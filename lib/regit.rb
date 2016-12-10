@@ -64,8 +64,6 @@ module Regit
 
   at_exit do
     LOGGER.info 'Exiting...'
-    
-    ServerConfig.save
 
     exit!
   end
@@ -77,5 +75,8 @@ module Regit
   
   BOT.run :async
   BOT.profile.avatar = File.open(avatar, 'rb')
-  IRB.start
+  
+  WebApp.run! # Run web app
+  
+  BOT.sync
 end

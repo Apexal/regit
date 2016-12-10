@@ -5,7 +5,8 @@ module Regit
 
     @commands = [
       Version,
-      WhoIs
+      WhoIs,
+      IrbCommand
     ]
 
     # Include all commands
