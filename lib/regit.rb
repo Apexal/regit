@@ -47,7 +47,7 @@ module Regit
   CONFIG = Config.new
   
   # Require all modules
-  Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| puts file; require file }
+  Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| require file }
 
   require_relative 'discordrb/member'
   require_relative 'discordrb/server'
@@ -73,6 +73,9 @@ module Regit
   LOGGER.info "Oauth url: #{BOT.invite_url}+&permissions=#{CONFIG.permissions_code}"
   LOGGER.info 'Use ctrl+c to safely stop the bot.'
 
+  avatar = "#{Dir.pwd}/juliuscaesar.jpg"
+  
   BOT.run :async
+  BOT.profile.avatar = File.open(avatar, 'rb')
   IRB.start
 end
