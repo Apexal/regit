@@ -31,6 +31,9 @@ module Regit
         @config[:command_prefix] = gets.chomp
         @config[:command_prefix] = '!' if @config[:command_prefix].empty?
 
+        print 'Permissions Code: '
+        @config[:permissions_code] = gets.chomp
+
         save
       end
 
