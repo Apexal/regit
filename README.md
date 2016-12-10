@@ -1,28 +1,39 @@
 # Regit
+*regit (rego, regere, rexi, rectum)* - he/she/it governs
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/regit`. To experiment with that code, run `bin/console` for an interactive prompt.
+A Discord bot that setups and fully moderates a Discord server based on a school. It handles authentication and total administration of the server and links it to all other school servers
+running on the bot.
 
-TODO: Delete this and the text above, and describe your gem
+Servers created are private to school students (and verified guests from other schools who have very limited access).
 
-## Installation
+Servers provide organized, specialized text and voice chat to allow academic cooperation and/or recreation for students. 
 
-Add this line to your application's Gemfile:
+# Web Component
+The bot also runs a web server which allows all students/administrators/moderators to manage their presence on the server.
 
-```ruby
-gem 'regit'
-```
+# School Server Layout
 
-And then execute:
+### TEXT-CHANNELS
+- **#welcome** - Only channel new users can see, shows info on how to register.
+- **#public-room** - All verified students and verified guests can talk here.
+- **#guest-room** - Only verified guests can talk here.
 
-    $ bundle
+*For Verified Students Only*
+- **#announcements** - Global announcements for the school server that only the server owner (and bots) can post in.
+- **#recreation** - General discussion of non-school related topics for all students in school.
+- **#work** - General school discussion, homework help, etc for all students in school.
+- **#freshmen | #sophomores | #juniors | #seniors** - Private chat for students in each grade.
+- **#meta** - Discussion of the server itself for all students in school.
+- **#{course_name}** - *Private text-channels for every course in the school based on teacher.*
 
-Or install it yourself as:
-
-    $ gem install regit
-
-## Usage
-
-TODO: Write usage instructions here
+### VOICE-CHANNELS
+The voice channel system is unique to Discord. Instead of a static number of voice channels existing at all times, voice channels are dynamically
+opened and closed based on users online, user requests, and when the existing number of voice channels are filled.
+- **AFK** - Room for AFK students.
+- **Public Room** - Opens when at least 1 verified guest is online; **ALL** (guest/verified/random) users can connect and speak.
+- **Freshmen | Sophomores | Juniors | Seniors** - Private channels for each grade that open when enough users in the respective grade is online.
+- **Room {Teacher Name}** - General room open to all students named randomly after a teacher.
+- **[New Room]** - Symbolic empty room that transforms into a teacher room when someone joins. There is always 1 new room available.
 
 ## Development
 
