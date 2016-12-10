@@ -1,0 +1,25 @@
+---
+Recreation:
+    description: General discussion of non-school related topics.
+    private: false
+    default: true
+
+Meta:
+    description: For meta discussion of the server itself.
+    private: false
+    default: true
+
+Testing:
+    description: For testing...?
+    private: true
+    default: false
+
+Politics:
+    description: For discussion of politics (keep it friendly).
+    private: false
+    default: true
+
+Gaming:
+    description: For discussion of everything gaming.
+    private: false
+    default: false

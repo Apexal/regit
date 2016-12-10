@@ -1,0 +1,70 @@
+---
+everyone:
+    perms: 
+        - change_nickname
+        - use_external_emoji
+    hoist: false
+    mentionable: true
+    description: Everybody.
+
+Guests:
+    perms:
+        - attach_files
+    hoist: true
+    mentionable: true
+    description: Students from other schools, or random friends of students invited to the server.
+    default: true
+
+Students:
+    perms:
+        - read_messages
+        - send_messages
+        - send_tts_messages
+        - embed_links
+        - attach_files
+        - read_message_history
+        - mention_everyone
+        - connect
+        - speak
+        - use_voice_activity
+    hoist: false
+    mentionable: false
+    description: Verified students from the school.
+
+Moderators:
+    perms:
+        - manage_messages
+    hoist: false
+    mentionable: true
+    description: Student-moderator of the school server.
+
+Studying:
+    perms: []
+    hoist: false
+    mentionable: false
+    description: Students in studymode who cannot see any non-work related channels.
+    color: "#585858"
+
+Freshmen:
+    perms: []
+    hoist: true
+    mentionable: true
+    description: All Freshmen.
+
+Sophomores:
+    perms: []
+    hoist: true
+    mentionable: true
+    description: All Sophomores.
+
+Juniors:
+    perms: []
+    hoist: true
+    mentionable: true
+    description: All Juniors.
+
+Seniors:
+    perms: []
+    hoist: true
+    mentionable: true
+    description: All Seniors.

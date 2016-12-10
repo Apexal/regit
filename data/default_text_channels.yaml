@@ -1,0 +1,92 @@
+---
+announcements:
+    topic: Server-wide announcements.
+    perms:
+        everyone:
+            - create_instant_invite
+            - -add_reactions
+        Students:
+            - read_messages
+            - -send_messages
+            - -add_reactions
+    position: 0
+
+welcome:
+    topic: Info on how to register.
+    perms:
+        everyone:
+            - read_messages
+            - read_message_history
+        Guests:
+            - -read_messages
+        Students:
+            - -read_messages
+    position: 1
+
+moderators:
+    topics: Private mod-chat.
+    perms:
+        everyone:
+            - -read_messages
+        Moderators:
+            - read_messages
+            - manage_messages
+
+public-room:
+    topic: Private chat for all guests and students.
+    perms:
+        Guests:
+            - read_messages
+            - read_message_history
+            - send_messages
+work:
+    topic: General school discussion, homework help, etc.
+    perms:
+        Students:
+            - send_messages
+            - read_message_history
+            - -embed_links
+            - -use_external_emoji
+            - -mention_everyone
+            - -add_reactions
+    default: true
+
+freshmen:
+    topic: Private chat for all Freshmen.
+    perms:
+        everyone:
+            - -read_messages
+        Freshmen:
+            - read_messages
+            - read_message_history
+            - send_messages
+
+sophomores:
+    topic: Private chat for all Sophomores.
+    perms:
+        everyone:
+            - -read_messages
+        Sophomores:
+            - read_messages
+            - read_message_history
+            - send_messages
+
+juniors:
+    topic: Private chat for all Juniors.
+    perms:
+        everyone:
+            - -read_messages
+        Juniors:
+            - read_messages
+            - read_message_history
+            - send_messages
+
+seniors:
+    topic: Private chat for all Seniors.
+    perms:
+        everyone:
+            - -read_messages
+        Seniors:
+            - read_messages
+            - read_message_history
+            - send_messages
