@@ -4,7 +4,8 @@ module Regit
     Dir["#{File.dirname(__FILE__)}/commands/*.rb"].each { |file| require file }
 
     @commands = [
-      Version
+      Version,
+      WhoIs
     ]
 
     # Include all commands

@@ -9,5 +9,9 @@ module Discordrb
       # LINK DATABASE
       @info = Regit::Database::Student.find_by_discord_id(@user.id)
     end
+
+    def student?
+      !@info.nil?
+    end
   end
 end

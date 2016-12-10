@@ -10,10 +10,16 @@ module Regit
     )
 
     class School < ActiveRecord::Base
+      has_many :students, inverse_of: :school
+      has_many :courses, inverse_of: :school
     end
 
     class Student < ActiveRecord::Base
-      belongs_to :school
+      belongs_to :school, inverse_of: :students
+    end
+
+    class Course < ActiveRecord::Base
+      belongs_to :school, inverse_of: :courses
     end
   end
 end
