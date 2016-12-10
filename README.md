@@ -13,6 +13,13 @@ The bot also runs a web server which allows all students/administrators/moderato
 
 # School Server Layout
 
+### ROLES
+- **Guest** - Assigned to all students from other schools than the specific server's
+- **Student** - Assigned to all *verified* students from the school for the server
+- **Moderator** - Assigned to student-moderators on the specific server; moderators can delete/pin messages and add strikes to students who abuse the rules
+- **Muted** - Assigned to students by moderators to prevent misbehaving students from sending any text-messages for an amount of time
+- **Studying** - Assigned to students that are in *studymode* and therefore have all non-work related channels temporarily blocked
+
 ### TEXT-CHANNELS
 - **#welcome** - Only channel new users can see, shows info on how to register.
 - **#public-room** - All verified students and verified guests can talk here.
