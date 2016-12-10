@@ -34,6 +34,22 @@ module Regit
         print 'Permissions Code: '
         @config[:permissions_code] = gets.chomp
 
+
+        @config[:db] = {}
+        
+        print 'Database Name: '
+        @config[:db][:database] = gets.chomp
+
+        print 'Database Host: '
+        @config[:db][:host] = gets.chomp
+
+        print 'Database Username: '
+        @config[:db][:username] = gets.chomp
+
+      print 'Database Password: '
+        @config[:db][:password] = gets.chomp
+
+
         save
       end
 

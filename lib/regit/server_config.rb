@@ -14,7 +14,7 @@ module Regit
       @default_settings.each do |key, value|
         @servers[id][key] = value[:default]
       end
-      LOGGER.debug "created a new config entry for server #{id}"
+      LOGGER.debug "Created a new config entry for server #{id}"
 
       @servers[id]
     end

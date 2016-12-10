@@ -4,7 +4,7 @@ module Regit
       extend Discordrb::EventContainer
 
       mention do |event|
-        event.respond("I am **Regit**, the successor to <@168184405414772736>")
+        event.respond event.server.school.title + event.user.on(event.server).info.first_name
       end
     end
   end

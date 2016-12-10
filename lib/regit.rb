@@ -1,8 +1,30 @@
 require 'discordrb'
 require 'yaml'
+require 'irb'
+require 'mysql'
+require 'active_record'
 
 require 'bundler/setup'
 Bundler.require(:default)
+
+# Global methods
+module Kernel
+  def bool_to_words(bool, mode = :on)
+    case mode
+    when :on
+      string_if_true = 'on'
+      string_if_false = 'off'
+    when :enabled
+      string_if_true = 'enabled'
+      string_if_false = 'disabled'
+    else
+      raise ArgumentError
+    end
+
+    return string_if_true if bool
+    string_if_false
+  end
+end
 
 module Regit
   Discordrb::LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
@@ -21,11 +43,15 @@ module Regit
   
   require_relative 'regit/other/store_data'
   require_relative 'regit/config'
-
-  # Require all modules
-  Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| require file }
-
+  
   CONFIG = Config.new
+  
+  # Require all modules
+  Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| puts file; require file }
+
+  require_relative 'discordrb/member'
+  require_relative 'discordrb/server'
+
   BOT = Discordrb::Commands::CommandBot.new(token: CONFIG.discord_token,
                                             client_id: CONFIG.discord_client_id,
                                             prefix: CONFIG.command_prefix,
@@ -47,9 +73,6 @@ module Regit
   LOGGER.info "Oauth url: #{BOT.invite_url}+&permissions=#{CONFIG.permissions_code}"
   LOGGER.info 'Use ctrl+c to safely stop the bot.'
 
-  BOT.run(:async)
-  
-  loop do
-    sleep 100
-  end
+  BOT.run :async
+  IRB.start
 end
