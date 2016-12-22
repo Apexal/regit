@@ -27,6 +27,8 @@ module Regit
           server.voice_channels.each do |v|
             Regit::Events::VoiceState::handle_associated_channel(v)
           end
+
+          CHANNEL_ASSOCIATIONS[server.id].select { |v_id, _| server.voice_channels.find { |v| v.id == v_id }.nil? }.map(&:delete) # Remove extra associations
         end
 
         save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)

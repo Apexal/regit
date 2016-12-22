@@ -13,3 +13,4 @@ data/server_config.yml
 data/stats.yml
 logs/*.log
 
+data/associations.yaml

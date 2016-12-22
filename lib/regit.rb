@@ -73,7 +73,6 @@ module Regit
 
   at_exit do
     LOGGER.info 'Exiting...'
-    #save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
     exit!
   end
   
