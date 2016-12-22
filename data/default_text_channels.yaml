@@ -31,6 +31,7 @@ moderators:
         Moderators:
             - read_messages
             - manage_messages
+    position: 2
 
 public-room:
     topic: Private chat for all guests and students.
@@ -39,6 +40,8 @@ public-room:
             - read_messages
             - read_message_history
             - send_messages
+    position: 3
+
 work:
     topic: General school discussion, homework help, etc.
     perms:
@@ -50,6 +53,7 @@ work:
             - -mention_everyone
             - -add_reactions
     default: true
+    position: 5
 
 freshmen:
     topic: Private chat for all Freshmen.
@@ -60,6 +64,7 @@ freshmen:
             - read_messages
             - read_message_history
             - send_messages
+    position: 6
 
 sophomores:
     topic: Private chat for all Sophomores.
@@ -70,6 +75,7 @@ sophomores:
             - read_messages
             - read_message_history
             - send_messages
+    position: 7
 
 juniors:
     topic: Private chat for all Juniors.
@@ -80,6 +86,7 @@ juniors:
             - read_messages
             - read_message_history
             - send_messages
+    position: 8
 
 seniors:
     topic: Private chat for all Seniors.
@@ -90,3 +97,4 @@ seniors:
             - read_messages
             - read_message_history
             - send_messages
+    position: 9

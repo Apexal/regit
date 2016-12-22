@@ -3,6 +3,7 @@ Recreation:
     description: General discussion of non-school related topics.
     private: false
     default: true
+    position: 4
 
 Meta:
     description: For meta discussion of the server itself.

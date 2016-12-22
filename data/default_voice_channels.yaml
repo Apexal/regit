@@ -1,11 +1,4 @@
 ---
-AFK:
-    perms:
-        everyone:
-            - connect
-            - -speak
-    position: 0
-
 Public Room:
     perms:
         everyone:

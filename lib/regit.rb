@@ -51,6 +51,8 @@ module Regit
   
   CONFIG = Config.new
   
+  OLD_VOICE_STATES = {}
+
   # Require all modules
   Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| require file }
 

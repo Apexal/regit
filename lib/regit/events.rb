@@ -8,7 +8,8 @@ module Regit
       Ready,
       Join,
       NewServer,
-      Presence
+      Presence,
+      VoiceState
     ]
 
     def self.include!

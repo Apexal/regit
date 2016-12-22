@@ -31,7 +31,7 @@ module Regit
           role.hoist = info['hoist']
           role.mentionable = info['mentionable']
           
-          binding.pry
+          #binding.pry
 
           perms = Discordrb::Permissions.new
 
