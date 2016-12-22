@@ -1,11 +1,12 @@
 module Regit
-
   module StoreData
     # Serializes an object and saves it to file.
     def save_to_file(file, object)
       File.open(file, 'w') do |f|
         f.write YAML.dump(object)
       end
+
+      LOGGER.info "SAVED FILE"
     end
 
     # Loads yaml from file or returns an empty hash if file doesn't exist.

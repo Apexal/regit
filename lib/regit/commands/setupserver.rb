@@ -29,9 +29,9 @@ module Regit
           role = event.server.create_role if role.nil?
           role.name = role_name
           role.hoist = info['hoist']
-          role.mentionable = info['mentionable']
           
-          #binding.pry
+          # Does not work yet
+          role.mentionable = info['mentionable']
 
           perms = Discordrb::Permissions.new
 

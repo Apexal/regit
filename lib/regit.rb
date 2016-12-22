@@ -52,7 +52,8 @@ module Regit
   CONFIG = Config.new
   
   OLD_VOICE_STATES = {}
-
+  CHANNEL_ASSOCIATIONS = {}
+  
   # Require all modules
   Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| require file }
 
@@ -72,7 +73,7 @@ module Regit
 
   at_exit do
     LOGGER.info 'Exiting...'
-
+    #save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
     exit!
   end
   
