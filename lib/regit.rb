@@ -3,6 +3,7 @@ require 'yaml'
 require 'irb'
 require 'mysql'
 require 'active_record'
+require 'pry'
 
 require 'bundler/setup'
 Bundler.require(:default)
@@ -27,6 +28,10 @@ module Kernel
 end
 
 module Regit
+  
+  # CONSTANTS
+  GRADES = %w(Freshmen Sophmores Juniors Seniors).freeze
+
   Discordrb::LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
   
   debug = ARGV.include?('-debug') ? :debug : false
@@ -50,6 +55,7 @@ module Regit
   Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| require file }
 
   require_relative 'discordrb/member'
+  require_relative 'discordrb/channel'
   require_relative 'discordrb/server'
 
   BOT = Discordrb::Commands::CommandBot.new(token: CONFIG.discord_token,
@@ -76,7 +82,7 @@ module Regit
   BOT.run :async
   BOT.profile.avatar = File.open(avatar, 'rb')
   
-  WebApp.run! # Run web app
+  #WebApp.run! # Run web app
   
   BOT.sync
 end

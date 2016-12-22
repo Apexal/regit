@@ -10,6 +10,7 @@ everyone:
 Guests:
     perms:
         - attach_files
+        - change_nickname
     hoist: true
     mentionable: true
     description: Students from other schools, or random friends of students invited to the server.

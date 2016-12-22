@@ -5,7 +5,10 @@ module Regit
 
     @events = [
       Mention,
-      Ready
+      Ready,
+      Join,
+      NewServer,
+      Presence
     ]
 
     def self.include!

@@ -1,0 +1,49 @@
+---
+AFK:
+    perms:
+        everyone:
+            - connect
+            - -speak
+    position: 0
+
+Public Room:
+    perms:
+        everyone:
+            - connect
+            - speak
+            - use_voice_activity
+    position: 1
+
+Freshmen:
+    perms:
+        everyone:
+            - -connect
+        Freshmen:
+            - connect
+    position: 2
+
+Sophomores:
+    perms:
+        everyone:
+            - -connect
+        Sophomores:
+            - connect
+    position: 3
+    
+Juniors:
+    perms:
+        everyone:
+            - -connect
+        Juniors:
+            - connect
+    position: 4
+    
+
+Seniors:
+    perms:
+        everyone:
+            - -connect
+        Seniors:
+            - connect
+    position: 5
+    

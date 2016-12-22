@@ -10,5 +10,4 @@ require "regit"
 # require "pry"
 # Pry.start
 
-require "irb"
-IRB.start
+

@@ -42,6 +42,10 @@ opened and closed based on users online, user requests, and when the existing nu
 - **Room {Teacher Name}** - General room open to all students named randomly after a teacher.
 - **[New Room]** - Symbolic empty room that transforms into a teacher room when someone joins. There is always 1 new room available.
 
+### GROUPS
+Groups are per-school server and allow for private text-channel and voice-channel chat for students with similar interests. Students decided what groups to join (there is no limit) and can
+even create their own (1 per user) and manage it themselves.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
