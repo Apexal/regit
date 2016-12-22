@@ -64,7 +64,7 @@ module Regit
   BOT = Discordrb::Commands::CommandBot.new(token: CONFIG.discord_token,
                                             client_id: CONFIG.discord_client_id,
                                             prefix: CONFIG.command_prefix,
-                                            advanced_functionality: false,
+                                            advanced_functionality: true,
                                             fancy_log: true)
   
 
