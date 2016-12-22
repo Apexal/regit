@@ -137,12 +137,8 @@ module Regit
             handle_join_channel(user)
           end
 
-          unless old[user.id].nil?
-            handle_voice_channel(old[user.id], user) 
-          end
-          unless states[user.id].nil?
-            handle_voice_channel(states[user.id], user)
-          end
+          handle_voice_channel(old[user.id], user) unless old[user.id].nil? 
+          handle_voice_channel(states[user.id], user) unless states[user.id].nil?
 
           save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
         end
@@ -151,7 +147,6 @@ module Regit
       end
 
       channel_create do |event|
-        binding.pry
         if event.type == 2
           #return if event.channel.id == event.server.afk_channel.id
           handle_associated_channel(event.channel)

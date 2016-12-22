@@ -13,6 +13,10 @@ module Regit
       has_many :students, inverse_of: :school
       has_many :courses, inverse_of: :school
       has_many :groups, inverse_of: :school
+
+      def members
+        Student.where(school_id: id).map { |s| Regit::BOT::member(server_id, Integer(s.discord_id)) }
+      end
     end
 
     class Student < ActiveRecord::Base
@@ -26,13 +30,18 @@ module Regit
     class Group < ActiveRecord::Base
       belongs_to :school, inverse_of: :groups
 
+      def owner
+        # Find owner
+        Regit::BOT.user(Student.where(username: owner_username).first.discord_id)
+      end
+
       def text_channel
         Regit::BOT.channel(text_channel_id)
       end
 
       def role
         Regit::BOT.servers.each do |id, server|
-          role = server.roles.find { |r| r.id == Integer(role_id) }
+          role = server.role(Integer(role_id))
           return role unless role.nil?
         end
         nil

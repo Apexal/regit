@@ -1,17 +1,17 @@
 module Discordrb
   
   class Server
-    attr_reader :school
-
     old_initialize = instance_method(:initialize)
     define_method(:initialize) do |data, bot, exists = true|
       old_initialize.bind(self).call(data, bot, exists)
-      
-      @school = Regit::Database::School.find_by_server_id(@id)
+    end
+
+    def school
+      Regit::Database::School.find_by_server_id(@id)
     end
 
     def setup?
-      !@school.nil?
+      !school.nil?
     end
   end
 end
