@@ -8,6 +8,21 @@ Servers created are private to school students (and verified guests from other s
 
 Servers provide organized, specialized text and voice chat to allow academic cooperation and/or recreation for students. 
 
+# Registration Process
+One of either two ways can be followed:
+1. User goes straight to website and authenticates with their Discord account
+    1. User sets school email
+    2. Confirmation email to prove
+    3. Link between user and discord account
+    4. They are shown invite link
+    5. On server join, bot sets them up
+2. User joins server
+    1. Tells bot school email
+    2. Confirmation email to prove
+    3. Link between user and discord account
+    4. Bot sets everything up
+    5. They are shown link to website
+
 # Web Component
 The bot also runs a web server which allows all students/administrators/moderators to manage their presence on the server.
 
@@ -44,7 +59,7 @@ opened and closed based on users online, user requests, and when the existing nu
 
 ### GROUPS
 Groups are per-school server and allow for private text-channel and voice-channel chat for students with similar interests. Students decided what groups to join (there is no limit) and can
-even create their own (1 per user) and manage it themselves.
+even create their own (limit in config file) and manage it themselves.
 
 ## Development
 
@@ -54,7 +69,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/regit. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/Apexal/regit. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License
