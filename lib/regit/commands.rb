@@ -8,7 +8,8 @@ module Regit
       WhoIs,
       IrbCommand,
       SetupServer,
-      Groups
+      Groups,
+      Administration
     ]
 
     # Include all commands

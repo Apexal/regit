@@ -27,17 +27,23 @@ module Regit
         if channel.name == CONFIG.new_room_name && !channel.users.empty?
           # Person joined empty voice-channel! Transform into room!
           channel.association = :room
-          channel.name = "Room Fun"
-
+          channel.name = "Room Fun" # Name after teacher
+          
+          # THIS IS BEFORE handle_associated_channel TO MAKE IT LOOK FASTER
           # Create new empty room
-          channel.server.create_channel(CONFIG.new_room_name, 2)
+          new_room = channel.server.create_channel(CONFIG.new_room_name, 2)
+          new_room.association = :new_room
+
+          handle_associated_channel(channel, user)          
         elsif channel.name != CONFIG.new_room_name && channel.users.empty?
           channel.delete if channel.association == :room
         end
       end
       
-      def self.handle_associated_channel(voice_channel)
+      def self.handle_associated_channel(voice_channel, member = nil)
         return unless voice_channel.type == 2
+        return if !voice_channel.server.afk_channel.nil? && voice_channel == voice_channel.server.afk_channel 
+        
         LOGGER.info "handle_associated_channel: #{voice_channel.name}"
         text_perms = Discordrb::Permissions.new
         text_perms.can_read_message_history = true
@@ -51,32 +57,17 @@ module Regit
           # Create associated #voice-channel text-channel
           text_channel = voice_channel.server.create_channel('voice-channel', 0)
           text_channel.topic = "Private chat for all those in the voice-channel **#{voice_channel.name}**."
+
+          # For when a user creates a new room, it makes it seem less glitchy
+          text_channel.define_overwrite(member, text_perms, 0) unless member.nil?
+
           text_channel.define_overwrite(voice_channel.server.roles.find { |r| r.id == voice_channel.server.id }, 0, text_perms)
           CHANNEL_ASSOCIATIONS[voice_channel.server.id][voice_channel.id] = text_channel.id
-        end
-
-        voice_channel.users.each do |u|
-          text_channel.define_overwrite(u, text_perms, 0)
         end
 
         return text_channel
       end
 
-      def self.update_associations(server)
-        LOGGER.info "update_associations"
-        CHANNEL_ASSOCIATIONS[server.id].each do |v_id, t_id|
-          voice_channel = server.voice_channels.find { |v| v.id == v_id }
-          text_channel = server.text_channels.find { |t| t.id == t_id }
-
-          if voice_channel.nil?
-            text_channel.delete
-          else
-            handle_associated_channel(voice_channel)
-          end
-        end
-
-        save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
-      end
 
       def self.handle_leave_channel(member, old_channel)
         
@@ -91,8 +82,8 @@ module Regit
         if text_channel.nil?
 
         else
-          text_channel.define_overwrite(member, 0, text_perms)
           text_channel.send_message("**#{member.display_name}** *has left the voice-channel.*")
+          text_channel.define_overwrite(member, 0, text_perms)
         end
       end
 
@@ -108,8 +99,9 @@ module Regit
         if text_channel.nil?
 
         else
-          text_channel.define_overwrite(member, text_perms, 0)
+          # This order prevents the person joining from seeing the message
           text_channel.send_message("**#{member.display_name}** *has joined the voice-channel.*")
+          text_channel.define_overwrite(member, text_perms, 0)
         end
       end
 
@@ -119,46 +111,50 @@ module Regit
         user = event.user.on(event.server)
 
         if old != states
-          LOGGER.debug "Person moved..."
           # Person changed voice-channel
+          
           # How?
           if old[user.id].nil?
             # Connected to voice
             LOGGER.info "#{user.distinct} joined #{states[user.id].name}"
-            handle_join_channel(user)
           elsif states[user.id].nil?
             # Disconnected from voice
             LOGGER.info "#{user.distinct} disconnected from #{old[user.id].name}"
-            handle_leave_channel(user, old[user.id])
           else
             # Changed rooms
             LOGGER.info "#{user.distinct} moved from #{old[user.id].name} to #{states[user.id].name}"
-            handle_leave_channel(user, old[user.id])
-            handle_join_channel(user)
           end
 
-          handle_voice_channel(old[user.id], user) unless old[user.id].nil? 
-          handle_voice_channel(states[user.id], user) unless states[user.id].nil?
+          unless old[user.id].nil?
+            handle_voice_channel(old[user.id], user)
+            handle_leave_channel(user, old[user.id]) unless old[user.id].association == :room && old[user.id].users.empty?
+          end
 
-          save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
+          unless states[user.id].nil?
+            handle_voice_channel(states[user.id], user)
+            handle_join_channel(user)
+          end
         end
 
         OLD_VOICE_STATES[event.server.id] = states.clone
       end
 
       channel_create do |event|
-        if event.type == 2
+        if event.type == 2 && event.name != CONFIG.new_room_name
           #return if event.channel.id == event.server.afk_channel.id
           handle_associated_channel(event.channel)
-          save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
         end
       end
 
       channel_delete do |event|
         if event.type == 2 # Voice
           # Hierarchy stuff
-          event.server.text_channels.find { |t| t.id == CHANNEL_ASSOCIATIONS[event.server.id][event.id] }.delete
-          CHANNEL_ASSOCIATIONS[event.server.id].delete event.id
+          begin
+            event.server.text_channels.find { |t| t.id == CHANNEL_ASSOCIATIONS[event.server.id][event.id] }.delete
+            CHANNEL_ASSOCIATIONS[event.server.id].delete event.id
+          rescue NoMethodError
+            # Did not have an associated text-channel for whatever reason (fine)
+          end
         elsif event.type == 0
           # Delete association
           begin
@@ -167,8 +163,6 @@ module Regit
             # Did not have an association (rightfully deleted then)
           end
         end
-
-        save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
       end
 
     end

@@ -25,13 +25,18 @@ module Regit
           server.text_channels.select { |t| t.association == :voice_channel && !CHANNEL_ASSOCIATIONS[server_id].has_value?(t.id) }.map(&:delete)
 
           server.voice_channels.each do |v|
-            Regit::Events::VoiceState::handle_associated_channel(v)
+            next if v.name == CONFIG.new_room_name || (!server.afk_channel.nil? && v == server.afk_channel)
+            t_channel = Regit::Events::VoiceState::handle_associated_channel(v)
+
+            v.users.each do |u|
+              t_channel.define_overwrite(u, text_perms, 0)
+            end
+
+            # TODO: Account for people in #voice-channel's they arent supposed to be in
           end
 
           CHANNEL_ASSOCIATIONS[server.id].select { |v_id, _| server.voice_channels.find { |v| v.id == v_id }.nil? }.map(&:delete) # Remove extra associations
         end
-
-        save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
       end
     end
   end

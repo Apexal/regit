@@ -1,12 +1,18 @@
-require 'discordrb'
+require 'rubygems'
+
 require 'yaml'
 require 'irb'
-require 'mysql'
-require 'active_record'
 require 'pry'
 
 require 'bundler/setup'
-Bundler.require(:default)
+Bundler.setup(:default)
+
+require 'discordrb'
+require 'mysql2'
+require 'active_record'
+require 'sinatra'
+
+
 
 # Global methods
 module Kernel
@@ -25,10 +31,13 @@ module Kernel
     return string_if_true if bool
     string_if_false
   end
+
 end
 
+require_relative 'regit/other/store_data'
 module Regit
-  
+  extend StoreData
+
   # CONSTANTS
   GRADES = %w(Freshmen Sophmores Juniors Seniors).freeze
 
@@ -46,7 +55,7 @@ module Regit
   LOGGER = Discordrb::LOGGER = Discordrb::Logger.new(nil, log_streams)
   LOGGER.debug = true if debug
   
-  require_relative 'regit/other/store_data'
+  
   require_relative 'regit/config'
   
   CONFIG = Config.new
@@ -73,6 +82,7 @@ module Regit
 
   at_exit do
     LOGGER.info 'Exiting...'
+    save_to_file("#{Dir.pwd}/data/associations.yaml", Regit::CHANNEL_ASSOCIATIONS)
     exit!
   end
   
@@ -87,4 +97,5 @@ module Regit
   #WebApp.run! # Run web app
   
   BOT.sync
+  save_associations
 end

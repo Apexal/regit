@@ -56,6 +56,10 @@ module Regit
           channel.topic = info['topic']
           channel.position = info['position'] unless info['position'].nil?
 
+          unless info['text'].nil?
+            channel.split_send(info['text'])
+          end
+
           # Channel perms
           info['perms'].each do |role_name, perms|
             role = event.server.roles.find { |r| r.name == role_name }

@@ -22,6 +22,8 @@ welcome:
         Students:
             - -read_messages
     position: 1
+    text: |
+        **To start, go to https://example.com and login with your Discord account!**
 
 moderators:
     topics: Private mod-chat.

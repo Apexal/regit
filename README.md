@@ -17,11 +17,12 @@ One of either two ways can be followed:
     4. They are shown invite link
     5. On server join, bot sets them up
 2. User joins server
-    1. Tells bot school email
-    2. Confirmation email to prove
-    3. Link between user and discord account
-    4. Bot sets everything up
-    5. They are shown link to website
+    0. Can only see #welcome 
+    1. PM's website link and tells them to login with Discord account
+    2. User sets school email on website
+    3. Confirmation email to prove
+    4. Link between user and discord account
+    5. Bot sets everything up
 
 # Web Component
 The bot also runs a web server which allows all students/administrators/moderators to manage their presence on the server.

@@ -46,10 +46,12 @@ module Regit
         print 'Database Username: '
         @config[:db][:username] = gets.chomp
 
-      print 'Database Password: '
+        print 'Database Password: '
         @config[:db][:password] = gets.chomp
 
-
+        print 'New Room Name: '
+        @config[:new_room_name] = gets.chomp
+        
         save
       end
 

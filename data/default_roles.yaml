@@ -15,6 +15,7 @@ Guests:
     mentionable: true
     description: Students from other schools, or random friends of students invited to the server.
     default: true
+    color: E74C3C # Not yet supported
 
 Students:
     perms:

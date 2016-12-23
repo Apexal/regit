@@ -14,7 +14,6 @@ module Discordrb
       elsif data['type'] == 0
         @association = :voice_channel if data['name'] == 'voice-channel'
       end
-
     end
 
   end
