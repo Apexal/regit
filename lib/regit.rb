@@ -43,7 +43,7 @@ module Regit
 
   Discordrb::LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
   
-  debug = ARGV.include?('-debug') ? :debug : false
+  debug = ARGV.include?('--debug') ? :debug : false
   log_streams = [STDOUT]
 
   if debug
@@ -89,7 +89,7 @@ module Regit
   LOGGER.info "Oauth url: #{BOT.invite_url}+&permissions=#{CONFIG.permissions_code}"
   LOGGER.info 'Use ctrl+c to safely stop the bot.'
 
-  avatar = "#{Dir.pwd}/juliuscaesar.jpg"
+  avatar = "#{Dir.pwd}/data/Student.jpg"
   
   BOT.run :async
   BOT.profile.avatar = File.open(avatar, 'rb')
