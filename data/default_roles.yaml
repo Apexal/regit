@@ -36,6 +36,8 @@ Students:
 Moderators:
     perms:
         - manage_messages
+        - mute_members
+        - move_members
     hoist: false
     mentionable: true
     description: Student-moderator of the school server.
