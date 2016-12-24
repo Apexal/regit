@@ -32,7 +32,8 @@ module Regit
               t_channel.define_overwrite(u, text_perms, 0)
             end
 
-            # TODO: Account for people in #voice-channel's they arent supposed to be in
+            # Account for people in #voice-channel's they arent supposed to be in
+            t_channel.users.select { |u| u.student?(server.school) && !v.users.include?(u) }.map { |u| t_channel.define_overwrite(u, 0, 0) }  
           end
 
           CHANNEL_ASSOCIATIONS[server.id].select { |v_id, _| server.voice_channels.find { |v| v.id == v_id }.nil? }.map(&:delete) # Remove extra associations
