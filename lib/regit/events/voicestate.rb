@@ -35,8 +35,8 @@ module Regit
           new_room.association = :new_room
 
           handle_associated_channel(channel, user)          
-        elsif channel.name != CONFIG.new_room_name && channel.users.empty?
-          channel.delete if channel.association == :room
+        elsif channel.association == :room && channel.name != CONFIG.new_room_name && channel.users.empty?
+          channel.delete
         end
       end
       
@@ -44,7 +44,6 @@ module Regit
         return unless voice_channel.type == 2
         return if !voice_channel.server.afk_channel.nil? && voice_channel == voice_channel.server.afk_channel 
         
-        LOGGER.info "handle_associated_channel: #{voice_channel.name}"
         text_perms = Discordrb::Permissions.new
         text_perms.can_read_message_history = true
         text_perms.can_read_messages = true
@@ -68,40 +67,23 @@ module Regit
         return text_channel
       end
 
-
-      def self.handle_leave_channel(member, old_channel)
-        
+      def self.handle_channel_action(action, member, old_channel = nil)
         text_perms = Discordrb::Permissions.new
         text_perms.can_read_message_history = true
         text_perms.can_read_messages = true
         text_perms.can_send_messages = true
 
-        v_id = old_channel.id
+        v_id = (old_channel.nil? ? member.voice_channel.id : old_channel.id)
         text_channel = member.server.text_channels.find { |t| t.id == CHANNEL_ASSOCIATIONS[member.server.id][v_id] }
 
-        if text_channel.nil?
-
-        else
-          text_channel.send_message("**#{member.display_name}** *has left the voice-channel.*")
-          text_channel.define_overwrite(member, 0, text_perms)
-        end
-      end
-
-      def self.handle_join_channel(member)
-        text_perms = Discordrb::Permissions.new
-        text_perms.can_read_message_history = true
-        text_perms.can_read_messages = true
-        text_perms.can_send_messages = true
-
-        v_id = member.voice_channel.id
-        text_channel = member.server.text_channels.find { |t| t.id == CHANNEL_ASSOCIATIONS[member.server.id][v_id] }
-
-        if text_channel.nil?
-
-        else
-          # This order prevents the person joining from seeing the message
-          text_channel.send_message("**#{member.display_name}** *has joined the voice-channel.*")
-          text_channel.define_overwrite(member, text_perms, 0)
+        unless text_channel.nil?
+          if action == :leave
+            text_channel.send_message("**#{member.display_name}** *has left the voice-channel.*")
+            text_channel.define_overwrite(member, 0, 0)
+          elsif action == :join
+            text_channel.send_message("**#{member.display_name}** *has joined the voice-channel.*")
+            text_channel.define_overwrite(member, text_perms, 0)
+          end
         end
       end
 
@@ -127,23 +109,21 @@ module Regit
 
           unless old[user.id].nil?
             handle_voice_channel(old[user.id], user)
-            handle_leave_channel(user, old[user.id]) unless old[user.id].association == :room && old[user.id].users.empty?
+            handle_channel_action(:leave, user, old[user.id]) unless old[user.id].association == :room && old[user.id].users.empty?
           end
 
           unless states[user.id].nil?
             handle_voice_channel(states[user.id], user)
-            handle_join_channel(user)
+            handle_channel_action(:join, user)
           end
         end
 
         OLD_VOICE_STATES[event.server.id] = states.clone
       end
 
+      # When voice-channels are created (by users or by the bot) handle their associated #voice-channel
       channel_create do |event|
-        if event.type == 2 && event.name != CONFIG.new_room_name
-          #return if event.channel.id == event.server.afk_channel.id
-          handle_associated_channel(event.channel)
-        end
+        handle_associated_channel(event.channel) if event.type == 2 && event.name != CONFIG.new_room_name
       end
 
       channel_delete do |event|

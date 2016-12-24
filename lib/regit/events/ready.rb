@@ -8,7 +8,7 @@ module Regit
       associations = load_file("#{Dir.pwd}/data/associations.yaml")
 
       ready do |event|
-        BOT.game = 'with the Future'
+        BOT.game = 'with Data'
         LOGGER.info 'Regit is ready.'
 
         text_perms = Discordrb::Permissions.new

@@ -5,8 +5,6 @@ module Regit
       File.open(file, 'w') do |f|
         f.write YAML.dump(object)
       end
-
-      LOGGER.info "SAVED FILE"
     end
 
     # Loads yaml from file or returns an empty hash if file doesn't exist.
