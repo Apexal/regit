@@ -4,21 +4,12 @@ module Regit
       group = Regit::Database::Group.find(id)
 
       # SO EZ
+      group.role.members.each { |m| m.pm "**Group #{group.name}** has been deleted." }
       group.role.delete
       group.text_channel.delete
 
       LOGGER.info "Deleted group #{group.name} of #{group.school.title} server"
       group.destroy
-    end
-
-    # Remove any remnants 
-    def self.clean_groups(server)
-      server.text_channels.select { |t| t.association == :group && Regit::Database::Group.find_by_text_channel_id(t.id).count == 0 }.map(&:delete)
-      server.roles.select { |r| r.association == :group && Regit::Database::Group.find_by_role_id(t.id).count == 0 }.map(&:delete)
-    end
-
-    def self.delete_group_by_name(full_name)
-
     end
 
     def self.create_group(owner, full_name, description, is_private)

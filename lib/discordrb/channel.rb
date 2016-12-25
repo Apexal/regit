@@ -13,8 +13,11 @@ module Discordrb
           :group
         elsif Regit::GRADES.map { |g| g.downcase }.include?(@name)
           :grade
+        elsif !Regit::DEFAULT_TEXT_CHANNELS[@name].nil?
+          :default
         end
       elsif type == 2
+        #LOGGER.info((@server.afk_channel.nil? ? '' : @server.afk_channel.name))
         if @name.start_with?('Room ')
           :room
         elsif @name.start_with?('Group ')
@@ -23,7 +26,13 @@ module Discordrb
           :new_room
         elsif Regit::GRADES.include?(@name)
           :grade
+        elsif !Regit::DEFAULT_VOICE_CHANNELS[@name].nil?
+          :default
+        elsif (!@server.afk_channel.nil? && @server.afk_channel.id == @id) || @name == 'AFK'
+          :afk
         end
+      else
+        :dm
       end
     end
 

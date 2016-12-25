@@ -25,6 +25,12 @@ module Regit
       { allow: allow, deny: deny }
     end
 
+    # Remove any remnants 
+    def self.clean_channels(server)
+      server.text_channels.select { |t| t.association.nil? }.map(&:delete)
+      server.roles.select { |r| r.association.nil? }.map(&:delete)
+    end
+
     def self.replace_mentions(message)
       message.strip!
       message.gsub! '**', ''

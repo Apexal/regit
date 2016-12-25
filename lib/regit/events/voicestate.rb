@@ -30,7 +30,7 @@ module Regit
           
           # THIS IS BEFORE handle_associated_channel TO MAKE IT LOOK FASTER
           # Create new empty room
-          new_room = channel.server.create_channel(CONFIG.new_room_name, 2)
+          channel.server.create_channel(CONFIG.new_room_name, 2)
 
           handle_associated_channel(channel, user)          
         elsif channel.association == :room && channel.name != CONFIG.new_room_name && channel.users.empty?

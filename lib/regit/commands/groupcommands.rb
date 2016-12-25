@@ -44,6 +44,7 @@ module Regit
           end
         rescue => e
           event.user.pm "Failed to create group: #{e}"
+          Regit::Utilities::clean_channels(event.server)
         end
 
         nil

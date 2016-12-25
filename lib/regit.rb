@@ -24,6 +24,10 @@ module Regit
   # CONSTANTS
   GRADES = %w(Freshmen Sophomores Juniors Seniors).freeze
 
+  DEFAULT_ROLES = load_file("#{Dir.pwd}/data/default_roles.yaml")
+  DEFAULT_TEXT_CHANNELS = load_file("#{Dir.pwd}/data/default_text_channels.yaml")
+  DEFAULT_VOICE_CHANNELS = load_file("#{Dir.pwd}/data/default_voice_channels.yaml")
+
   Discordrb::LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
   
   debug = ARGV.include?('--debug') ? :debug : false
@@ -48,6 +52,7 @@ module Regit
   # Require all modules
   Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| require file }
 
+  require_relative 'discordrb/role'
   require_relative 'discordrb/member'
   require_relative 'discordrb/channel'
   require_relative 'discordrb/server'

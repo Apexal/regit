@@ -4,10 +4,6 @@ module Regit
       extend Discordrb::Commands::CommandContainer
       extend StoreData
 
-      default_roles = load_file("#{Dir.pwd}/data/default_roles.yaml")
-      default_text_channels = load_file("#{Dir.pwd}/data/default_text_channels.yaml")
-      default_voice_channels = load_file("#{Dir.pwd}/data/default_voice_channels.yaml")
-
       command(:setup, description: 'Open console.') do |event|
         #return 'This server is already setup!' if event.server.setup?
         
@@ -15,7 +11,7 @@ module Regit
         LOGGER.info 'Setting up new server...'
         event.server.owner.pm 'Adding necessary roles...'
 
-        default_roles.each do |role_name, info|
+        DEFAULT_ROLES.each do |role_name, info|
           role = nil
           
           if role_name == 'everyone'
@@ -45,7 +41,7 @@ module Regit
         end
 
         # Text-channels
-        default_text_channels.each do |channel_name, info|
+        DEFAULT_TEXT_CHANNELS.each do |channel_name, info|
           unless event.server.text_channels.find { |t| t.name == channel_name }.nil?
             LOGGER.info "Text-channel ##{channel_name} already exists."
             next
@@ -76,7 +72,7 @@ module Regit
         end
 
         # Voice-channels
-        default_voice_channels.each do |channel_name, info|
+        DEFAULT_VOICE_CHANNELS.each do |channel_name, info|
           unless event.server.voice_channels.find { |v| v.name == channel_name }.nil?
             LOGGER.info "Voice-channel #{channel_name} already exists on #{event.server.name}!"  
             next
