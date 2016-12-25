@@ -46,6 +46,10 @@ module Regit
         end
         nil
       end
+
+      def private?
+        private
+      end
     end
   end
 end

@@ -36,18 +36,14 @@ module Regit
         w.sub!('(', '')
         w.sub!(')', '')
         w.sub!('"', '')
-        if w.start_with? '<@' and w.end_with? '>'
-          id = w.sub('<@!', '').sub('<@', '').sub('>', '') # Get ID 
-          if !done.include? id and /\A\d+\z/.match(id)
-            user = $db.query("SELECT username FROM students WHERE discord_id=#{id}")
-            if user.count > 0
-              user = user.first
-              rep = "**@#{user["username"]}**" # replacement
-              message.gsub! "<@#{id}>", rep # Only works when they don't have a nickname
-              message.gsub! "<@!#{id}>", rep
-            end
-            done << id
-          end
+
+        if w.start_with? '<@' and w.end_with? '>' && !done.include?(id)
+          id = w.sub('<@!', '').sub('<@', '').sub('>', '')
+
+          user = Regit::BOT.parse_mention(w)
+          message.gsub(user.mention, user.distinct) unless user.nil?
+          
+          done << id
         end
       end
 

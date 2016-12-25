@@ -1,5 +1,4 @@
 module Discordrb
-  
   class Server
     old_initialize = instance_method(:initialize)
     define_method(:initialize) do |data, bot, exists = true|

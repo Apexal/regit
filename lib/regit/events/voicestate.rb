@@ -26,13 +26,11 @@ module Regit
         # Check what type of room it is
         if channel.name == CONFIG.new_room_name && !channel.users.empty?
           # Person joined empty voice-channel! Transform into room!
-          channel.association = :room
           channel.name = "Room Fun" # Name after teacher
           
           # THIS IS BEFORE handle_associated_channel TO MAKE IT LOOK FASTER
           # Create new empty room
           new_room = channel.server.create_channel(CONFIG.new_room_name, 2)
-          new_room.association = :new_room
 
           handle_associated_channel(channel, user)          
         elsif channel.association == :room && channel.name != CONFIG.new_room_name && channel.users.empty?

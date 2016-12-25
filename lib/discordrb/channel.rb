@@ -1,18 +1,29 @@
 module Discordrb
   class Channel
-    attr_reader :association
-    attr_writer :association
-
     old_initialize = instance_method(:initialize)
     define_method(:initialize) do |data, bot, server = nil|
       old_initialize.bind(self).call(data, bot, server)
+    end
 
-      if data['type'] == 2
-        @association = :room if data['name'].start_with? 'Room '
-        @association = :group if data['name'].start_with? 'Group '
-        @association = :grade if Regit::GRADES.include?(data['name'])
-      elsif data['type'] == 0
-        @association = :voice_channel if data['name'] == 'voice-channel'
+    def association
+      if @type == 0
+        if @name == 'voice-channel'
+          :voice_channel
+        elsif !Regit::Database::Group.find_by_text_channel_id(@id).nil?
+          :group
+        elsif Regit::GRADES.map { |g| g.downcase }.include?(@name)
+          :grade
+        end
+      elsif type == 2
+        if @name.start_with?('Room ')
+          :room
+        elsif @name.start_with?('Group ')
+          :group
+        elsif @name == Regit::CONFIG.new_room_name
+          :new_room
+        elsif Regit::GRADES.include?(@name)
+          :grade
+        end
       end
     end
 

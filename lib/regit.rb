@@ -12,26 +12,9 @@ require 'mysql2'
 require 'active_record'
 require 'sinatra'
 
-
-
 # Global methods
 module Kernel
-  def bool_to_words(bool, mode = :on)
-    case mode
-    when :on
-      string_if_true = 'on'
-      string_if_false = 'off'
-    when :enabled
-      string_if_true = 'enabled'
-      string_if_false = 'disabled'
-    else
-      raise ArgumentError
-    end
-
-    return string_if_true if bool
-    string_if_false
-  end
-
+  
 end
 
 require_relative 'regit/other/store_data'
@@ -39,7 +22,7 @@ module Regit
   extend StoreData
 
   # CONSTANTS
-  GRADES = %w(Freshmen Sophmores Juniors Seniors).freeze
+  GRADES = %w(Freshmen Sophomores Juniors Seniors).freeze
 
   Discordrb::LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
   
@@ -54,7 +37,6 @@ module Regit
   
   LOGGER = Discordrb::LOGGER = Discordrb::Logger.new(nil, log_streams)
   LOGGER.debug = true if debug
-  
   
   require_relative 'regit/config'
   
@@ -75,7 +57,6 @@ module Regit
                                             prefix: CONFIG.command_prefix,
                                             advanced_functionality: true,
                                             fancy_log: true)
-  
 
   Commands.include!
   Events.include!
@@ -97,5 +78,4 @@ module Regit
   #WebApp.run! # Run web app
   
   BOT.sync
-  save_associations
 end

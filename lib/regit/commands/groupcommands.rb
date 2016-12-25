@@ -30,13 +30,22 @@ module Regit
       command(:creategroup, min_args: 2, max_args: 3, description: 'Create a private group for some member!', usage: '`!creategroup "Name" "Description"`') do |event, full_name, description, is_private|
         event.message.delete unless event.channel.private?
 
-        new_group = Regit::Groups::create_group(event.user.on(event.server), full_name, description, (is_private == 'yes' || is_private == '1' || is_private == 'true' ))
-        
-        if new_group.nil?
-          event.user.pm 'Groups already exists!'
+        begin
+          new_group = Regit::Groups::create_group(event.user.on(event.server), full_name, description, (is_private == 'yes' || is_private == '1' || is_private == 'true' ))
+          event.user.pm "You have created the Group **#{full_name}**. You now have access to `##{new_group.text_channel.name}`."
+          
+          unless new_group.private?
+            announcement_channel = event.server.text_channels.find { |t| t.name == 'announcements' }
+            if announcement_channel.nil?
+              # Announce in default channel
+            else
+              announcement_channel.send_message "#{event.user.mention} has created public **Group #{new_group.name}**!"
+            end
+          end
+        rescue => e
+          event.user.pm "Failed to create group: #{e}"
         end
 
-        event.user.pm "You have created the Group **#{full_name}**."
         nil
       end
     end
