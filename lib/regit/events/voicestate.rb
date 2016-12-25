@@ -21,7 +21,7 @@ module Regit
       end
 
       def self.handle_voice_channel(channel, user = nil)
-        LOGGER.debug "Handling voice-channel #{channel.name} for #{user.distinct}"
+        LOGGER.debug "Handling voice-channel #{channel.name} #{(user.nil? ? '' : 'for ' +user.distinct)}"
         
         # Check what type of room it is
         if channel.name == CONFIG.new_room_name && !channel.users.empty?
@@ -35,6 +35,9 @@ module Regit
           handle_associated_channel(channel, user)          
         elsif channel.association == :room && channel.name != CONFIG.new_room_name && channel.users.empty?
           channel.delete
+          nil
+        else
+          channel.associated_channel
         end
       end
       

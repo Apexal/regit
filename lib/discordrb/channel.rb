@@ -15,6 +15,8 @@ module Discordrb
           :grade
         elsif !Regit::DEFAULT_TEXT_CHANNELS[@name].nil?
           :default
+        # elsif !Regit::Database::Course.find(school: @server.school, text_channel_id: @id).nil?
+          # :course
         end
       elsif type == 2
         #LOGGER.info((@server.afk_channel.nil? ? '' : @server.afk_channel.name))
@@ -33,6 +35,16 @@ module Discordrb
         end
       else
         :dm
+      end
+    end
+
+    def associated_channel
+      return unless [:default, :grade, :room, :voice_channel].include?(association)
+
+      if @type == 2
+        Regit::BOT.channel(Regit::CHANNEL_ASSOCIATIONS[@server.id][@id], @server)
+      elsif @type == 0
+        Regit::BOT.channel(Regit::CHANNEL_ASSOCIATIONS[@server.id].key(@id), @server)
       end
     end
 

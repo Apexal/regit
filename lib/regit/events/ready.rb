@@ -9,7 +9,6 @@ module Regit
 
       ready do |event|
         BOT.game = 'with Data'
-        LOGGER.info 'Regit is ready.'
 
         text_perms = Discordrb::Permissions.new
         text_perms.can_read_message_history = true
@@ -25,19 +24,21 @@ module Regit
           server.text_channels.select { |t| t.association == :voice_channel && !CHANNEL_ASSOCIATIONS[server_id].has_value?(t.id) }.map(&:delete)
 
           server.voice_channels.each do |v|
-            next if v.name == CONFIG.new_room_name || (!server.afk_channel.nil? && v == server.afk_channel)
-            t_channel = Regit::Events::VoiceState::handle_associated_channel(v)
-
+            next if v.name == !server.afk_channel.nil? && v == server.afk_channel
+            t_channel = Regit::Events::VoiceState::handle_voice_channel(v)
+            
             v.users.each do |u|
               t_channel.define_overwrite(u, text_perms, 0)
             end
 
             # Account for people in #voice-channel's they arent supposed to be in
-            t_channel.users.select { |u| u.student?(server.school) && !v.users.include?(u) }.map { |u| t_channel.define_overwrite(u, 0, 0) }  
+            t_channel.users.select { |u| u.student?(server.school) && !v.users.include?(u) }.map { |u| t_channel.define_overwrite(u, 0, 0) } unless t_channel.nil?
           end
 
           CHANNEL_ASSOCIATIONS[server.id].select { |v_id, _| server.voice_channels.find { |v| v.id == v_id }.nil? }.map(&:delete) # Remove extra associations
         end
+
+        LOGGER.info 'Regit is ready.'
       end
     end
   end

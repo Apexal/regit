@@ -1,5 +1,5 @@
 # Regit
-*regit (rego, regere, rexi, rectum)* - he/she/it governs
+*regit (rego, regere, rexi, rectum)* - it governs
 
 A Discord bot that setups and fully moderates a Discord server based on a school. It handles authentication and total administration of the server and links it to all other school servers
 running on the bot.
@@ -7,6 +7,8 @@ running on the bot.
 Servers created are private to school students (and verified guests from other schools who have very limited access).
 
 Servers provide organized, specialized text and voice chat to allow academic cooperation and/or recreation for students. 
+
+#### NOTE: *SERVERS MANAGED BY THIS BOT ARE TOTALLY UNDER THE CONTROL OF THE BOT AND CANNOT BE MANUALLY MODIFIED IN ANY WAY BY USERS (CHANGES ARE AUTOMATICALLY REVERTED)*
 
 # Registration Process
 One of either two ways can be followed:
