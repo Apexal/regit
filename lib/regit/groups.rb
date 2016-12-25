@@ -4,7 +4,7 @@ module Regit
       group = Regit::Database::Group.find(id)
 
       # SO EZ
-      group.role.members.each { |m| m.pm "**Group #{group.name}** has been deleted." }
+      group.school.server.members.select { |m| m.role? group.role }.each { |m| m.pm "**Group #{group.name}** has been deleted." }
       group.role.delete
       group.text_channel.delete
 
@@ -31,8 +31,6 @@ module Regit
       group_name.gsub!(/[^\p{Alnum}-]/, '')
 
       raise "Group name '#{full_name}' is too short!" if group_name.length < 3
-      
-      group = Regit::Database::Group.create(school_id: server.school.id, name: full_name, private: is_private, owner_username: owner.info.username, description: description, default_group: false, text_channel_id: group_text_channel.id, role_id: group_role.id, voice_channel_allowed: false)
 
       # Perms for group members
       group_perms = Discordrb::Permissions.new
@@ -62,7 +60,22 @@ module Regit
       group_text_channel.define_overwrite(owner, owner_perms, 0) # Add owner perms
       group_text_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, non_perms) # Don't allow anyone else
 
+      group = Regit::Database::Group.create(school_id: server.school.id, name: full_name, private: is_private, owner_username: owner.info.username, description: description, default_group: false, text_channel_id: group_text_channel.id, role_id: group_role.id, voice_channel_allowed: false)
       LOGGER.info "Attempting to create group '#{group_name}'"
+      return group
+    end
+
+    def self.remove_from_group(member, group_id)
+      return unless member.student?(member.server.school)
+
+      group = Regit::Database::Group.find(group_id)
+      raise 'Group doesn\'t exist!' if group.nil?
+
+      raise 'Not in that group.' unless member.role? group.role
+
+      group.text_channel.send_message "*#{member.mention} left the group.*"
+      member.remove_role group.role
+
       return group
     end
   end

@@ -4,8 +4,12 @@ module Regit
       extend Discordrb::Commands::CommandContainer
 
       command(:whois, description: 'Show description.') do |event|
-        target = (event.message.mentions.empty? ? event.author : event.message.mentions.first.on(event.server))
+        if event.channel.private?
+          event.user.pm 'You can only use `!whois` on a school server!'
+          return
+        end
 
+        target = (event.message.mentions.empty? ? event.author : event.message.mentions.first.on(event.server))
 
         event.channel.send_embed do |embed|
           if target.student?(event.server.school)

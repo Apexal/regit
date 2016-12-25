@@ -14,6 +14,10 @@ module Regit
       has_many :courses, inverse_of: :school
       has_many :groups, inverse_of: :school
 
+      def server
+        Regit::BOT.server(server_id)
+      end
+
       def members
         Student.where(school_id: id).map { |s| Regit::BOT::member(server_id, Integer(s.discord_id)) }
       end
