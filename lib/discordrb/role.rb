@@ -3,7 +3,6 @@ module Discordrb
     old_initialize = instance_method(:initialize)
     define_method(:initialize) do |data, bot, server = nil|
       old_initialize.bind(self).call(data, bot, server)
-      LOGGER.info "#{@name} | #{association}"
     end
 
     def association
@@ -22,7 +21,7 @@ module Discordrb
 
     def description
       begin
-        Regit::DEFAULT_ROLES[@name].description
+        Regit::DEFAULT_ROLES[@name]['description']
       rescue;end
     end
   end

@@ -15,8 +15,10 @@ module Regit
         text_perms.can_read_messages = true
         text_perms.can_send_messages = true
 
+        LOGGER.info 'Setting up voice system'
         # Set up voice states already
         event.bot.servers.each do |server_id, server|
+          LOGGER.info "for #{server.name}..."
           Regit::OLD_VOICE_STATES[server_id] = Regit::Events::VoiceState::simplify_voice_states(server.voice_states)
           
           CHANNEL_ASSOCIATIONS[server.id] = ( associations.nil? || associations[server_id].nil? ? {} : associations[server_id] )
@@ -26,7 +28,7 @@ module Regit
           server.voice_channels.each do |v|
             next if v.name == !server.afk_channel.nil? && v == server.afk_channel
             t_channel = Regit::Events::VoiceState::handle_voice_channel(v)
-            
+
             v.users.each do |u|
               t_channel.define_overwrite(u, text_perms, 0)
             end

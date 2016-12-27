@@ -37,7 +37,7 @@ module Regit
           channel.delete
           nil
         else
-          channel.associated_channel
+          handle_associated_channel(channel, user)   
         end
       end
       

@@ -19,7 +19,6 @@ module Discordrb
           # :course
         end
       elsif type == 2
-        #LOGGER.info((@server.afk_channel.nil? ? '' : @server.afk_channel.name))
         if @name.start_with?('Room ')
           :room
         elsif @name.start_with?('Group ')
