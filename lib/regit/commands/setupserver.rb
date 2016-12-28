@@ -98,7 +98,7 @@ module Regit
           event.server.owner.pm "Added voice-channel **#{channel_name}**"
         end
 
-        "Done!"
+        'Done!'
       end
     end
   end

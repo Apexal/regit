@@ -61,6 +61,7 @@ module Regit
                                             client_id: CONFIG.discord_client_id,
                                             prefix: CONFIG.command_prefix,
                                             advanced_functionality: true,
+                                            chain_delimiter: '>>',
                                             fancy_log: true)
 
   Commands.include!

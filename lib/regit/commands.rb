@@ -9,7 +9,8 @@ module Regit
       IrbCommand,
       SetupServer,
       Groups,
-      Administration
+      Administration,
+      Moderation
     ]
 
     # Include all commands
