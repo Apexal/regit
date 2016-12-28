@@ -1,5 +1,11 @@
 module Regit
   module Groups
+    def self.group_embed(group)
+      Discordrb::Webhooks.Builder.new.add_embed do |embed|
+        embed.title 'Test'
+      end
+    end
+
     def self.delete_group(id)
       group = Regit::Database::Group.find(id)
 

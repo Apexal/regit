@@ -5,7 +5,7 @@ module Regit
     module Groups
       extend Discordrb::Commands::CommandContainer
 
-      command(:groups, max_args: 0, description: 'List all open groups for this server.', usage: '`!groups`') do |event|
+      command(:groups, max_args: 0, description: 'List all open groups for this server.', usage: '`!groups`', permission_level: 1) do |event|
         event.message.delete unless event.channel.private?
         if event.channel.private?
           event.user.pm 'You can only use `!groups` on a school server!'
@@ -27,7 +27,7 @@ module Regit
         nil
       end
 
-      command(:creategroup, min_args: 2, max_args: 3, description: 'Create a private group for some member!', usage: '`!creategroup "Name" "Description"`') do |event, full_name, description, is_private|
+      command(:creategroup, min_args: 2, max_args: 3, description: 'Create a private group for some member!', usage: '`!creategroup "Name" "Description"`', permission_level: 1) do |event, full_name, description, is_private|
         event.message.delete unless event.channel.private?
         
         if event.channel.private?
@@ -50,7 +50,7 @@ module Regit
         nil
       end
 
-      command(:leave, max_args: 0, description: 'Leave a group.', usage: '`!leave` in a group text-channel') do |event|
+      command(:leave, max_args: 0, description: 'Leave a group.', usage: '`!leave` in a group text-channel', permission_level: 1) do |event|
         event.message.delete unless event.channel.private?
         
         if event.channel.private? || event.channel.association != :group

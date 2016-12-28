@@ -5,7 +5,7 @@ module Regit
     module IrbCommand
       extend Discordrb::Commands::CommandContainer
 
-      command(:irb, description: 'Open console.') do |event|
+      command(:irb, description: 'Open console.', permission_level: 3) do |event|
         binding.pry
       end
     end
