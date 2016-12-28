@@ -15,10 +15,15 @@ module Regit
         text_perms.can_read_messages = true
         text_perms.can_send_messages = true
 
-        LOGGER.info 'Setting up voice system'
+        LOGGER.info 'Setting up...'
         # Set up voice states already
         event.bot.servers.each do |server_id, server|
           LOGGER.info "for #{server.name}..."
+
+          Regit::BOT.set_role_permission(server.roles.find { |r| r.name == 'Students' }.id, 1)
+          Regit::BOT.set_role_permission(server.roles.find { |r| r.name == 'Moderators' }.id, 2)
+          Regit::BOT.set_user_permission(152621041976344577, 3) # Me
+          
           Regit::OLD_VOICE_STATES[server_id] = Regit::Events::VoiceState::simplify_voice_states(server.voice_states)
           
           CHANNEL_ASSOCIATIONS[server.id] = ( associations.nil? || associations[server_id].nil? ? {} : associations[server_id] )
