@@ -1,5 +1,14 @@
 module Regit
   module Utilities
+
+    def self.announce(server, message)
+      announcement_channel = server.text_channels.find { |t| t.name == 'announcements' }
+
+      unless announcement_channel.nil? || message.nil? || message.empty?
+        announcement_channel.send_message "@everyone #{message}"
+      end
+    end
+
     def self.list_to_perms(perms)
       allow = Discordrb::Permissions.new
       deny = Discordrb::Permissions.new

@@ -39,14 +39,9 @@ module Regit
           new_group = Regit::Groups::create_group(event.user.on(event.server), full_name, description, (is_private == 'yes' || is_private == '1' || is_private == 'true' ))
           event.user.pm "You have created the Group **#{full_name}**. You now have access to `##{new_group.text_channel.name}`."
           
-          unless new_group.private?
-            announcement_channel = event.server.text_channels.find { |t| t.name == 'announcements' }
-            if announcement_channel.nil?
-              # Announce in default channel
-            else
-              announcement_channel.send_message "#{event.user.mention} has created public **Group #{new_group.name}**!"
-            end
-          end
+          # TODO: send embed
+          Regit::Utilities::announce(event.server, "#{event.user.mention} has created public **Group #{new_group.name}**!") unless new_group.private?
+
         rescue => e
           event.user.pm "Failed to create group: #{e}"
           Regit::Utilities::clean_channels(event.server)
