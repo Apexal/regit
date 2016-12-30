@@ -1,10 +1,24 @@
 ---
+Music Room:
+    perms:
+        everyone:
+            - connect
+            - speak
+            - -use_voice_activity
+        DJ:
+            - use_voice_activity
+        Studying:
+            - -connect
+    position: 0
+
 Public Room:
     perms:
         everyone:
             - connect
             - speak
             - use_voice_activity
+        Studying:
+            - -connect
     position: 1
 
 Freshmen:
@@ -13,6 +27,8 @@ Freshmen:
             - -connect
         Freshmen:
             - connect
+        Studying:
+            - -connect
     position: 2
 
 Sophomores:
@@ -21,16 +37,19 @@ Sophomores:
             - -connect
         Sophomores:
             - connect
+        Studying:
+            - -connect
     position: 3
-    
+
 Juniors:
     perms:
         everyone:
             - -connect
         Juniors:
             - connect
+        Studying:
+            - -connect
     position: 4
-    
 
 Seniors:
     perms:
@@ -38,5 +57,7 @@ Seniors:
             - -connect
         Seniors:
             - connect
+        Studying:
+            - -connect
     position: 5
     

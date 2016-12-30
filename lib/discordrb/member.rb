@@ -16,5 +16,9 @@ module Discordrb
     def guest?(school)
       !info.nil? && info.school_id != school.id
     end
+
+    def studying?
+      !roles.find { |r| r.name == 'Studying' }.nil?
+    end
   end
 end

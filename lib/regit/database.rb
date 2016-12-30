@@ -25,6 +25,30 @@ module Regit
 
     class Student < ActiveRecord::Base
       belongs_to :school, inverse_of: :students
+
+      def grade_name
+        case grade
+          when 9
+            'Freshmen'
+          when 10
+            'Sophomores'
+          when 11
+            'Juniors'
+          when 12
+            'Seniors'
+        end
+      end
+
+      def groups
+        server = School.find(school_id).server
+        Group.all.select do |g|
+          member.role?(server.roles.find { |r| r.id == Integer(g.role_id) })
+        end
+      end
+
+      def member
+        School.find(school_id).server.member(discord_id)
+      end
     end
 
     class Course < ActiveRecord::Base

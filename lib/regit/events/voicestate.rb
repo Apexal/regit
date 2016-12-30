@@ -27,6 +27,11 @@ module Regit
         if channel.name == CONFIG.new_room_name && !channel.users.empty?
           # Person joined empty voice-channel! Transform into room!
           channel.name = "Room Fun" # Name after teacher
+
+          # Block now to studying users
+          v_perms = Discordrb::Permissions.new
+          v_perms.can_connect = true
+          channel.define_overwrite(channel.server.roles.find { |r| r.name == 'Studying' }, 0, v_perms)
           
           # THIS IS BEFORE handle_associated_channel TO MAKE IT LOOK FASTER
           # Create new empty room
@@ -60,6 +65,9 @@ module Regit
 
           # For when a user creates a new room, it makes it seem less glitchy
           text_channel.define_overwrite(member, text_perms, 0) unless member.nil?
+          
+          # If music room
+          text_channel.define_overwrite(voice_channel.server.roles.find { |r| r.name == 'DJ' }, text_perms, 0) if voice_channel.name == 'Music Room'
 
           text_channel.define_overwrite(voice_channel.server.roles.find { |r| r.id == voice_channel.server.id }, 0, text_perms)
           CHANNEL_ASSOCIATIONS[voice_channel.server.id][voice_channel.id] = text_channel.id

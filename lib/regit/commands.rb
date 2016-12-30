@@ -10,7 +10,8 @@ module Regit
       SetupServer,
       Groups,
       Administration,
-      Moderation
+      Moderation,
+      Studymode
     ]
 
     # Include all commands

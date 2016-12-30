@@ -28,6 +28,7 @@ module Regit
           
           CHANNEL_ASSOCIATIONS[server.id] = ( associations.nil? || associations[server_id].nil? ? {} : associations[server_id] )
 
+          CHANNEL_ASSOCIATIONS[server.id].select { |v_id, _| server.voice_channels.find { |v| v.id == v_id }.nil? }.each { |v_id, _| CHANNEL_ASSOCIATIONS[server.id].delete(v_id) } # Remove extra associations
           server.text_channels.select { |t| t.association == :voice_channel && !CHANNEL_ASSOCIATIONS[server_id].has_value?(t.id) }.map(&:delete)
 
           server.voice_channels.each do |v|
@@ -42,7 +43,6 @@ module Regit
             t_channel.users.select { |u| u.student?(server.school) && !v.users.include?(u) }.map { |u| t_channel.define_overwrite(u, 0, 0) } unless t_channel.nil?
           end
 
-          CHANNEL_ASSOCIATIONS[server.id].select { |v_id, _| server.voice_channels.find { |v| v.id == v_id }.nil? }.map(&:delete) # Remove extra associations
         end
 
         LOGGER.info 'Regit is ready.'

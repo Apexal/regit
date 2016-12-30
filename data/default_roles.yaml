@@ -7,6 +7,10 @@ everyone:
     mentionable: true
     description: Everybody.
 
+DJ:
+    perms: []
+    hoist: true
+
 Guests:
     perms:
         - attach_files
