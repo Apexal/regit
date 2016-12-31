@@ -12,11 +12,6 @@ require 'mysql2'
 require 'active_record'
 require 'sinatra'
 
-# Global methods
-module Kernel
-  
-end
-
 require_relative 'regit/other/store_data'
 module Regit
   extend StoreData
@@ -70,6 +65,8 @@ module Regit
   at_exit do
     LOGGER.info 'Exiting...'
     save_to_file("#{Dir.pwd}/data/associations.yaml", Regit::CHANNEL_ASSOCIATIONS)
+    save_to_file("#{Dir.pwd}/data/verify_codes.yaml", Regit::Registration::VERIFY_CODES)
+
     exit!
   end
   

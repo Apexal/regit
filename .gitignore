@@ -11,6 +11,7 @@
 data/config.yaml
 data/server_config.yml
 data/stats.yml
+data/verify_codes.yaml
 logs/*.log
 
 data/associations.yaml

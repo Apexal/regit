@@ -39,6 +39,10 @@ module Regit
         end
       end
 
+      def description
+        "#{first_name} #{last_name} (#{grade}th grade) of #{school.title}"
+      end
+
       def groups
         server = School.find(school_id).server
         Group.all.select do |g|
