@@ -50,6 +50,26 @@ module Regit
         nil
       end
 
+      command(:join, max_args: 1, description: 'Join a group.', usage: '`!join "Group Name"`', permission_level: 1) do |event, group_name|
+        event.message.delete unless event.channel.private?
+        
+        if event.channel.private?
+          event.user.pm 'You muse use `!join` in a school server!'
+          return
+        end
+
+        begin
+          group = Regit::Database::Group.where('lower(name) = ?', group_name.downcase).first
+          raise 'Doesn\'t exist!' if group.nil?
+          Regit::Groups::add_to_group(event.user, group.id)
+          group.text_channel.send_message "**#{event.user.mention}** joined the group."
+          event.user.pm 'Joined group!'
+        rescue => e
+          event.user.pm("Failed to join group: #{e}")
+          LOGGER.error e.backtrace
+        end
+      end
+
       command(:leave, max_args: 0, description: 'Leave a group.', usage: '`!leave` in a group text-channel', permission_level: 1) do |event|
         event.message.delete unless event.channel.private?
         
@@ -67,7 +87,7 @@ module Regit
           event.user.pm 'Left group!'
         rescue => e
           event.user.pm "Failed to leave group: #{e}"
-          p e.backtrace
+          LOGGER.error e.backtrace
         end
       end
     end

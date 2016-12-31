@@ -5,8 +5,7 @@ module Regit
     module Administration
       extend Discordrb::Commands::CommandContainer
 
-      command(:stop, description: 'Shutdown bot.') do |event|
-        save_associations
+      command(:stop, description: 'Shutdown bot.', permission_level: 3) do |event|
         Regit::BOT.stop
       end
     end

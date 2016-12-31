@@ -71,6 +71,19 @@ module Regit
       return group
     end
 
+    def self.add_to_group(member, group_id)
+      raise 'member is null' if member.nil?
+      raise 'group_id is null' if group_id.nil?
+
+      group = Regit::Database::Group.find(group_id)
+      raise "Group #{group_id} doesn't exist!" if group.nil?
+      
+      LOGGER.info "Adding #{member.distinct} to Group #{group.name}"
+      member.add_role(group.role)
+
+      group
+    end
+
     def self.remove_from_group(member, group_id)
       return unless member.student?(member.server.school)
 
