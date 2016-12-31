@@ -11,6 +11,11 @@ DJ:
     perms: []
     hoist: true
 
+Muted:
+    perms: []
+    host: false
+    mentionable: false
+
 Guests:
     perms:
         - attach_files

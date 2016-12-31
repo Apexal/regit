@@ -20,5 +20,9 @@ module Discordrb
     def studying?
       !roles.find { |r| r.name == 'Studying' }.nil?
     end
+
+    def muted?
+      !roles.find { |r| r.name == 'Muted' }.nil?
+    end
   end
 end
