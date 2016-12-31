@@ -33,6 +33,13 @@ module Regit
         member.add_role(studyrole) if is_on
         member.remove_role(studyrole) unless is_on
         
+        # Voice-channels
+        if !member.voice_channel.nil? and !member.permission?('can_connect', member.voice_channel)
+          LOGGER.info "Moving #{member.distinct} to allowed voice-channel"
+          server.move(member, server.voice_channels.find { |c| c.name == Regit::CONFIG.new_room_name })
+          member.pm 'You were moved into a new voice-channel because your previous one only allowed students in studymode.'
+        end
+
         member.nickname = '[S] ' + member.display_name if is_on
         member.nickname = member.display_name.sub('[S] ', '') unless is_on
         #LOGGER.info text_channels
