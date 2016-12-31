@@ -1,5 +1,11 @@
 module Regit
   module Groups
+    INVITES = {}
+    # {
+    #   user_id: [group_id, group_id],
+    #   user_id: [group_id] 
+    # }
+
     def self.group_embed(group)
       Discordrb::Webhooks.Builder.new.add_embed do |embed|
         embed.title 'Test'
@@ -71,13 +77,28 @@ module Regit
       return group
     end
 
-    def self.add_to_group(member, group_id)
-      raise 'member is null' if member.nil?
-      raise 'group_id is null' if group_id.nil?
+    def self.add_invite(target, group_id)
+      raise 'Not a school member!' unless target.student?(target.server.school)
 
+      INVITES[target.id] ||= []
+      INVITES[target.id] << group_id
+    end
+
+    def self.remove_invite(target, group_id)
+      raise 'Not a school member!' unless target.student?(target.server.school)
+
+      INVITES[target.id].delete(group_id)
+      INVITES.delete(target.id) if INVITES[target.id].empty? 
+      INVITES[target.id]
+    end
+
+    def self.add_to_group(member, group_id)
+      raise 'Not a school member!' unless member.student?(member.server.school)
       group = Regit::Database::Group.find(group_id)
       raise "Group #{group_id} doesn't exist!" if group.nil?
       
+      raise 'You have not been invited!' if group.private? && !INVITES[member.id].nil? && INVITES[member.id].include?(group_id)
+
       LOGGER.info "Adding #{member.distinct} to Group #{group.name}"
       member.add_role(group.role)
 
@@ -85,7 +106,7 @@ module Regit
     end
 
     def self.remove_from_group(member, group_id)
-      return unless member.student?(member.server.school)
+      raise 'Not a school member!' unless member.student?(member.server.school)
 
       group = Regit::Database::Group.find(group_id)
       raise 'Group doesn\'t exist!' if group.nil?

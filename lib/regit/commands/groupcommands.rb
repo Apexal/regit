@@ -50,6 +50,36 @@ module Regit
         nil
       end
 
+      command(:invite, max_args: 0, description: 'Invite a student to a private group.', usage: '`!invite "Group" @member` in a group text-channel', permission_level: 1) do |event|
+        event.message.delete unless event.channel.private?
+
+        if event.channel.private?
+          event.user.pm 'You can only use `!invite` in a group channel!'
+          return
+        end
+
+        if event.message.mentions.empty?
+          event.user.pm 'Usage: `!invite "Group" @member`'
+          return
+        end
+
+        target = event.message.mentions.first.on(event.server)
+
+        begin
+          group = Regit::Database::Group.find_by_text_channel_id(event.channel.id)
+          raise 'Must be used in a private group text-channel!' if group.nil?
+          raise 'Group is not private!' unless group.private?
+          raise 'Target is already in that group!' if target.role?(group.role)
+
+          Regit::Groups::add_invite(target, group.id)
+        rescue => e
+          event.user.pm "Failed to invite: #{e}"
+          LOGGER.error e.backtrace
+        end
+        LOGGER.info Regit::Groups::INVITES
+        nil
+      end 
+
       command(:join, max_args: 1, description: 'Join a group.', usage: '`!join "Group Name"`', permission_level: 1) do |event, group_name|
         event.message.delete unless event.channel.private?
         
