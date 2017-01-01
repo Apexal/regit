@@ -4,6 +4,8 @@ module Regit
   module Registration
     extend StoreData
 
+    UNALLOWED = []
+
     VERIFY_CODES = load_file("#{Dir.pwd}/data/verify_codes.yaml")
     # {
     #   student_username: random_code,
@@ -79,12 +81,39 @@ module Regit
       member.modify_roles(new_roles, other_roles)
     end
 
-    def self.setup_channels(member)
-
+    def self.handle_course_channels(member)
+      # Course channels
+      courses = member.info.courses.where(is_class: true)
+      courses.each { |c| handle_course_channel(member.server, c, member) }
     end
 
-    def self.handle_course_channel(course)
-      # Create text-channel
+    def self.course_name(full_name)
+      full_name = full_name.split(' (')[0].split(' ').join('-')
+      full_name.gsub!(/\W+/, '-')
+      %w(IV III II I 9 10 11 12).each { |i| full_name.gsub!("-#{i}", '') }
+      full_name
+    end
+
+    def self.handle_course_channel(server, course, user=nil)
+      return if UNALLOWED.any? { |w| course.title.include?(w) }
+      text_channel = course.text_channel
+      
+      perms = Discordrb::Permissions.new
+      perms.can_read_messages = true
+      perms.can_send_messages = true
+      perms.can_read_message_history = true
+      perms.can_mention_everyone = true
+
+      # Create text-channel if not exist
+      if text_channel.nil?
+        text_channel = server.create_channel(course_name(course.title), 0)
+        text_channel.topic = "Discussion room for #{course.title}"
+        text_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, perms)
+        course.update(text_channel_id: text_channel.id)
+      end
+
+      text_channel.define_overwrite(user, perms, 0) unless user.nil?
+
       # Save in DB
       # Return text-channel
     end
@@ -110,7 +139,7 @@ module Regit
       member.modify_roles(new_roles, [])
 
       handle_advisement_system(member)
-      setup_channels(member)
+      handle_course_channels(member)
       VERIFY_CODES.delete(member.info.username)
     end
   end
