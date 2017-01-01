@@ -6,6 +6,9 @@ module Discordrb
     end
 
     def association
+      small_advs = Regit::Database::Student.distinct.pluck(:advisement)
+      large_advs = small_advs.map { |a| a[0..1] }.uniq
+
       if @type == 0
         if @name == 'voice-channel'
           :voice_channel
@@ -15,6 +18,8 @@ module Discordrb
           :grade
         elsif !Regit::DEFAULT_TEXT_CHANNELS[@name].nil?
           :default
+        elsif small_advs.include?(@name) || large_advs.include?(@name)
+          :advisement
         # elsif !Regit::Database::Course.find(school: @server.school, text_channel_id: @id).nil?
           # :course
         end

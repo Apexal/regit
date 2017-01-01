@@ -67,7 +67,10 @@ module Regit
         if adv_channel.nil?
           adv_channel = server.create_channel(a, 0)
           adv_channel.topic = "Private chat for **Advisement #{a}**"
-          # adv_channel.position = 0
+          
+          pos = server.text_channels.find { |t| t.name == 'seniors' }.position
+          adv_channel.position = pos
+          
           adv_channel.define_overwrite(adv_role, perms, 0) # Advisement members
           adv_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, perms) # @everyone
         end
