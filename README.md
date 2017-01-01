@@ -45,19 +45,22 @@ The bot also runs a web server which allows all students/administrators/moderato
 
 *For Verified Students Only*
 - **#announcements** - Global announcements for the school server that only the server owner (and bots) can post in.
-- **#recreation** - General discussion of non-school related topics for all students in school.
+- **#recreation** - General discussion of non-school related topics for all students in school. [GROUP]
 - **#work** - General school discussion, homework help, etc for all students in school.
 - **#freshmen | #sophomores | #juniors | #seniors** - Private chat for students in each grade.
-- **#meta** - Discussion of the server itself for all students in school.
+- **#meta** - Discussion of the server itself for all students in school. [GROUP]
 - **#{course_name}** - *Private text-channels for every course in the school based on teacher.*
 
 ### VOICE-CHANNELS
 The voice channel system is unique to Discord. Instead of a static number of voice channels existing at all times, voice channels are dynamically
 opened and closed based on users online, user requests, and when the existing number of voice channels are filled.
 - **AFK** - Room for AFK students.
+- **Music Room** - Room for a Music bot to play music chosen by users. Users must use push-to-talk here.
 - **Public Room** - Opens when at least 1 verified guest is online; **ALL** (guest/verified/random) users can connect and speak.
-- **Freshmen | Sophomores | Juniors | Seniors** - Private channels for each grade that open when enough users in the respective grade is online.
+- **Freshmen | Sophomores | Juniors | Seniors** - Private channels for each grade.
 - **Room {Teacher Name}** - General room open to all students named randomly after a teacher.
+- **{Game} Party** - Room dedicated to a game after majority of users connected start playing said game.
+- **Study Room {Teacher Name}** - Room opened by a student in studymode, only for studying students.
 - **[New Room]** - Symbolic empty room that transforms into a teacher room when someone joins. There is always 1 new room available.
 
 ### GROUPS
