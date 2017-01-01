@@ -25,6 +25,7 @@ module Regit
 
     class Student < ActiveRecord::Base
       belongs_to :school, inverse_of: :students
+      has_and_belongs_to_many :courses
 
       def grade_name
         case grade
@@ -57,6 +58,11 @@ module Regit
 
     class Course < ActiveRecord::Base
       belongs_to :school, inverse_of: :courses
+      has_and_belongs_to_many :students
+
+      def text_channel
+        Regit::BOT.channel(text_channel_id)
+      end
     end
 
     class Group < ActiveRecord::Base
