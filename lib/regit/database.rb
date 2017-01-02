@@ -61,7 +61,7 @@ module Regit
       has_and_belongs_to_many :students
 
       def text_channel
-        Regit::BOT.channel(text_channel_id)
+        Regit::BOT.channel(text_channel_id) unless text_channel_id.nil?
       end
     end
 

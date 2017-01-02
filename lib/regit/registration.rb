@@ -4,7 +4,7 @@ module Regit
   module Registration
     extend StoreData
 
-    UNALLOWED = []
+    UNALLOWED = ['Advisement', 'Health', 'Guidance', 'Phys Ed']
 
     VERIFY_CODES = load_file("#{Dir.pwd}/data/verify_codes.yaml")
     # {
@@ -83,6 +83,7 @@ module Regit
 
     def self.handle_course_channels(member)
       # Course channels
+      LOGGER.info "Handling course channels for #{member.distinct} | #{member.info.description}"
       courses = member.info.courses.where(is_class: true)
       courses.each { |c| handle_course_channel(member.server, c, member) }
     end
@@ -96,6 +97,7 @@ module Regit
 
     def self.handle_course_channel(server, course, user=nil)
       return if UNALLOWED.any? { |w| course.title.include?(w) }
+      LOGGER.info "Handling course channel for #{course.title}"
       text_channel = course.text_channel
       
       perms = Discordrb::Permissions.new
@@ -111,7 +113,6 @@ module Regit
         text_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, perms)
         course.update(text_channel_id: text_channel.id)
       end
-
       text_channel.define_overwrite(user, perms, 0) unless user.nil?
 
       # Save in DB
