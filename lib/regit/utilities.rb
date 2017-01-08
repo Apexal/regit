@@ -46,19 +46,19 @@ module Regit
       message.gsub! '@everyone', '**everyone**'
       message.gsub! '@here', '**here**'
       words = message.split ' '
-      done = []
+
       words.each_with_index do |w, i|
         w.sub!('(', '')
         w.sub!(')', '')
-        w.sub!('"', '')
+        w.gsub!('"', '')
+        w.gsub!('*', '')
 
-        if w.start_with? '<@' and w.end_with? '>' && !done.include?(id)
-          id = w.sub('<@!', '').sub('<@', '').sub('>', '')
-
+        unless Regit::BOT.parse_mention(w).nil?
+          # See if mention is student
           user = Regit::BOT.parse_mention(w)
-          message.gsub(user.mention, user.distinct) unless user.nil?
-          
-          done << id
+
+          student = Regit::Database::Student.find_by_discord_id(user.id)
+          message.gsub!(w, (student.nil? ? user.distinct : student.description)) unless user.nil?
         end
       end
 
