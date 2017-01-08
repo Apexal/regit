@@ -26,8 +26,8 @@ module Regit
 
       message(containing: '@everyone') do |event|
         return if event.channel.private?
-        
-        event.channel.send_temporary_message('You can\'t use `@everyone` in this channel. Try using `@here`.`' , 5) unless event.user.on(event.server).permission?(:mention_everyone, event.channel)
+
+        event.channel.send_temporary_message('You can\'t use `@everyone` in this channel. Try using `@here`.`' , 10) unless event.user.on(event.server).permission?(:mention_everyone, event.channel)
       end
 
       message(containing: '@here') do |event|
@@ -42,6 +42,10 @@ module Regit
         end
       end
 
+
+      message do |event|
+        event.message.delete if !event.channel.private? && event.user.on(event.server).role?(event.server.roles.find { |r| r.name == 'Muted' })
+      end
     end
   end
 end
