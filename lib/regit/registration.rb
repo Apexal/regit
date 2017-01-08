@@ -43,8 +43,11 @@ module Regit
       large_adv = student.advisement[0..1]
       small_adv = student.advisement
 
+      # Since seniors are in 1 advisement
+      advs = student.grade == 12 ? [large_adv] : [large_adv, small_adv]
+
       # Remove other advisement roles
-      other_roles = server.roles.select { |r| ![large_adv, small_adv].include?(r.name) && Regit::Database::Student.distinct.pluck(:advisement).include?(r.name) }
+      other_roles = server.roles.select { |r| !advs.include?(r.name) && Regit::Database::Student.distinct.pluck(:advisement).include?(r.name) }
 
       new_roles = []
 
@@ -54,7 +57,7 @@ module Regit
       perms.can_read_message_history = true
       perms.can_mention_everyone = true
 
-      [large_adv, small_adv].each do |a|
+      advs.each do |a|
         adv_role = server.roles.find { |r| r.name == a }
         if adv_role.nil?
           # Need to create role
