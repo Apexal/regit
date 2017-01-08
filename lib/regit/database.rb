@@ -56,12 +56,25 @@ module Regit
       end
     end
 
+    class Staff < ActiveRecord::Base
+      has_and_belongs_to_many :courses
+    end
+
     class Course < ActiveRecord::Base
       belongs_to :school, inverse_of: :courses
+      belongs_to :staff, inverse_of: :staffs, foreign_key: 'teacher_id'
       has_and_belongs_to_many :students
 
       def text_channel
         Regit::BOT.channel(text_channel_id) unless text_channel_id.nil?
+      end
+
+      def teacher
+        staff
+      end
+
+      def class?
+        !teacher_id.nil?
       end
     end
 

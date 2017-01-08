@@ -68,11 +68,11 @@ module Regit
         adv_channel = server.text_channels.find { |t| t.name == a.downcase }
         if adv_channel.nil?
           adv_channel = server.create_channel(a, 0)
-          adv_channel.topic = "Private chat for **Advisement #{a}**"
-          
+          adv_channel.topic = "Private chat for **Advisement #{a}**."
+
           pos = server.text_channels.find { |t| t.name == 'seniors' }.position
           adv_channel.position = pos
-          
+
           adv_channel.define_overwrite(adv_role, perms, 0) # Advisement members
           adv_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, perms) # @everyone
         end
@@ -84,7 +84,7 @@ module Regit
     def self.handle_course_channels(member)
       # Course channels
       LOGGER.info "Handling course channels for #{member.distinct} | #{member.info.description}"
-      courses = member.info.courses.where(is_class: true)
+      courses = member.info.courses.where.not(teacher_id: nil)
       courses.each { |c| handle_course_channel(member.server, c, member) }
     end
 
@@ -99,7 +99,7 @@ module Regit
       return if UNALLOWED.any? { |w| course.title.include?(w) }
       LOGGER.info "Handling course channel for #{course.title}"
       text_channel = course.text_channel
-      
+
       perms = Discordrb::Permissions.new
       perms.can_read_messages = true
       perms.can_send_messages = true
@@ -109,7 +109,7 @@ module Regit
       # Create text-channel if not exist
       if text_channel.nil?
         text_channel = server.create_channel(course_name(course.title), 0)
-        text_channel.topic = "Discussion room for #{course.title}"
+        text_channel.topic = "Discussion room for **#{course.title}** with **#{course.teacher.last_name}**."
         text_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, perms)
         course.update(text_channel_id: text_channel.id)
       end
