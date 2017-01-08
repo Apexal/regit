@@ -20,7 +20,7 @@ module Discordrb
           :default
         elsif small_advs.include?(@name) || large_advs.include?(@name)
           :advisement
-        elsif !Regit::Database::Course.find(school_id: @server.school.id, text_channel_id: @id).nil?
+        elsif Regit::Database::Course.where(school_id: @server.school.id, text_channel_id: @id).count > 0
           :course
         end
       elsif type == 2
