@@ -25,6 +25,10 @@ module Regit
       def groups
         Group.where(school_id: id)
       end
+
+      def staffs
+        Staff.where(school_id: id)
+      end
     end
 
     class Student < ActiveRecord::Base

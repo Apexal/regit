@@ -42,7 +42,7 @@ module Regit
             # Account for people in #voice-channel's they arent supposed to be in
             t_channel.users.select { |u| u.student?(server.school) && !v.users.include?(u) }.map { |u| t_channel.define_overwrite(u, 0, 0) } unless t_channel.nil?
           end
-
+          Regit::Utilities::clean_channels(server)
         end
 
         LOGGER.info 'Regit is ready.'
