@@ -17,7 +17,7 @@ module Regit
         messages << ":school: __**PUBLIC GROUPS FOR #{event.server.name} (#{event.server.school.title} #{event.server.school.school_type})**__ :school: "
 
         groups.each do |g|
-          messages << "**#{g.name}** `#{g.description}` (#{g.owner_username})"
+          messages << ("**#{g.name}** `#{g.description}`" + (g.owner_username.nil? ? '' : "(#{g.owner_username})"))
         end
 
         messages << "\n *#{groups.count} total*"
@@ -44,6 +44,7 @@ module Regit
 
         rescue => e
           event.user.pm "Failed to create group: #{e}"
+          LOGGER.error e.backtrace.join("\n\t")
           Regit::Utilities::clean_channels(event.server)
         end
 

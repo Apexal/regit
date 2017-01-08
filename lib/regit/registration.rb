@@ -84,7 +84,7 @@ module Regit
     def self.handle_course_channels(member)
       # Course channels
       LOGGER.info "Handling course channels for #{member.distinct} | #{member.info.description}"
-      courses = member.info.courses.where.not(teacher_id: nil)
+      courses = member.info.classes
       courses.each { |c| handle_course_channel(member.server, c, member) }
     end
 
@@ -133,9 +133,9 @@ module Regit
       new_roles << server.roles.find { |r| r.name == member.info.grade_name }
 
       # Default groups
-      Regit::Database::Group.where(default_group: true).each do |g|
-        Regit::Groups::add_to_group(member, g.id)
-      end
+      #Regit::Database::Group.where(default_group: true).each do |g|
+      #  Regit::Groups::add_to_group(member, g.id)
+      #end
 
       member.modify_roles(new_roles, [])
 

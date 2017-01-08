@@ -6,6 +6,33 @@ module Regit
     #   user_id: [group_id] 
     # }
 
+    def self.ensure_connections(server)
+      begin
+        server.school.groups.each do |g|
+          # Check if channel exists
+          owner = g.owner
+          owner = owner.on(server) unless owner.nil?
+
+          if g.role.nil?
+            group_role = create_group_role(server, owner, g.name)
+            g.update(role_id: group_role.id)
+          end
+
+          if g.text_channel.nil?
+            LOGGER.info "text-channel for Group #{g.name} doesn't exist!!! Fixing..."
+            channel_name = g.name.dup
+            channel_name.downcase!
+            channel_name.gsub!(/\s+/, '-')
+            channel_name.gsub!(/[^\p{Alnum}-]/, '')
+            group_text_channel = create_group_channel(server, owner, g.role, channel_name, g.description)
+            g.update(text_channel_id: group_text_channel.id)
+          end
+        end
+      rescue => e
+        LOGGER.error e.backtrace.join("\n\t")
+      end
+    end
+
     def self.group_embed(group)
       Discordrb::Webhooks.Builder.new.add_embed do |embed|
         embed.title 'Test'
@@ -22,6 +49,42 @@ module Regit
 
       LOGGER.info "Deleted group #{group.name} of #{group.school.title} server"
       group.destroy
+    end
+
+    def self.create_group_role(server, owner, role_name)
+      # Create role
+      group_role = server.create_role
+      group_role.name = role_name
+      group_role.mentionable = true
+      owner.add_role(group_role) unless owner.nil?
+
+      group_role
+    end
+
+    def self.create_group_channel(server, owner, group_role, channel_name, description)
+      # Perms for group members
+      group_perms = Discordrb::Permissions.new
+      group_perms.can_read_messages = true
+      group_perms.can_read_message_history = true
+      group_perms.can_send_messages = true
+      group_perms.can_mention_everyone = true
+
+      # Perms for non-group members
+      non_perms = Discordrb::Permissions.new
+      non_perms.can_read_messages = true
+
+      # Group owner perms
+      owner_perms = Discordrb::Permissions.new
+      owner_perms.can_manage_messages = true
+
+      # Create text-channel
+      group_text_channel = server.create_channel(channel_name, 0)
+      group_text_channel.topic = description
+      group_text_channel.define_overwrite(group_role, group_perms, 0) # Allow group members to use it
+      group_text_channel.define_overwrite(owner, owner_perms, 0) unless owner.nil? # Add owner perms 
+      group_text_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, non_perms) # Don't allow anyone else
+
+      group_text_channel
     end
 
     def self.create_group(owner, full_name, description, is_private)
@@ -44,33 +107,8 @@ module Regit
 
       raise "Group name '#{full_name}' is too short!" if group_name.length < 3
 
-      # Perms for group members
-      group_perms = Discordrb::Permissions.new
-      group_perms.can_read_messages = true
-      group_perms.can_read_message_history = true
-      group_perms.can_send_messages = true
-      group_perms.can_mention_everyone = true
-
-      # Perms for non-group members
-      non_perms = Discordrb::Permissions.new
-      non_perms.can_read_messages = true
-
-      # Group owner perms
-      owner_perms = Discordrb::Permissions.new
-      owner_perms.can_manage_messages = true
-
-      # Create role
-      group_role = server.create_role
-      group_role.name = full_name
-      group_role.mentionable = true
-      owner.add_role(group_role)
-
-      # Create text-channel
-      group_text_channel = server.create_channel(group_name, 0)
-      group_text_channel.topic = description
-      group_text_channel.define_overwrite(group_role, group_perms, 0) # Allow group members to use it
-      group_text_channel.define_overwrite(owner, owner_perms, 0) # Add owner perms
-      group_text_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, non_perms) # Don't allow anyone else
+      group_role = create_group_role(server, owner, full_name)
+      group_text_channel = create_group_channel(server, owner, group_role, group_name, description)
 
       group = Regit::Database::Group.create(school_id: server.school.id, name: full_name, private: is_private, owner_username: owner.info.username, description: description, default_group: false, text_channel_id: group_text_channel.id, role_id: group_role.id, voice_channel_allowed: false)
       LOGGER.info "Attempting to create group '#{group_name}'"

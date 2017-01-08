@@ -21,11 +21,27 @@ module Regit
       def members
         Student.where(school_id: id).map { |s| Regit::BOT::member(server_id, Integer(s.discord_id)) }
       end
+
+      def groups
+        Group.where(school_id: id)
+      end
     end
 
     class Student < ActiveRecord::Base
       belongs_to :school, inverse_of: :students
       has_and_belongs_to_many :courses
+
+      def teachers
+        courses.select { |c| c.is_class? }.map { |c| c.teacher }.uniq
+      end
+
+      def classes
+        courses.select { |c| c.is_class? }
+      end
+
+      def extracurriculars
+        courses.select { |c| !c.is_class? }
+      end
 
       def grade_name
         case grade
@@ -62,7 +78,7 @@ module Regit
 
     class Course < ActiveRecord::Base
       belongs_to :school, inverse_of: :courses
-      belongs_to :staff, inverse_of: :staffs, foreign_key: 'teacher_id'
+      belongs_to :staff, inverse_of: :courses, foreign_key: 'teacher_id'
       has_and_belongs_to_many :students
 
       def text_channel
@@ -74,7 +90,17 @@ module Regit
       end
 
       def class?
-        !teacher_id.nil?
+        is_class
+      end
+    end
+
+    class Quote < ActiveRecord::Base
+      def added_by
+        Regit::BOT.user(Student.find_by_username(username).discord_id)
+      end
+
+      def author
+        Regit::BOT.user(Student.find_by_username(author_username).discord_id)
       end
     end
 
@@ -83,11 +109,21 @@ module Regit
 
       def owner
         # Find owner
-        Regit::BOT.user(Student.where(username: owner_username).first.discord_id)
+        begin
+          return Regit::BOT.user(Student.where(username: owner_username).first.discord_id)
+        rescue => e
+          LOGGER.error "Could not find group owner for #{name}: #{e}"
+          return nil
+        end
       end
 
       def text_channel
-        Regit::BOT.channel(text_channel_id)
+        begin
+          return Regit::BOT.channel(text_channel_id)
+        rescue => e
+          LOGGER.error "Could not find text-channel for #{name}: #{e}"
+          return nil
+        end
       end
 
       def role
