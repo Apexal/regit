@@ -35,7 +35,7 @@ module Regit
             channel.define_overwrite(channel.server.roles.find { |r| r.name == 'Studying' }, v_perms, 0)
             channel.define_overwrite(channel.server.roles.find { |r| r.id == channel.server.id }, 0, v_perms)
           else
-            channel.name = "Room Fun" # Name after teacher
+            channel.name = 'Room ' + (user.nil? || !user.student?(channel.server.school) ? channel.server.school.staffs.order("RAND()").first : user.info.teachers.sample ).last_name  # Name after teacher
 
             # Block now to studying users
             channel.define_overwrite(channel.server.roles.find { |r| r.name == 'Studying' }, 0, v_perms)
