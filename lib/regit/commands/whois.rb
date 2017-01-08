@@ -16,7 +16,7 @@ module Regit
             embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: target.info.pictureurl)
             embed.title = '[Student] ' + target.info.first_name + ' ' + target.info.last_name
             embed.add_field(name: 'School', value: target.info.school.title + ' ' + target.info.school.school_type, inline: true)
-            embed.add_field(name: 'Advisement', value: '3A-2', inline: true)
+            embed.add_field(name: 'Advisement', value: target.info.advisement, inline: true)
             embed.add_field(name: 'Discord Tag', value: "#{target.mention} | #{target.distinct}", inline: true)
             
             embed.color = 7380991
