@@ -1,15 +1,15 @@
 ---
-Music Room:
-    perms:
-        everyone:
-            - connect
-            - speak
-            - -use_voice_activity
-        DJ:
-            - use_voice_activity
-        Studying:
-            - -connect
-    position: 0
+#Music Room:
+#    perms:
+#        everyone:
+#            - connect
+#            - speak
+#            - -use_voice_activity
+#        DJ:
+#            - use_voice_activity
+#        Studying:
+#            - -connect
+#    position: 0
 
 Public Room:
     perms:
