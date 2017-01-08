@@ -6,12 +6,17 @@ module Discordrb
     end
 
     def association
+      small_advs = Regit::Database::Student.distinct.pluck(:advisement)
+      large_advs = small_advs.map { |a| a[0..1] }.uniq
+
       if !Regit::Database::Group.find_by_role_id(@id).nil?
         :group
       elsif Regit::GRADES.include?(@name)
         :grade
       elsif !Regit::DEFAULT_ROLES[@name].nil?
         :default
+      elsif small_advs.include?(@name) || large_advs.include?(@name)
+        :advisement
       elsif @server.id == @id
         :everyone
       elsif @name == 'Regit'
