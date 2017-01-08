@@ -18,7 +18,7 @@ module Discordrb
           :grade
         elsif !Regit::DEFAULT_TEXT_CHANNELS[@name].nil?
           :default
-        elsif small_advs.include?(@name) || large_advs.include?(@name)
+        elsif small_advs.include?(@name.uppercase) || large_advs.include?(@name.uppercase)
           :advisement
         elsif Regit::Database::Course.where(school_id: @server.school.id, text_channel_id: @id).count > 0
           :course
