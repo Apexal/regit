@@ -13,8 +13,6 @@ require 'active_record'
 require 'sinatra'
 
 require_relative 'regit/other/store_data'
-require_relative 'regit/server'
-
 module Regit
   extend StoreData
 
@@ -79,8 +77,5 @@ module Regit
   
   BOT.run :async
   BOT.profile.avatar = File.open(avatar, 'rb')
-  
-  run WebApp # Run web app
-  
   BOT.sync
 end
