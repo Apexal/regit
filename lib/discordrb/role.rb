@@ -6,6 +6,7 @@ module Discordrb
     end
 
     def association
+      colors = %w(blue orange purple green yellow pink red)
       small_advs = Regit::Database::Student.distinct.pluck(:advisement)
       large_advs = small_advs.map { |a| a[0..1] }.uniq
 
@@ -17,6 +18,10 @@ module Discordrb
         :default
       elsif small_advs.include?(@name) || large_advs.include?(@name)
         :advisement
+      elsif colors.include?(@name)
+        :color
+      elsif @name == 'bots'
+        :bots
       elsif @server.id == @id
         :everyone
       elsif @name == 'Regit'
