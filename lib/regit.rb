@@ -13,6 +13,8 @@ require 'active_record'
 require 'sinatra'
 
 require_relative 'regit/other/store_data'
+require_relative 'regit/server'
+
 module Regit
   extend StoreData
 
@@ -71,14 +73,14 @@ module Regit
   end
   
   LOGGER.info "Oauth url: #{BOT.invite_url}+&permissions=#{CONFIG.permissions_code}"
-  LOGGER.info 'Use ctrl+c to safely stop the bot.'
+  LOGGER.info 'Use [Ctrl+C] to safely stop the bot.'
 
   avatar = "#{Dir.pwd}/data/Student.jpg"
   
   BOT.run :async
   BOT.profile.avatar = File.open(avatar, 'rb')
   
-  #WebApp.run! # Run web app
+  run WebApp # Run web app
   
   BOT.sync
 end
