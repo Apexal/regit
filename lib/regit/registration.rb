@@ -112,7 +112,8 @@ module Regit
       # Create text-channel if not exist
       if text_channel.nil?
         text_channel = server.create_channel(course_name(course.title), 0)
-        text_channel.topic = "Discussion room for **#{course.title}** with **#{course.teacher.last_name}**."
+        text_channel.topic = "Discussion room for **#{course.title}** with **#{course.teacher.last_name}**. | http://moodle.regis.org/course/view.php?id=#{course.id}"
+        text_channel.send_message("Course Page: http://moodle.regis.org/course/view.php?id=#{course.id}").pin
         text_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, perms)
         course.update(text_channel_id: text_channel.id)
       end
@@ -136,9 +137,9 @@ module Regit
       new_roles << server.roles.find { |r| r.name == member.info.grade_name }
 
       # Default groups
-      #Regit::Database::Group.where(default_group: true).each do |g|
-      #  Regit::Groups::add_to_group(member, g.id)
-      #end
+      Regit::Database::Group.where(default_group: true).each do |g|
+        Regit::Groups::add_to_group(member, g.id)
+      end
 
       member.modify_roles(new_roles, [])
 

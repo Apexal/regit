@@ -96,8 +96,13 @@ module Regit
       # Prepare data
       full_name = full_name[0..20]
 
+      raise 'Group name must start with a letter' if full_name.start_with? '#'
+
       # Check if already exists
       raise "Group #{full_name} already exists!" if Regit::Database::Group.where(name: full_name).count > 0
+
+      # Check if same name as role
+      raise 'Invalid group name!' unless server.roles.find { |r| r.name.downcase == full_name.downcase }.nil? 
 
       description = description.empty? ? 'No description given.' : description[0..254]
       group_name = full_name.dup
