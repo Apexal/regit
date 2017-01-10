@@ -45,6 +45,8 @@ module Regit
           Regit::Utilities::clean_channels(server)
         end
 
+        Regit::Schedule::update_work_channel_topic()
+
         LOGGER.info 'Regit is ready.'
       end
     end

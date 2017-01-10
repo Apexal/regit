@@ -11,6 +11,7 @@ require 'discordrb'
 require 'mysql2'
 require 'active_record'
 require 'sinatra'
+require 'rhs-schedule'
 
 require_relative 'regit/other/store_data'
 module Regit
