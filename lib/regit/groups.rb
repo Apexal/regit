@@ -79,7 +79,7 @@ module Regit
 
       # Create text-channel
       group_text_channel = server.create_channel(channel_name, 0)
-      group_text_channel.topic = description
+      group_text_channel.topic = "**Group #{group_role.name}** | #{description}" + (owner.nil? ? '' : " | Owned by #{owner.mention}")
       group_text_channel.define_overwrite(group_role, group_perms, 0) # Allow group members to use it
       group_text_channel.define_overwrite(owner, owner_perms, 0) unless owner.nil? # Add owner perms 
       group_text_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, non_perms) # Don't allow anyone else
