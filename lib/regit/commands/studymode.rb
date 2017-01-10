@@ -48,6 +48,11 @@ module Regit
       command(:study, description: 'Show description.') do |event|
         event.message.delete unless event.channel.private?
 
+        if event.channel.private?
+          event.user.pm 'You must use `!study` on a school server!'
+          return
+        end
+
         begin
           set_study_mode(event.user, !event.user.studying?)
           event.user.pm "**Studymode** is now *#{event.user.studying? ? 'on' : 'off'}*."  
