@@ -112,6 +112,9 @@ module Regit
 
       raise "Group name '#{full_name}' is too short!" if group_name.length < 3
 
+      # In case some wise-guy tries to create a group called "work"
+      raise 'Invalid group name!' unless server.text_channels.find { |t| t.name == group_name }.nil?
+
       group_role = create_group_role(server, owner, full_name)
       group_text_channel = create_group_channel(server, owner, group_role, group_name, description)
 
