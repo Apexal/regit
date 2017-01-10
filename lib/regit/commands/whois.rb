@@ -9,17 +9,45 @@ module Regit
           return
         end
 
-        target = event.author
-        target = Regit::Database::Student.find_by_username(username).member if !username.nil? && event.message.mentions.empty?
-        target = event.message.mentions.first.on(event.server) unless event.message.mentions.empty?
+        # TARGET IS ONE OF THE FOLLOWING
+        # - author of message
+        # - first mention
+        # - username given
 
-        if target.nil?
-          event.channel.send_temporary_message('That user does not exist!', 5)
-          return
+        who = :author
+        target = event.author
+        
+        if !username.nil? && event.message.mentions.empty?
+          who = :username
+          begin
+            target = Regit::Database::Student.find_by_username(username).member
+            raise if target.nil?
+          rescue
+            who = :unregistered unless Regit::Database::Student.find_by_username(username).nil?
+            who = :nobody if Regit::Database::Student.find_by_username(username).nil?
+          end
+        elsif !event.message.mentions.empty?
+          who = :mention
+          target = event.message.mentions.first.on(event.server)
         end
 
         event.channel.send_embed do |embed|
-          if target.student?(event.server.school)
+          if who == :nobody
+            # DOESNT EXIST
+            embed.title = 'Invalid User'
+            embed.description = 'That user does not exist!'
+          elsif who == :unregistered
+            # Username of non registered student
+            info = Regit::Database::Student.find_by_username(username)
+            embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: info.pictureurl)
+            embed.title = '[Student] ' + info.first_name + ' ' + info.last_name
+            embed.add_field(name: 'School', value: info.school.title + ' ' + info.school.school_type, inline: true)
+            embed.add_field(name: 'Advisement', value: info.advisement, inline: true)
+            embed.add_field(name: 'Birthday', value: info.birthday.strftime('%B %e, %Y '), inline: true)
+
+            embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "#{info.first_name} is not registered on the server yet!")
+          elsif [:mention, :author, :username].include?(who) && (who == :username || target.student?(event.server.school))
+            target = Regit::Database::Student.find_by_username(username).member if who == :username
             embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: target.info.pictureurl)
             embed.title = '[Student] ' + target.info.first_name + ' ' + target.info.last_name
             embed.add_field(name: 'School', value: target.info.school.title + ' ' + target.info.school.school_type, inline: true)
@@ -32,7 +60,7 @@ module Regit
 
             embed.url = 'https://example.com' # TODO: change
             embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{target.joined_at}", icon_url: target.avatar_url)
-          elsif target.guest?(event.server.school)
+          elsif who == :mention && target.guest?(event.server.school)
             embed.title = '[Guest] ' + target.info.first_name + ' ' + target.info.last_name
             embed.add_field(name: 'School', value: target.info.school.title + ' ' + target.info.school.school_type, inline: true)
             embed.add_field(name: 'Discord Tag', value: "#{target.mention} | #{target.distinct}", inline: true)
@@ -49,8 +77,9 @@ module Regit
             embed.title = target.distinct
             embed.description = "#{target.mention} is an unregistered guest. They may or may not be from a school. They are only allowed very limited permissions."
           end
-
         end
+
+        nil
       end
     end
   end
