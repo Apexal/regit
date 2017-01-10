@@ -11,7 +11,8 @@ module Regit
       Groups,
       Administration,
       Moderation,
-      Studymode
+      Studymode,
+      Colors
     ]
 
     # Include all commands
