@@ -73,7 +73,7 @@ module Regit
   LOGGER.info "Oauth url: #{BOT.invite_url}+&permissions=#{CONFIG.permissions_code}"
   LOGGER.info 'Use [Ctrl+C] to safely stop the bot.'
 
-  avatar = "#{Dir.pwd}/data/Student.jpg"
+  avatar = "#{Dir.pwd}/data/gear.jpg"
   
   BOT.run :async
   BOT.profile.avatar = File.open(avatar, 'rb')

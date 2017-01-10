@@ -18,7 +18,7 @@ module Discordrb
         :default
       elsif small_advs.include?(@name) || large_advs.include?(@name)
         :advisement
-      elsif colors.include?(@name)
+      elsif @name.start_with?('#')
         :color
       elsif @name == 'bots'
         :bots

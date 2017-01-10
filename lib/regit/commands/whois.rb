@@ -18,6 +18,7 @@ module Regit
             embed.add_field(name: 'School', value: target.info.school.title + ' ' + target.info.school.school_type, inline: true)
             embed.add_field(name: 'Advisement', value: target.info.advisement, inline: true)
             embed.add_field(name: 'Discord Tag', value: "#{target.mention} | #{target.distinct}", inline: true)
+            embed.add_field(name: 'Birthday', value: target.info.birthday.strftime('%B %e, %Y '), inline: true)
             
             embed.color = 7380991
             embed.color = 16720128 if target.role?(target.server.roles.find { |r| r.name == 'Moderators' })
