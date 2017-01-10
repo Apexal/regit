@@ -3,13 +3,20 @@ module Regit
     module WhoIs
       extend Discordrb::Commands::CommandContainer
 
-      command(:whois, description: 'Show description.', permission_level: 1) do |event|
+      command(:whois, description: 'Show description.', permission_level: 1) do |event, username|
         if event.channel.private?
           event.user.pm 'You can only use `!whois` on a school server!'
           return
         end
 
-        target = (event.message.mentions.empty? ? event.author : event.message.mentions.first.on(event.server))
+        target = event.author
+        target = Regit::Database::Student.find_by_username(username).member if !username.nil? && event.message.mentions.empty?
+        target = event.message.mentions.first.on(event.server) unless event.message.mentions.empty?
+
+        if target.nil?
+          event.channel.send_temporary_message('That user does not exist!', 5)
+          return
+        end
 
         event.channel.send_embed do |embed|
           if target.student?(event.server.school)
@@ -19,10 +26,10 @@ module Regit
             embed.add_field(name: 'Advisement', value: target.info.advisement, inline: true)
             embed.add_field(name: 'Discord Tag', value: "#{target.mention} | #{target.distinct}", inline: true)
             embed.add_field(name: 'Birthday', value: target.info.birthday.strftime('%B %e, %Y '), inline: true)
-            
+
             embed.color = 7380991
             embed.color = 16720128 if target.role?(target.server.roles.find { |r| r.name == 'Moderators' })
-            
+
             embed.url = 'https://example.com' # TODO: change
             embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{target.joined_at}", icon_url: target.avatar_url)
           elsif target.guest?(event.server.school)
@@ -42,7 +49,7 @@ module Regit
             embed.title = target.distinct
             embed.description = "#{target.mention} is an unregistered guest. They may or may not be from a school. They are only allowed very limited permissions."
           end
-    
+
         end
       end
     end
