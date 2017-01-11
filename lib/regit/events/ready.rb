@@ -46,8 +46,8 @@ module Regit
         end
 
         Regit::Schedule::update_work_channel_topic()
-
         LOGGER.info 'Regit is ready.'
+        Regit::WebApp.run!
       end
     end
   end

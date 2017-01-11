@@ -10,7 +10,6 @@ Bundler.setup(:default)
 require 'discordrb'
 require 'mysql2'
 require 'active_record'
-require 'sinatra'
 require 'rhs-schedule'
 
 require_relative 'regit/other/store_data'
@@ -78,5 +77,6 @@ module Regit
   
   BOT.run :async
   BOT.profile.avatar = File.open(avatar, 'rb')
+  #require_relative './regit/server/server'
   BOT.sync
 end
