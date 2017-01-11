@@ -13,6 +13,10 @@ module Discordrb
       !info.nil? && info.school_id == school.id
     end
 
+    def moderator?
+      !roles.find { |r| r.name == 'Moderators' }.nil?
+    end
+
     def guest?(school)
       !info.nil? && info.school_id != school.id
     end

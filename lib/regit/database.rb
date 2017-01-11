@@ -115,6 +115,7 @@ module Regit
 
     class Group < ActiveRecord::Base
       belongs_to :school, inverse_of: :groups
+      before_update :update_channel
 
       def owner
         # Find owner
@@ -146,6 +147,28 @@ module Regit
       def private?
         private
       end
+
+      private
+        def update_channel
+          # Group owner perms
+          owner_perms = Discordrb::Permissions.new
+          owner_perms.can_manage_messages = true
+          text_channel.define_overwrite(owner, owner_perms, 0) unless owner.nil?
+
+          # Perms for group members
+          group_perms = Discordrb::Permissions.new
+          group_perms.can_read_messages = true
+          group_perms.can_read_message_history = true
+          group_perms.can_send_messages = true
+          group_perms.can_mention_everyone = true
+          
+          # All but owner
+          text_channel.users.select { |m| owner.nil? || (m.id != owner.id) && m.permission?(:manage_messages, text_channel) && !m.moderator? && !m.studying? }.each do |m|
+            text_channel.define_overwrite(m, 0, 0)
+          end
+
+          text_channel.topic = "**Group #{role.name}** | #{description}" + (owner.nil? ? '' : " | Owned by #{owner.mention}")
+        end
     end
   end
 end
