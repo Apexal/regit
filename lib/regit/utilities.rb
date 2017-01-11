@@ -9,6 +9,16 @@ module Regit
       end
     end
 
+    def self.todays_birthdays(school)
+      date = DateTime.now
+      Regit::Database::Student.where("MONTH(birthday) = ? and DAY(birthday) = ? and school_id = ?", date.month, date.day, school.id)
+    end
+
+    def self.announce_birthdays(server)
+      return if todays_birthdays(server.school).empty?
+      announce(server, ":birthday: TODAY'S BIRTHDAYS: #{todays_birthdays(server.school).map { |s| "**#{s.first_name} #{s.last_name} of #{s.advisement}** (#{s.member.mention})" }.join(', ')}")
+    end
+
     def self.list_to_perms(perms)
       allow = Discordrb::Permissions.new
       deny = Discordrb::Permissions.new
