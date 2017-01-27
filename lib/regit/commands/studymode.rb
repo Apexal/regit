@@ -45,13 +45,8 @@ module Regit
         #LOGGER.info text_channels
       end
 
-      command(:study, description: 'Show description.') do |event|
+      command(:study, description: 'Show description.', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event|
         event.message.delete unless event.channel.private?
-
-        if event.channel.private?
-          event.user.pm 'You must use `!study` on a school server!'
-          return
-        end
 
         begin
           set_study_mode(event.user, !event.user.studying?)

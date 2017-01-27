@@ -1,11 +1,11 @@
 module Regit
   module Utilities
 
-    def self.announce(server, message)
+    def self.announce(server, message, everyone=false)
       announcement_channel = server.text_channels.find { |t| t.name == 'announcements' }
 
       unless announcement_channel.nil? || message.nil? || message.empty?
-        announcement_channel.send_message "@everyone #{message}"
+        announcement_channel.send_message "#{everyone ? '@everyone ' : ''}#{message}"
       end
     end
 
@@ -74,7 +74,7 @@ module Regit
         end
       end
 
-      return message.sub('@', '') if words.length == 1 and done == 1
+      return message.sub('@', '') if words.length == 1
       return message
     end
 

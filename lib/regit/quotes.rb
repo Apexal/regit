@@ -11,6 +11,7 @@ module Regit
       raise 'Attributed author is not a student!' if student.nil?
 
       message = Regit::Utilities::replace_mentions(message)
+      LOGGER.info "Adding quote '#{message}' by #{author.distinct} | added by #{submitter.distinct}"
       quote = Regit::Database::Quote.create(username: submitter.info.username, author_username: author.info.username, text: message)
     end
 

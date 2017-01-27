@@ -4,7 +4,7 @@ module Regit
       extend Discordrb::Commands::CommandContainer
       extend StoreData
 
-      command(:setup, description: 'Open console.', permission_level: 3) do |event|
+      command(:setup, description: 'Open console.', permission_level: 3, permission_message: 'You can only use this command in a school server!') do |event|
         #return 'This server is already setup!' if event.server.setup?
         
         # Will create all roles necessary

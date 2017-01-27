@@ -12,7 +12,9 @@ module Regit
       Administration,
       Moderation,
       Studymode,
-      Colors
+      Colors,
+      Rename,
+      Quotes
     ]
 
     # Include all commands

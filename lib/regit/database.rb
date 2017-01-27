@@ -122,7 +122,7 @@ module Regit
         begin
           return Regit::BOT.user(Student.where(username: owner_username).first.discord_id)
         rescue => e
-          LOGGER.error "Could not find group owner for #{name}: #{e}"
+          #LOGGER.error "Could not find group owner for #{name}: #{e}"
           return nil
         end
       end
@@ -137,11 +137,11 @@ module Regit
       end
 
       def role
-        Regit::BOT.servers.each do |id, server|
-          role = server.role(Integer(role_id))
-          return role unless role.nil?
-        end
-        nil
+        school.server.role(Integer(role_id))
+      end
+
+      def members
+        school.server.members.select { |m| m.role?(role) }
       end
 
       def private?

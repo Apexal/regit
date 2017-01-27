@@ -5,13 +5,9 @@ module Regit
     module Groups
       extend Discordrb::Commands::CommandContainer
 
-      command(:groups, max_args: 0, description: 'List all open groups for this server.', usage: '`!groups`', permission_level: 1) do |event|
+      command(:groups, max_args: 0, description: 'List all open groups for this server.', usage: '`!groups`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event|
         event.message.delete unless event.channel.private?
-        if event.channel.private?
-          event.user.pm 'You can only use `!groups` on a school server!'
-          return
-        end
-
+				
         groups = Regit::Database::Group.where(school_id: event.server.school.id).order(name: :asc)
         messages = []
         messages << ":school: __**PUBLIC GROUPS FOR #{event.server.name} (#{event.server.school.title} #{event.server.school.school_type})**__ :school: "
@@ -27,13 +23,8 @@ module Regit
         nil
       end
 
-      command(:creategroup, min_args: 2, max_args: 3, description: 'Create a private group for some member!', usage: '`!creategroup "Name" "Description"`', permission_level: 1) do |event, full_name, description, is_private|
+      command(:creategroup, min_args: 2, max_args: 3, description: 'Create a private group for some member!', usage: '`!creategroup "Name" "Description"`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, full_name, description, is_private|
         event.message.delete unless event.channel.private?
-        
-        if event.channel.private?
-          event.user.pm 'You can only use `!creategroup` on a school server!'
-          return
-        end
 
         begin
           new_group = Regit::Groups::create_group(event.user.on(event.server), full_name, description, (is_private == 'yes' || is_private == '1' || is_private == 'true' ))
@@ -51,13 +42,8 @@ module Regit
         nil
       end
 
-      command(:invite, max_args: 0, description: 'Invite a student to a private group.', usage: '`!invite "Group" @member` in a group text-channel', permission_level: 1) do |event|
+      command(:invite, max_args: 0, description: 'Invite a student to a private group.', usage: '`!invite "Group" @member` in a group text-channel', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event|
         event.message.delete unless event.channel.private?
-
-        if event.channel.private?
-          event.user.pm 'You can only use `!invite` in a group channel!'
-          return
-        end
 
         if event.message.mentions.empty?
           event.user.pm 'Usage: `!invite "Group" @member`'
@@ -81,15 +67,13 @@ module Regit
         nil
       end 
 
-      command(:join, max_args: 1, description: 'Join a group.', usage: '`!join "Group Name"`', permission_level: 1) do |event, group_name|
+      command(:join, max_args: 1, description: 'Join a group.', usage: '`!join "Group Name"`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, group_name|
         event.message.delete unless event.channel.private?
         
-        if event.channel.private?
-          event.user.pm 'You muse use `!join` in a school server!'
-          return
-        end
-
         begin
+          raise 'No group name given!' if group_name.nil?
+          LOGGER.info group_name.nil?
+
           group = Regit::Database::Group.where('lower(name) = ?', group_name.downcase).first
           raise 'Doesn\'t exist!' if group.nil?
           Regit::Groups::add_to_group(event.user, group.id)
@@ -99,16 +83,13 @@ module Regit
           event.user.pm("Failed to join group: #{e}")
           LOGGER.error e.backtrace
         end
+
+        nil
       end
 
-      command(:leave, max_args: 0, description: 'Leave a group.', usage: '`!leave` in a group text-channel', permission_level: 1) do |event|
+      command(:leave, max_args: 0, description: 'Leave a group.', usage: '`!leave` in a group text-channel', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event|
         event.message.delete unless event.channel.private?
         
-        if event.channel.private? || event.channel.association != :group
-          event.user.pm 'You can only use `!leave` on a group text-channel!'
-          return
-        end
-
         begin
           group = Regit::Groups::remove_from_group(event.user, Regit::Database::Group.find_by_text_channel_id(event.channel.id).id)
           if event.server.members.count { |m| m.role? group.role } == 0
@@ -120,6 +101,8 @@ module Regit
           event.user.pm "Failed to leave group: #{e}"
           LOGGER.error e.backtrace
         end
+
+        nil
       end
     end
   end

@@ -1,0 +1,12 @@
+body { 
+  padding-top: 70px;
+}
+
+.right {
+  float: right;
+}
+
+.join-group, .manage-group, .view-group, .leave-group {
+  float: right;
+  width: 67px;
+}

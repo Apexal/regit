@@ -3,12 +3,7 @@ module Regit
     module WhoIs
       extend Discordrb::Commands::CommandContainer
 
-      command(:whois, description: 'Show description.', permission_level: 1) do |event, username|
-        if event.channel.private?
-          event.user.pm 'You can only use `!whois` on a school server!'
-          return
-        end
-
+      command(:whois, description: 'Show description.', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, username|
         # TARGET IS ONE OF THE FOLLOWING
         # - author of message
         # - first mention

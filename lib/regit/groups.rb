@@ -145,7 +145,8 @@ module Regit
       
       raise 'You have not been invited!' if group.private? && !INVITES[member.id].nil? && INVITES[member.id].include?(group_id)
 
-      LOGGER.info "Adding #{member.distinct} to Group #{group.name}"
+      begin;Regit::LOGGER.info "Adding #{member.distinct} to Group #{group.name}";rescue;end
+      
       member.add_role(group.role)
 
       group

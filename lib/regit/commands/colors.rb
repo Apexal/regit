@@ -5,12 +5,8 @@ module Regit
     module Colors
       extend Discordrb::Commands::CommandContainer
 
-      command(:color, min_args: 0, max_args: 1, description: 'Choose a user color.', usage: '`!color #colorhex` or `!color`', permission_level: 1) do |event, color_hex|
+      command(:color, min_args: 0, max_args: 1, description: 'Choose a user color.', usage: '`!color #colorhex` or `!color`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, color_hex|
         event.message.delete unless event.channel.private?
-        if event.channel.private?
-          event.user.pm 'You can only use `!color` on a school server!'
-          return
-        end
 
         color_hex ||= '#99AAB5'
         begin

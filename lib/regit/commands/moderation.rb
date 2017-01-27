@@ -50,12 +50,8 @@ module Regit
         end
       end
 
-      command(:report, description: 'Report a user for breaking the rules.', usage: '`!report @who "reason"` or `!report "reason" @who`', permission_level: 1) do |event, *reason|
+      command(:report, description: 'Report a user for breaking the rules.', usage: '`!report @who "reason"` or `!report "reason" @who`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, *reason|
         event.message.delete unless event.channel.private?
-        if event.channel.private?
-          event.user.pm 'Command must be used on school server.'
-          return
-        end
 
         target = (event.message.mentions.empty? ? nil : event.message.mentions.first.on(event.server))
         

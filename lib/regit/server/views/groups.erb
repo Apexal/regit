@@ -1,0 +1,65 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="jumbotron clearfix">
+            <img class="right hidden-xs" src="http://az616578.vo.msecnd.net/files/2015/07/23/635732924053603777-93632716_group.png">
+            <h1>Groups</h1>
+            <p>
+                Groups allow users to communicate in private text and voice channels about topics that interest them.
+                <br><br>
+                <a class="btn btn-default" href="#groups">Browse Groups</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12" id="groups">
+        <h2>All Public Groups <span class="text-muted right">(<%= @groups.length %> total)</span></h2>
+        <p class="text-muted">These are the groups on the server that any users can join and leave. Private groups are not shown. You must be invited to private groups to join them.</p>
+        <hr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="hidden-xs hidden-sm">Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% @groups.select { |m| !m.private? }.each do |g| %>
+                    <tr class="<% if @student.groups.include?(g) %>active<% end %>">
+                        <td title="Owned by <%= g.owner_username %>"><%= g.name %></td>
+                        <td class="hidden-xs hidden-sm"><%= g.description %> <span class="badge right"><%= g.members.length %> members</span></td>
+
+                        <% if !g.owner.nil? && g.owner == @student %>
+                            <td class="hidden-xs">
+                                <a class="btn btn-default manage-group" href="/groups/<%= g.id %>/manage">Manage</a>
+                                <a class="btn btn-default view-group" href="/groups/<%= g.id %>">View</a>
+                            </td>
+
+                        <% elsif @student.groups.include?(g) %>
+                            <td class="hidden-xs">
+                                <form onsubmit="return confirm('Do you really want to leave <%= g.name %>?');" method="POST" action='/groups/<%= g.id %>/leave'>
+                                    <button class="btn btn-danger leave-group" type='submit'>Leave</button>
+                                    <a class="btn btn-default view-group" href="/groups/<%= g.id %>">View</a>
+                                </form>
+                            </td>
+                        <% else %>
+                            <td class="hidden-xs">
+                                <form onsubmit="return confirm('Do you really want to join <%= g.name %>?');" method="POST" action='/groups/<%= g.id %>/join'>
+                                    <button class="btn btn-info join-group" type='submit'>Join</button>
+                                    <a class="btn btn-default view-group" href="/groups/<%= g.id %>">View</a>
+                                </form>
+                            </td>
+                        <% end %>
+
+                        <td class="visible-xs">
+                            <a class="btn btn-default view-group" href="/groups/<%= g.id %>">View</a>
+                        </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</div>
