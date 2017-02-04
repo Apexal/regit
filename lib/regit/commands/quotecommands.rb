@@ -49,12 +49,11 @@ module Regit
           method = 2
           author = ms.last
         end
-        
-        
 
-        #Regit::Quotes::add_quote(event.user, author, message)
+        author = author.on(event.server)
 
-        "#{event.user.mention} | #{message} | #{author.mention}"
+        Regit::Quotes::add_quote(event.user.on(event.server), author, message)
+        "Saved quote `#{message}` by **#{author.display_name}** (#{author.info.username})!"
       end
     end
   end
