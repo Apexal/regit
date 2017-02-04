@@ -26,7 +26,6 @@ module Regit
     end
 
     get '/groups' do
-      #binding.pry
       redirect(to('/')) unless @logged_in
       
       @title = 'Groups'
