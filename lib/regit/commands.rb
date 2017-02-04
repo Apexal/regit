@@ -15,7 +15,8 @@ module Regit
       Colors,
       Rename,
       Quotes,
-      Pin
+      Pin,
+      Imitate
     ]
 
     # Include all commands

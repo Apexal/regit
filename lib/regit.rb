@@ -11,6 +11,7 @@ require 'discordrb'
 require 'mysql2'
 require 'active_record'
 require 'rhs-schedule'
+require 'marky_markov'
 
 require_relative 'regit/other/store_data'
 module Regit
