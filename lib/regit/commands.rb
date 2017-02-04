@@ -14,7 +14,8 @@ module Regit
       Studymode,
       Colors,
       Rename,
-      Quotes
+      Quotes,
+      Pin
     ]
 
     # Include all commands

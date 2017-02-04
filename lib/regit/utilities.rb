@@ -1,6 +1,8 @@
 module Regit
   module Utilities
 
+    ANNOUNCED_BIRTHDAYS_DATES = []
+
     def self.announce(server, message, everyone=false)
       announcement_channel = server.text_channels.find { |t| t.name == 'announcements' }
 
@@ -15,8 +17,9 @@ module Regit
     end
 
     def self.announce_birthdays(server)
-      return if todays_birthdays(server.school).empty?
+      return if todays_birthdays(server.school).empty? || ANNOUNCED_BIRTHDAYS_DATES.include?(DateTime.now.to_date)
       announce(server, ":birthday: TODAY'S BIRTHDAYS: #{todays_birthdays(server.school).map { |s| "**#{s.first_name} #{s.last_name} of #{s.advisement}** (#{s.member.mention})" }.join(', ')}")
+      ANNOUNCED_BIRTHDAYS_DATES << DateTime.now.to_date
     end
 
     def self.list_to_perms(perms)
