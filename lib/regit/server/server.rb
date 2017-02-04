@@ -24,7 +24,16 @@ module Regit
     get '/' do
       erb :index, layout: :layout
     end
-
+    
+    get '/users' do
+      redirect(to('/')) unless @logged_in
+      
+      @title = 'Users'
+      @users = @student.school.members
+      
+      erb :users, layout: :layout
+    end
+    
     get '/groups' do
       #binding.pry
       redirect(to('/')) unless @logged_in
