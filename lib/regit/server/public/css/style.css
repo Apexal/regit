@@ -12,5 +12,9 @@ body {
 }
 
 .user-image {
-  width: 70px;
+  height: 60px;
+}
+
+.user-search > .form-group {
+  width: 70%;
 }

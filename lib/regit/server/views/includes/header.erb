@@ -16,10 +16,10 @@
       <ul class="nav navbar-nav">
         <li><a href="/">About</a></li>
         <% if @logged_in %>
-          <li><a href="#">Members</a></li>
+          <li><a href="/users">People</a></li>
           <li><a href="/groups">Groups</a></li>
           <li><a href="/quotes">Quotes</a></li>
-          <li><a target="new" href="https://discordapp.com/channels/<%= @student.member.server.id %>/<%= @student.member.server.default_channel.id %>">Discord</a></li>
+          <li><a target="new" href="https://discordapp.com/channels/<%= @student.member.server.id %>/<%= @student.member.server.default_channel.id %>">Server</a></li>
         <% end %>
       </ul>
 
