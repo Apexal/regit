@@ -11,7 +11,7 @@ module Regit
       member_leave do |event|
         LOGGER.info "#{event.user.distinct} HAS LEFT SERVER #{event.server.name}"
         event.server.owner.pm "#{event.user.mention} HAS LEFT THE SERVER"
-        Regit::Database::Student.find_by_discord_id(event.user.id).update(discord_id: nil)
+        Regit::Registration::unverify_student(event.user)
       end
 
       presence do |event|

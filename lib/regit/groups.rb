@@ -165,5 +165,6 @@ module Regit
 
       return group
     end
+
   end
 end

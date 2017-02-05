@@ -35,6 +35,17 @@ module Regit
       LOGGER.info "Linked #{member.distinct} to #{username}"
     end
 
+    def self.unverify_student(user)
+      # Remove discord_id link
+      begin
+        student = Regit::Database::Student.find_by_discord_id(user.id) 
+        student.update(discord_id: nil)
+
+        # Give away groupss
+        Regit::Database::Group.where(owner_username).update_all(owner_username: 'fmatranga18') # Nasty, I know
+      rescue; end
+    end
+
     def self.handle_advisement_system(member)
       LOGGER.info "Setting up advisement stuff for #{member.distinct} | #{member.info.description}"
       server = member.server
