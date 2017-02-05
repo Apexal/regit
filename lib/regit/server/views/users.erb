@@ -44,9 +44,11 @@
       <thead>
         <tr>
           <th class=>Picture</th>
-          <th>Advisement</th>
+          <th class="hidden-xs">Advisement</th>
+          <th class="visible-xs">Adv</th>
           <th>Name</th>
-          <th>Discord Tag</th>
+          <th class="hidden-xs">Discord Tag</th>
+          <th class="visible-xs">Tag</th>
         </tr>
       </thead>
 
@@ -57,7 +59,7 @@
             <td><%= m.info.advisement %></td>
             <td><a href="/users/<%= m.info.username %>"><%= m.info.first_name %> <%= m.info.last_name %></a></td>
             <td><%= m.distinct %></td>
-            <td class="hidden-md"><img class="user-image" src="<%= m.avatar_url %>"></td>
+            <td class="hidden-md hidden-xs"><img class="user-image" src="<%= m.avatar_url %>"></td>
           </tr>
         <% end %>
       </tbody>
