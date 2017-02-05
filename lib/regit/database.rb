@@ -147,7 +147,13 @@ module Regit
       end
 
       def members
-        school.server.members.select { |m| m.role?(role) }
+        school.server.members.select do |m| 
+          begin
+            m.role?(role)
+          rescue
+            false
+          end
+        end
       end
 
       def private?
