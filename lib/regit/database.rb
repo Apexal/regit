@@ -19,7 +19,13 @@ module Regit
       end
 
       def members
-        Student.where(school_id: id).map { |s| Regit::BOT::member(server_id, Integer(s.discord_id)) }
+        Regit::Database::Student.where(school_id: id).where.not(discord_id: nil).map do |s|
+          begin
+            Regit::BOT::member(server_id, Integer(s.discord_id))
+          rescue
+            nil
+          end
+        end.compact
       end
 
       def groups

@@ -2,13 +2,38 @@
   <div class="col-xs-12">
     <div class="jumbotron clearfix">
       <!-- <img class="right hidden-xs" src="http://az616578.vo.msecnd.net/files/2015/07/23/635732924053603777-93632716_group.png"> -->
-      <h1>Server Users</h1>
+      <h1><%= @student.school.title %> Server Users</h1>
       <p>
-        Each school server is open to all students at that school (School Name). Guests (non-students) are allowed on the server by invitation yet can only see #public-room and join voice-channel <b>Public Room</b>.
+        Each school server is open to all students at <b><%= @student.school.title %></b>. Guests (non-students) are allowed on the server by invitation yet can only see #public-room and join voice-channel <b>Public Room</b>.
         <br><br>
-        <a class="btn btn-primary" href="#students">SCHOOL NAME Students</a>
+        <a class="btn btn-primary" href="#students"><%= @student.school.title %> Students</a>
         <a class="btn btn-default" href="#guests">Server Guests</a>
       </p>
     </div>
+  </div>
+
+  <div class="col-xs=12">
+    <table id="students" class="table table-striped">
+      <thead>
+        <tr>
+          <th>Picture</th>
+          <th>Advisement</th>
+          <th>Name</th>
+          <th>Discord Tag</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @users.sort { |a, b| a.joined_at <=> b.joined_at }.each do |m| %>
+          <tr>
+            <td><img class="user-image" src="<%= m.info.pictureurl %>"></td>
+            <td><%= m.info.advisement %></td>
+            <td><%= m.info.first_name %> <%= m.info.last_name %></td>
+            <td><%= m.distinct %></td>
+            <td><img class="user-image" src="<%= m.avatar_url %>"></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>
