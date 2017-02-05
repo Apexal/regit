@@ -34,6 +34,23 @@ module Regit
       erb :users, layout: :layout
     end
     
+    get '/users/:username' do
+      redirect(to('/')) unless @logged_in
+
+      username = params['username']
+      @user = Regit::Database::Student.find_by_username(username)
+
+      if @user.nil?
+        session['info'] << 'Invalid username!'
+        redirect back
+        return
+      end
+
+      @title = "#{@user.first_name} #{@user.last_name}"
+
+      erb :user, layout: :layout
+    end
+
     get '/groups' do
       redirect(to('/')) unless @logged_in
       

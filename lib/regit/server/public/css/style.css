@@ -18,3 +18,21 @@ body {
 .user-search > .form-group {
   width: 70%;
 }
+
+.user-profile {
+  border: 10px solid black;
+}
+
+.user-profile-xs {
+  margin: 0 auto;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.moderator-note {
+  margin: 0;
+}
+
+.moderator-note + h1 {
+  margin-top: 5px;
+}

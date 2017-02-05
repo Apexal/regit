@@ -1,0 +1,47 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="jumbotron clearfix">
+      <img class="right hidden-xs user-profile" src="<%= @user.pictureurl %>">
+      <% if @user.username == 'fmatranga18' %>
+        <h3 class="moderator-note">Founder</h3>
+      <% elsif @user.member.moderator? %>
+        <h3 class="moderator-note" style="margin: 0;">Moderator</h3>
+      <% end %>
+
+      <h1><%= @user.first_name %> <%= @user.last_name %> of <%= @user.advisement %></h1>
+      <p>
+        Member since <b><%= @user.member.joined_at.strftime('%B %-d, %Y') %></b>.
+      </p>
+      <br>
+      <a class="btn btn-danger" href="#">Report User</a>
+      <a class="btn btn-default" href="/users">User List</a>
+    </div>
+
+    <img class="visible-xs user-profile-xs" src="<%= @user.pictureurl %>">
+  </div>
+
+  <div class="col-xs-12 col-md-6 col-lg-4">
+    <h3><%= @user.first_name %>'s Groups <small class="right"><%= @user.groups.length %> Total</small></h3>
+    <ul id="groups" class="list-group">
+      <% @user.groups.each do |g| %>
+        <li class="list-group-item">
+          <% if g.owner == @user.member %><span class="badge">Owner</span><% end %>
+          <a href="/groups/<%= g.id %>"><%= g.name %></a>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="col-xs-12 col-md-6 col-lg-4">
+    <h3><%= @user.first_name %>'s Teachers <small class="right"><%= @user.classes.length %> Total</small></h3>
+    <ul id="groups" class="list-group">
+      <% @user.classes.each do |c| %>
+        <li class="list-group-item">
+          <span class="right"><%= c.teacher.last_name %></span>
+          <%= c.title %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+</div>
