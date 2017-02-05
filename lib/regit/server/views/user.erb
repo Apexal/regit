@@ -20,8 +20,14 @@
     <img class="visible-xs user-profile-xs" src="<%= @user.pictureurl %>">
   </div>
 
+  <div class="col-xs-12 discord-info">
+    <hr>
+    <h3>Discord Tag: <small><%= @user.member.distinct %> (<%= @user.member.display_name %>)</small></h3>
+    <hr>
+  </div>
+
   <div class="col-xs-12 col-md-6 col-lg-4">
-    <h3><%= @user.first_name %>'s Groups <small class="right"><%= @user.groups.length %> Total</small></h3>
+    <h3 class="clearfix"><%= @user.first_name %>'s Groups <small class="right"><%= @user.groups.length %> Total</small></h3>
     <ul id="groups" class="list-group">
       <% @user.groups.each do |g| %>
         <li class="list-group-item">
@@ -33,7 +39,7 @@
   </div>
 
   <div class="col-xs-12 col-md-6 col-lg-4">
-    <h3><%= @user.first_name %>'s Teachers <small class="right"><%= @user.classes.length %> Total</small></h3>
+    <h3 class="clearfix"><%= @user.first_name %>'s Teachers <small class="right"><%= @user.classes.length %> Total</small></h3>
     <ul id="groups" class="list-group">
       <% @user.classes.each do |c| %>
         <li class="list-group-item">

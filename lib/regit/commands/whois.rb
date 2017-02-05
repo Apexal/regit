@@ -53,7 +53,7 @@ module Regit
             embed.color = 7380991
             embed.color = 16720128 if target.role?(target.server.roles.find { |r| r.name == 'Moderators' })
 
-            embed.url = 'https://example.com' # TODO: change
+            embed.url = "http://www.getontrac.info:4567/users/#{target.info.username}"
             embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{target.joined_at}", icon_url: target.avatar_url)
           elsif who == :mention && target.guest?(event.server.school)
             embed.title = '[Guest] ' + target.info.first_name + ' ' + target.info.last_name
