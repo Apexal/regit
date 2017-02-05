@@ -28,11 +28,10 @@
     <p>Moderators are given limited power to keep an eye out for inappropriate content or anything that breaks the few server rules.
     <ul class="list-group">
       <% @users.select { |m| m.moderator? }.sort { |a, b| a.joined_at <=> b.joined_at }.each do |m| %>
-        <li class="list-group-item">
+        <a href="#<%= m.info.username %>" class="list-group-item">
           <span class="badge"><%= m.info.advisement %></span>
-          
-          <a href="#<%= m.info.username %>"><%= m.info.first_name %> <%= m.info.last_name %></a>
-        </li>
+          <%= m.info.first_name %> <%= m.info.last_name %>
+        </a>
       <% end %>
     </ul>
   </div>

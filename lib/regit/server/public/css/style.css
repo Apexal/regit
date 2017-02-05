@@ -20,7 +20,7 @@ body {
 }
 
 .user-profile {
-  border: 10px solid black;
+  border: 5px solid black;
 }
 
 .user-profile-xs {
@@ -37,6 +37,16 @@ body {
   margin-top: 5px;
 }
 
-.discord-info h3 {
+.profile-jumbotron {
+  margin-bottom: 15px;
+}
+
+.discord-info {
   text-align: center;
+}
+
+.discord-info > hr {
+
+  margin-top: 10px;
+  margin-bottom: 10px;
 }

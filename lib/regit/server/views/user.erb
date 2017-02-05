@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-xs-12">
-    <div class="jumbotron clearfix">
+    <div class="jumbotron clearfix profile-jumbotron">
       <img class="right hidden-xs user-profile" src="<%= @user.pictureurl %>">
       <% if @user.username == 'fmatranga18' %>
         <h3 class="moderator-note">Founder</h3>
@@ -8,7 +8,7 @@
         <h3 class="moderator-note" style="margin: 0;">Moderator</h3>
       <% end %>
 
-      <h1><%= @user.first_name %> <%= @user.last_name %> of <%= @user.advisement %></h1>
+      <h1><%= @user.first_name %> <%= @user.last_name %><br class="hidden-lg"><small> of <%= @user.advisement %></small></h1>
       <p>
         Member since <b><%= @user.member.joined_at.strftime('%B %-d, %Y') %></b>.
       </p>
@@ -22,7 +22,7 @@
 
   <div class="col-xs-12 discord-info">
     <hr>
-    <h3>Discord Tag: <small><%= @user.member.distinct %> (<%= @user.member.display_name %>)</small></h3>
+    <h4>Discord Tag: <small><%= @user.member.distinct %> (<%= @user.member.display_name %>)</small></h4>
     <hr>
   </div>
 
@@ -30,10 +30,10 @@
     <h3 class="clearfix"><%= @user.first_name %>'s Groups <small class="right"><%= @user.groups.length %> Total</small></h3>
     <ul id="groups" class="list-group">
       <% @user.groups.each do |g| %>
-        <li class="list-group-item">
+        <a href="/groups/<%= g.id %>" class="list-group-item <%= 'list-group-item-info' if @student.groups.include?(g) && @student != @user %>">
           <% if g.owner == @user.member %><span class="badge">Owner</span><% end %>
-          <a href="/groups/<%= g.id %>"><%= g.name %></a>
-        </li>
+          <%= g.name %>
+        </a>
       <% end %>
     </ul>
   </div>

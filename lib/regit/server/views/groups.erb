@@ -13,8 +13,20 @@
 </div>
 
 <div class="row">
-    <div class="col-xs-12" id="groups">
-        <h2>All Public Groups <span class="text-muted right">(<%= @groups.length %> total)</span></h2>
+    <div class="col-xs-12 col-md-6 col-lg-3" id="self-groups">
+        <h2 class="clearfix">Your Groups <small class="right"><%= @student.groups.length %> Total</small></h2>
+        <div class="list-group">
+            <% @student.groups.each do |g| %>
+                <a href="/groups/<%= g.id %>" class="list-group-item">
+                    <% if g.owner == @student.member %><span class="badge">Owner</span><% end %>
+                    <%= g.name %>
+                </a>
+            <% end %>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-lg-9" id="groups">
+        <h2>All Public Groups <span class="text-muted right"><%= @groups.length %> Total</span></h2>
         <p class="text-muted">These are the groups on the server that any users can join and leave. Private groups are not shown. You must be invited to private groups to join them.</p>
         <hr>
         <table class="table">
@@ -29,27 +41,24 @@
             <tbody>
                 <% @groups.select { |m| !m.private? }.each do |g| %>
                     <tr class="<% if @student.groups.include?(g) %>active<% end %>">
-                        <td title="Owned by <%= g.owner_username %>"><%= g.name %></td>
+                        <td title="Owned by <%= g.owner_username %>"><a href="/groups/<%= g.id %>"><%= g.name %></a></td>
                         <td class="hidden-xs hidden-sm"><%= g.description %> <span class="badge right"><%= g.members.length %> members</span></td>
 
-                        <% if !g.owner.nil? && g.owner == @student %>
+                        <% if !g.owner.nil? && g.owner == @student.member %>
                             <td class="hidden-xs">
                                 <a class="btn btn-default manage-group" href="/groups/<%= g.id %>/manage">Manage</a>
-                                <a class="btn btn-default view-group" href="/groups/<%= g.id %>">View</a>
                             </td>
 
                         <% elsif @student.groups.include?(g) %>
                             <td class="hidden-xs">
                                 <form onsubmit="return confirm('Do you really want to leave <%= g.name %>?');" method="POST" action='/groups/<%= g.id %>/leave'>
                                     <button class="btn btn-danger leave-group" type='submit'>Leave</button>
-                                    <a class="btn btn-default view-group" href="/groups/<%= g.id %>">View</a>
                                 </form>
                             </td>
                         <% else %>
                             <td class="hidden-xs">
                                 <form onsubmit="return confirm('Do you really want to join <%= g.name %>?');" method="POST" action='/groups/<%= g.id %>/join'>
                                     <button class="btn btn-info join-group" type='submit'>Join</button>
-                                    <a class="btn btn-default view-group" href="/groups/<%= g.id %>">View</a>
                                 </form>
                             </td>
                         <% end %>
