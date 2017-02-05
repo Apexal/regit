@@ -6,6 +6,8 @@
       <p>
         Each school server is open to all students at <b><%= @student.school.title %></b>. Guests (non-students) are allowed on the server by invitation yet can only see #public-room and join voice-channel <b>Public Room</b>.
         <br><br>
+
+        <a class="btn btn-info" href="/users/<%= @student.username %>">Your Profile</a>
         <a class="btn btn-primary" href="#students"><%= @student.school.title %> Students</a>
         <a class="btn btn-default" href="#guests">Server Guests</a>
       </p>

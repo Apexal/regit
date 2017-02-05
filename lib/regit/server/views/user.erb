@@ -42,7 +42,7 @@
     <h3 class="clearfix"><%= @user.first_name %>'s Teachers <small class="right"><%= @user.classes.length %> Total</small></h3>
     <ul id="groups" class="list-group">
       <% @user.classes.each do |c| %>
-        <li class="list-group-item">
+        <li class="list-group-item <%= 'active' if @student.classes.include?(c) && @student != @user %>">
           <span class="right"><%= c.teacher.last_name %></span>
           <%= c.title %>
         </li>

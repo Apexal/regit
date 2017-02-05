@@ -60,6 +60,23 @@ module Regit
       erb :groups, layout: :layout
     end
 
+    get '/groups/:id' do
+      redirect(to('/')) unless @logged_in
+
+      group_id = params['id']
+      @group = Regit::Database::Group.find(group_id)
+
+      if @group.nil?
+        session['info'] << 'That group doesn\'t exist!'
+        redirect back
+        return
+      end
+
+      @title = "Group #{@group.name}"
+
+      erb :group, layout: :layout
+    end
+
     post '/groups/:id/join' do
       redirect(to('/')) unless @logged_in
 

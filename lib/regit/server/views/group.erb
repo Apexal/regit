@@ -1,0 +1,56 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="jumbotron clearfix group-jumbotron">
+            <h1>Group <%= @group.name %></h1>
+            <p><%= @group.description %></p>
+
+            <br>
+
+            <% if @student.groups.include?(@group) %>
+                <form onsubmit="return confirm('Do you really want to leave <%= @group.name %>?');" method="POST" action='/groups/<%= @group.id %>/leave'>
+                    <button class="btn btn-danger leave-group" type='submit'>Leave</button>
+                </form>
+            <% else %>
+                <form onsubmit="return confirm('Do you really want to join <%= @group.name %>?');" method="POST" action='/groups/<%= @group.id %>/join'>
+                    <button class="btn btn-info join-group" type='submit'>Join</button>
+                </form>
+            <% end %>
+            <a class="btn btn-default" href="/groups">Group List</a>
+        </div>
+    </div>
+
+    <div class="col-xs-12 discord-info">
+        <hr>
+        <h4>Owned By: <small><%= @group.owner.on(@group.school.server).info.first_name %> <%= @group.owner.on(@group.school.server).info.last_name %> of <%= @group.owner.on(@group.school.server).info.advisement %> (<%= @group.owner.distinct %>)</small></h4>
+        <hr>
+    </div>
+
+    <div class="col-xs-12 clearfix">
+        <h2>Members <small class="right"><%= @group.members.length %> Total</small></h2>
+
+        <table id="members" class="table table-condensed">
+            <thead>
+                <tr>
+                    <th class=>Picture</th>
+                    <th class="hidden-xs">Advisement</th>
+                    <th class="visible-xs">Adv</th>
+                    <th>Name</th>
+                    <th class="hidden-xs">Discord Tag</th>
+                    <th class="visible-xs">Tag</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% @group.members.sort { |a, b| a.info.advisement <=> b.info.advisement }.each do |m| %>
+                    <tr>
+                        <td><img class="user-image" src="<%= m.info.pictureurl %>"></td>
+                        <td><%= m.info.advisement %></td>
+                        <td><a href="/users/<%= m.info.username %>"><%= m.info.first_name %> <%= m.info.last_name %></a></td>
+                        <td><%= m.distinct %></td>
+                        <td class="hidden-md hidden-xs"><img class="user-image" src="<%= m.avatar_url %>"></td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</div>

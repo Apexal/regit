@@ -11,6 +11,11 @@ body {
   width: 67px;
 }
 
+.manage-group {
+  margin-left: 0;
+  margin-right: 0;
+}
+
 .user-image {
   height: 60px;
 }
@@ -37,7 +42,7 @@ body {
   margin-top: 5px;
 }
 
-.profile-jumbotron {
+.profile-jumbotron, .group-jumbotron {
   margin-bottom: 15px;
 }
 
