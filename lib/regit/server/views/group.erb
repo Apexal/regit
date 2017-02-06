@@ -4,6 +4,9 @@
             <h1>Group <%= @group.name %></h1>
             <p><%= @group.description %></p>
 
+            
+            <hr>
+
             <br>
 
             <% if @student.groups.include?(@group) %>
@@ -19,11 +22,45 @@
         </div>
     </div>
 
-    <div class="col-xs-12 discord-info">
-        <hr>
-        <h4>Owned By: <small><%= @group.owner.on(@group.school.server).info.first_name %> <%= @group.owner.on(@group.school.server).info.last_name %> of <%= @group.owner.on(@group.school.server).info.advisement %> (<%= @group.owner.distinct %>)</small></h4>
-        <hr>
-    </div>
+    <% if @group.owner == @student.member %>
+        <div class="col-xs-12 col-lg-6 update-group">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Update Description</h3>
+                </div>
+                <div class="panel-body">
+                    <form action="/groups/<%= @group.id %>/update" method="POST">
+                        <textarea class="form-control" name="description"><%= @group.description %></textarea>
+                        <hr>
+                        <button class="btn btn-warning right" type="submit">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-lg-6 update-group">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Invite Student</h3>
+                </div>
+                <div class="panel-body">
+                    <form action="/groups/<%= @group.id %>/invite" method="POST">
+                        <input class="form-control" type="text" name="username" placeholder="School Username">
+                        <hr>
+                        <button class="btn btn-info right" type="submit">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <% else %>
+        <div class="col-xs-12 discord-info">
+            <hr>
+            <h4>Owned By: 
+                <small><%= @group.owner.on(@group.school.server).info.first_name %> <%= @group.owner.on(@group.school.server).info.last_name %> of <%= @group.owner.on(@group.school.server).info.advisement %> (<%= @group.owner.distinct %>)</small>
+            </h4>
+            <hr>
+        </div>
+    <% end %>
 
     <div class="col-xs-12 clearfix">
         <h2>Members <small class="right"><%= @group.members.length %> Total</small></h2>

@@ -121,7 +121,7 @@ module Regit
 
     class Group < ActiveRecord::Base
       belongs_to :school, inverse_of: :groups
-      before_update :update_channel
+      after_save :update_channel
 
       def owner
         # Find owner
