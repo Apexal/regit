@@ -9,6 +9,10 @@ module Discordrb
       Regit::Database::School.find_by_server_id(@id)
     end
 
+    def students
+      members.select { |m| m.student?(school) }
+    end
+
     def setup?
       !school.nil?
     end

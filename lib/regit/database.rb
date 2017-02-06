@@ -147,7 +147,7 @@ module Regit
       end
 
       def members
-        school.server.members.select do |m| 
+        school.server.students.select do |m| 
           begin
             m.role?(role)
           rescue

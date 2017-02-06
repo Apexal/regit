@@ -109,6 +109,91 @@ module Regit
       redirect back
     end
 
+    post '/groups/:id/kick' do
+      redirect(to('/')) unless @logged_in
+      
+      group_id = params['id']
+      target_username = params['username']
+      
+      group = Regit::Database::Group.find(group_id)
+
+      if group.nil?
+        session['info'] << 'Invalid group!'
+        redirect back
+        return
+      end
+
+      # Make sure is server owner
+      unless @student.member == group.owner
+        session['info'] << "You don't own Group #{group.name}!"
+        redirect back
+        return
+      end
+
+      if target_username == @student.username
+        session['info'] << 'You can\'t kick yourself!'
+        redirect back
+        return
+      end
+
+      begin
+        target = Regit::Database::Student.find_by_username(target_username)
+        group = Regit::Groups::remove_from_group(target.member, group_id)
+        session['info'] << "Kicked #{target.username} from Group '#{group.name}'!"
+      rescue => e
+        puts e.backtrace.join("\t\n")
+        session['info'] << 'Failed to kick member! Please try again later.'
+      end
+      
+      redirect back
+    end
+
+    post '/groups/:id/transfer' do
+      redirect(to('/')) unless @logged_in
+      
+      group_id = params['id']
+      target_username = params['username']
+      
+      group = Regit::Database::Group.find(group_id)
+
+      if group.nil?
+        session['info'] << 'Invalid group!'
+        redirect back
+        return
+      end
+
+      # Make sure is server owner
+      unless @student.member == group.owner
+        session['info'] << "You don't own Group #{group.name}!"
+        redirect back
+        return
+      end
+
+      if target_username == @student.username
+        session['info'] << 'You already own the group!'
+        redirect back
+        return
+      end
+
+      target = Regit::Database::Student.find_by_username(target_username)
+      if target.nil? || !target.groups.include?(group)
+        session['info'] << 'Target doesn\'t exist or is not in the group!'
+        redirect back
+        return
+      end
+
+      begin
+        group.update(owner_username: target_username)
+        target.member.pm("You have been given ownership of **Group #{group.name}**!")
+        session['info'] << "Transfered ownership of Group '#{group.name}' to #{target.username}!"
+      rescue => e
+        puts e.backtrace.join("\t\n")
+        session['info'] << 'Failed to transfer ownership! Please try again later.'
+      end
+      
+      redirect back
+    end
+
     get '/auth/discord/callback' do
       session['discord_id'] = request.env['omniauth.auth'].uid
       session['discord_verified'] = request.env['omniauth.auth'].extra.raw_info.verified

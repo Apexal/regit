@@ -28,5 +28,9 @@ module Discordrb
     def muted?
       !roles.find { |r| r.name == 'Muted' }.nil?
     end
+
+    def avatar_url_fixed
+      avatar_url.end_with?('/.jpg') ? '/img/noavatar.png' : avatar_url
+    end
   end
 end

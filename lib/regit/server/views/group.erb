@@ -37,6 +37,8 @@
                     <th>Name</th>
                     <th class="hidden-xs">Discord Tag</th>
                     <th class="visible-xs">Tag</th>
+                    <th></th>
+                    <%= '<th>Actions</th>' if @group.owner == @student.member %>
                 </tr>
             </thead>
 
@@ -47,7 +49,17 @@
                         <td><%= m.info.advisement %></td>
                         <td><a href="/users/<%= m.info.username %>"><%= m.info.first_name %> <%= m.info.last_name %></a></td>
                         <td><%= m.distinct %></td>
-                        <td class="hidden-md hidden-xs"><img class="user-image" src="<%= m.avatar_url %>"></td>
+                        <td class="hidden-md hidden-xs"><img class="user-image" src="<%= m.avatar_url_fixed %>"></td>
+                        <% if  @student.member != m && @group.owner == @student.member %>
+                            <td>
+                                <form onsubmit="return confirm('Do you really want to transfer ownership of Group <%= @group.name %> to <%= m.info.first_name %>?');" method="POST" action='/groups/<%= @group.id %>/transfer?username=<%= m.info.username %>'>
+                                    <button class="btn btn-info" type='submit'>Owner</button>
+                                </form>
+                                <form onsubmit="return confirm('Do you really want to kick <%= m.info.first_name %> from Group <%= @group.name %>?');" method="POST" action='/groups/<%= @group.id %>/kick?username=<%= m.info.username %>'>
+                                    <button class="btn btn-danger" type='submit'>Kick</button>
+                                </form>
+                            </td>
+                        <% end %>
                     </tr>
                 <% end %>
             </tbody>
