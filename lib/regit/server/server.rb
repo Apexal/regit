@@ -244,6 +244,39 @@ module Regit
       redirect back
     end
 
+    # DELETE GROUP
+    post '/groups/:id/delete' do
+      redirect(to('/')) unless @logged_in
+      
+      group_id = params['id']
+      
+      begin
+        group = Regit::Database::Group.find(group_id)
+
+        if group.nil?
+          session['info'] << 'Invalid group!'
+          redirect back
+          return
+        end
+
+        # Make sure is server owner
+        unless @student.member == group.owner
+          session['info'] << "You don't own Group #{group.name}!"
+          redirect back
+          return
+        end
+      
+        Regit::Groups::delete_group(group_id)
+
+        session['info'] << "Deleted Group '#{group.name}'!"
+      rescue => e
+        puts e.backtrace.join("\t\n")
+        session['info'] << 'Failed to delete group! Please try again later.'
+      end
+      
+      redirect(to('/groups'))
+    end
+
     get '/auth/discord/callback' do
       session['discord_id'] = request.env['omniauth.auth'].uid
       session['discord_verified'] = request.env['omniauth.auth'].extra.raw_info.verified

@@ -102,4 +102,14 @@
             </tbody>
         </table>
     </div>
+
+    <% if @group.owner == @student.member %>
+        <div class="col-xs-12">
+            <hr>
+            <form class="clearfix" onsubmit="return confirm('Do you REALLY want to delete Group <%= @group.name %>?');" method="POST" action='/groups/<%= @group.id %>/delete'>
+                <button class="btn btn-danger right" type='submit'>Delete Group</button>
+            </form>
+            <hr>
+        </div>
+    <% end %>
 </div>
