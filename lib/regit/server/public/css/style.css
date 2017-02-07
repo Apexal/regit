@@ -14,6 +14,8 @@ body {
 .manage-group {
   margin-left: 0;
   margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .user-image {

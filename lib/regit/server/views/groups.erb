@@ -46,7 +46,7 @@
 
                         <% if !g.owner.nil? && g.owner == @student.member %>
                             <td class="hidden-xs">
-                                <a class="btn btn-default manage-group" href="/groups/<%= g.id %>/manage">Manage</a>
+                                <a class="btn btn-default manage-group" href="/groups/<%= g.id %>">Manage</a>
                             </td>
 
                         <% elsif @student.groups.include?(g) %>

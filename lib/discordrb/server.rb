@@ -10,7 +10,7 @@ module Discordrb
     end
 
     def students
-      members.select { |m| m.student?(school) }
+      members.compact.select { |m| m.student?(school) }
     end
 
     def setup?
