@@ -9,6 +9,8 @@ module Regit
       unless announcement_channel.nil? || message.nil? || message.empty?
         announcement_channel.send_message "#{everyone ? '@everyone ' : ''}#{message}"
       end
+
+      announcement_channel
     end
 
     def self.todays_birthdays(school)

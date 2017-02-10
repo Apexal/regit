@@ -16,7 +16,8 @@ module Regit
       Rename,
       Quotes,
       Pin,
-      Imitate
+      Imitate,
+      RegistrationCommands
     ]
 
     # Include all commands

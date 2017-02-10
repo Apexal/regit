@@ -14,7 +14,7 @@ module Regit
         event.user.pm(":wave: Welcome to the Discord server for :school: **#{event.server.school.title} #{event.server.school.school_type}**!")
         event.user.pm.start_typing
         sleep 3
-        event.user.pm("\n__To get started, log in with your Discord account here https://example.com. And that's it!")
+        event.user.pm("\n__To get started, log in with your Discord account at http://www.getontrac.info:4567/. And that's it!")
       end
     end
   end

@@ -13,6 +13,7 @@ require 'active_record'
 require 'rhs-schedule'
 require 'marky_markov'
 require 'gmail'
+require 'securerandom'
 
 require_relative 'regit/other/store_data'
 module Regit

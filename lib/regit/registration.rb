@@ -13,9 +13,9 @@ module Regit
     # }
 
     # When user enters username
-    def self.start_process(member, username)
+    def self.start_process(user, username)
       raise 'Invalid username format!' unless /^[a-z]+\d{2}$/.match(username)
-      raise 'Already registered.' unless member.info.nil?
+      #raise 'Already registered.' unless Regit::Database::Student.find_by_discord_id(user.id).nil?
 
       LOGGER.info "Starting registration process for #{username}"
 
@@ -26,24 +26,26 @@ module Regit
       code # Return to send in email
     end
 
-    def self.verify_student(member, code)
+    def self.verify_student(user, code)
       username = VERIFY_CODES.key(code)
       raise 'Invalid code!' if username.nil?
 
       # Link student to Discord account
-      Regit::Database::Student.find_by_username(username).update(discord_id: member.id)
-      LOGGER.info "Linked #{member.distinct} to #{username}"
+      student = Regit::Database::Student.find_by_username(username)
+      student.update(discord_id: user.id)
+      LOGGER.info "Linked #{user.distinct} to #{username}"
+      
+      student
     end
 
     def self.unverify_student(user)
       # Remove discord_id link
-      begin
-        student = Regit::Database::Student.find_by_discord_id(user.id) 
-        student.update(discord_id: nil)
 
-        # Give away groupss
-        Regit::Database::Group.where(owner_username).update_all(owner_username: 'fmatranga18') # Nasty, I know
-      rescue; end
+      student = Regit::Database::Student.find_by_discord_id(user.id) 
+      student.update(discord_id: nil)
+
+      # Give away groupss
+      Regit::Database::Group.where(owner_username).update_all(owner_username: 'fmatranga18') # Nasty, I know
     end
 
     def self.handle_advisement_system(member)
@@ -157,6 +159,26 @@ module Regit
       handle_advisement_system(member)
       handle_course_channels(member)
       VERIFY_CODES.delete(member.info.username)
+
+      # Announce it
+      Regit::Utilities::announce(member.server, 'Please welcome a new member to the server!', true)
+      Regit::Utilities::announce(member.server, nil).send_embed do |embed|
+        embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: member.info.pictureurl)
+        embed.title = '[Student] ' + member.info.first_name + ' ' + member.info.last_name
+        embed.add_field(name: 'School', value: member.info.school.title + ' ' + member.info.school.school_type, inline: true)
+        embed.add_field(name: 'Advisement', value: member.info.advisement, inline: true)
+        embed.add_field(name: 'Discord Tag', value: "#{member.mention} | #{member.distinct}", inline: true)
+        embed.add_field(name: 'Birthday', value: member.info.birthday.strftime('%B %e, %Y '), inline: true)
+
+        embed.color = 7380991
+        
+        embed.url = "http://www.getontrac.info:4567/users/#{member.info.username}"
+        embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{member.joined_at}", icon_url: member.avatar_url)
+      end
+
+      LOGGER.info 'Done!'
+
+      member
     end
   end
 end
