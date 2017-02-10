@@ -13,13 +13,59 @@
 </div>
 
 <div class="row">
+    <div class="col-xs-12 col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Create Group</h3>
+            </div>
+            <form action="/groups/create" method="POST" onsubmit="return confirm('Do you really want to create this group?');">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="name">Group Name</label>
+                        <input class="form-control" type="text" name="name" placeholder="Keep it short!" maxlength="20" autocomplete="off" required autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input class="form-control" type="text" name="description" placeholder="Be descriptive!" maxlength="254" autocomplete="off" required>
+                    </div>
+
+                    <button class="btn btn-info right">Create</button>
+                    <div class="form-group">
+                        <label for="public">Public Group? </label>
+                        <input type="checkbox" name="public" checked>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-md-6">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">Your Invitations</h3>
+            </div>
+            <div class="list-group">
+                <% if @invites.empty? %>
+                    <a class="list-group-item" href="#"><i>No pending group invitations.</i></a>
+                <% else %>
+                    <% @invites.each do |g| %>
+                        <a class="list-group-item" href="/groups/<%= g.id %>"><%= g.name %></a>
+                    <% end %>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
     <div class="col-xs-12 col-md-6 col-lg-3" id="self-groups">
         <h2 class="clearfix">Your Groups <small class="right"><%= @student.groups.length %> Total</small></h2>
         <div class="list-group">
             <% @student.groups.each do |g| %>
                 <a href="/groups/<%= g.id %>" class="list-group-item">
                     <% if g.owner == @student.member %><span class="badge">Owner</span><% end %>
-                    <%= g.name %>
+                    <%= '<i class="fa fa-lock" aria-hidden="true"></i> ' if g.private? %><%= g.name %>
                 </a>
             <% end %>
         </div>

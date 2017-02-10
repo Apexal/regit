@@ -57,7 +57,31 @@ module Regit
       @title = 'Groups'
 
       @groups = @student.school.groups
+      @invites = (Regit::Groups::INVITES[@student.member.id] || []).map { |i| begin;Regit::Database::Group.find(i);rescue;end }.compact
+
       erb :groups, layout: :layout
+    end
+
+    # CREATE GROUP
+    post '/groups/create' do
+      redirect(to('/')) unless @logged_in
+
+      name = params['name']
+      description = params['description']
+      is_private = params['public'].nil?
+      
+      begin
+        group = Regit::Groups::create_group(@student.member, name, description, is_private)
+        Regit::Utilities::announce(@student.school.server, "#{event.user.mention} has created public **Group #{group.name}**!") unless group.private?
+        session['info'] << "Created group '#{group.name}'!"
+      rescue => e
+        puts e
+        puts e.backtrace.join("\t\n")
+        session['info'] << 'Failed to create group! Please try again later.'
+        Regit::Utilities::clean_channels(@student.school.server)
+      end
+      
+      redirect back
     end
 
     # SHOW GROUP INFO
@@ -73,6 +97,15 @@ module Regit
         return
       end
 
+      if !@group.members.include?(@student.member) && @group.private?
+        invites = Regit::Groups::INVITES[@student.member.id]
+        if invites.nil? || !invites.include?(@group.id)
+          session['info'] << 'That group is private!'
+          redirect back
+          return
+        end
+      end
+
       @title = "Group #{@group.name}"
 
       erb :group, layout: :layout
@@ -85,7 +118,13 @@ module Regit
       group_id = params['id']
       
       begin
+        group = Regit::Database::Group.find(group_id)
+        if group.private?
+          invites = Regit::Groups::INVITES[@student.member.id]
+          raise 'You have not been invited to that group!' if invites.nil? || !invites.include?(group.id)
+        end
         group = Regit::Groups::add_to_group(@student.member, group_id)
+        Regit::Groups::INVITES[@student.member.id].delete(group_id) unless (Regit::Groups::INVITES[@student.member.id] || []).empty?
         session['info'] << "Joined group '#{group.name}'!"
       rescue => e
         puts e

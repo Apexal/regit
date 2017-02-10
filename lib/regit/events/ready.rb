@@ -8,7 +8,7 @@ module Regit
       associations = load_file("#{Dir.pwd}/data/associations.yaml")
 
       ready do |event|
-        BOT.game = 'with Data'
+        BOT.game = '!site'
 
         text_perms = Discordrb::Permissions.new
         text_perms.can_read_message_history = true
@@ -48,6 +48,16 @@ module Regit
         Regit::Schedule::update_work_channel_topic()
         LOGGER.info 'Regit is ready.'
         Regit::WebApp.run!
+
+        # Regit::Email::GMAIL.deliver do
+        #   to "fmatranga18@regis.org"
+        #   from "Student Discord Server"
+        #   subject "Bot Started"
+        #   html_part do
+        #     content_type 'text/html; charset=UTF-8'
+        #     body "<p>Regit has started.</p>"
+        #   end
+        # end
       end
     end
   end

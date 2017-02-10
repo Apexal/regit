@@ -119,7 +119,7 @@ module Regit
       group_text_channel = create_group_channel(server, owner, group_role, group_name, description)
 
       group = Regit::Database::Group.create(school_id: server.school.id, name: full_name, private: is_private, owner_username: owner.info.username, description: description, default_group: false, text_channel_id: group_text_channel.id, role_id: group_role.id, voice_channel_allowed: false)
-      LOGGER.info "Attempting to create group '#{group_name}'"
+      #LOGGER.info "Attempting to create group '#{group_name}'"
       return group
     end
 
@@ -143,8 +143,6 @@ module Regit
       group = Regit::Database::Group.find(group_id)
       raise "Group #{group_id} doesn't exist!" if group.nil?
       
-      raise 'You have not been invited!' if group.private? && !INVITES[member.id].nil? && INVITES[member.id].include?(group_id)
-
       begin;Regit::LOGGER.info "Adding #{member.distinct} to Group #{group.name}";rescue;end
       
       member.add_role(group.role)

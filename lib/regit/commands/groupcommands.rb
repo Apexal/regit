@@ -28,11 +28,10 @@ module Regit
 
         begin
           new_group = Regit::Groups::create_group(event.user.on(event.server), full_name, description, (is_private == 'yes' || is_private == '1' || is_private == 'true' ))
-          event.user.pm "You have created the Group **#{full_name}**. You now have access to `##{new_group.text_channel.name}`."
+          event.user.pm "You have created the Group **#{full_name}**. You now have access to `##{new_group.text_channel.name}`. Use your group page at http://www.getontrac.info:4567/groups/#{new_group.id} to manage it."
           
           # TODO: send embed
           Regit::Utilities::announce(event.server, "#{event.user.mention} has created public **Group #{new_group.name}**!") unless new_group.private?
-
         rescue => e
           event.user.pm "Failed to create group: #{e}"
           LOGGER.error e.backtrace.join("\n\t")
@@ -72,13 +71,18 @@ module Regit
         
         begin
           raise 'No group name given!' if group_name.nil?
-          LOGGER.info group_name.nil?
 
           group = Regit::Database::Group.where('lower(name) = ?', group_name.downcase).first
           raise 'Doesn\'t exist!' if group.nil?
+
+          if group.private?
+            invites = Regit::Groups::INVITES[event.user.id]
+            raise 'You have not been invited to that group!' if invites.nil? || !invites.include?(group.id)
+          end
+        
           Regit::Groups::add_to_group(event.user, group.id)
           group.text_channel.send_message "**#{event.user.mention}** joined the group."
-          event.user.pm 'Joined group!'
+          event.user.pm("Joined group! | http://www.getontrac.info:4567/groups/#{group.id}")
         rescue => e
           event.user.pm("Failed to join group: #{e}")
           LOGGER.error e.backtrace

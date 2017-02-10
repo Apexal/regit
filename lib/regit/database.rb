@@ -179,7 +179,7 @@ module Regit
             text_channel.define_overwrite(m, 0, 0)
           end
 
-          text_channel.topic = "**Group #{role.name}** | #{description}" + (owner.nil? ? '' : " | Owned by #{owner.mention}")
+          text_channel.topic = "**#{private? ? 'Private ' : ''}Group #{role.name}** | #{description}" + (owner.nil? ? '' : " | Owned by #{owner.mention} | http://www.getontrac.info:4567/groups/#{id}")
         end
     end
   end

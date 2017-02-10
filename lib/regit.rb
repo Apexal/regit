@@ -12,6 +12,7 @@ require 'mysql2'
 require 'active_record'
 require 'rhs-schedule'
 require 'marky_markov'
+require 'gmail'
 
 require_relative 'regit/other/store_data'
 module Regit
@@ -67,7 +68,7 @@ module Regit
     LOGGER.info 'Exiting...'
     save_to_file("#{Dir.pwd}/data/associations.yaml", Regit::CHANNEL_ASSOCIATIONS)
     save_to_file("#{Dir.pwd}/data/verify_codes.yaml", Regit::Registration::VERIFY_CODES)
-
+    Regit::Email::GMAIL.logout
     exit!
   end
   
