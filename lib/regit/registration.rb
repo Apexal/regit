@@ -15,7 +15,7 @@ module Regit
     # When user enters username
     def self.start_process(user, username)
       raise 'Invalid username format!' unless /^[a-z]+\d{2}$/.match(username)
-      #raise 'Already registered.' unless Regit::Database::Student.find_by_discord_id(user.id).nil?
+      raise 'Already registered.' unless Regit::Database::Student.find_by_discord_id(user.id).nil?
 
       LOGGER.info "Starting registration process for #{username}"
 
@@ -171,7 +171,7 @@ module Regit
         embed.add_field(name: 'Birthday', value: member.info.birthday.strftime('%B %e, %Y '), inline: true)
 
         embed.color = 7380991
-        
+
         embed.url = "http://www.getontrac.info:4567/users/#{member.info.username}"
         embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{member.joined_at}", icon_url: member.avatar_url)
       end

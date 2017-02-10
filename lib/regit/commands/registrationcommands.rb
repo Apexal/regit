@@ -21,10 +21,10 @@ module Regit
         Regit::Email::GMAIL.deliver! do
           to email
           from "Student Discord Server"
-          subject "Prove You Are #{student.first_name}"
+          subject "Verify Your Identity"
           html_part do
             content_type 'text/html; charset=UTF-8'
-            body "<h1>So Close!</h1><p>#{student.first_name}, your code is <code>#{code}</code>!</p></p>Simply enter that code on <a href='http://www.getontrac.info:4567'>the server website</a> or reply to <b>studybot</b> on the server with <code>!verify #{code}</code>.</p>"
+            body "<h1>So Close!</h1><p>#{student.first_name}, your special verification code is <code>#{code}</code>.</p></p>Simply enter that code on <a href='http://www.getontrac.info:4567'>the server website</a> or reply to <b>studybot</b> on the server with <code>!verify #{code}</code>.</p>"
           end
         end
         
@@ -39,9 +39,14 @@ module Regit
 
         # FINISH HIM
         message = event.user.pm('Setting you up...')
-        Regit::Registration::setup_user(student.member)
+
+        begin
+          Regit::Registration::setup_user(student.member)
+        rescue => e
+          message.edit(e)
+          return
+        end
         message.edit('**DONE!**')
-        
         nil
       end
     end
