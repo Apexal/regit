@@ -20,6 +20,10 @@ module Regit
         return simple
       end
 
+      def self.check_game_party(channel)
+
+      end
+
       def self.handle_voice_channel(channel, user = nil)
         LOGGER.debug "Handling voice-channel #{channel.name} #{(user.nil? ? '' : 'for ' + user.distinct)}"
         
@@ -96,6 +100,8 @@ module Regit
           if action == :leave
             text_channel.send_message("**#{member.display_name}** *has left the voice-channel.*")
             text_channel.define_overwrite(member, 0, 0)
+
+            old_channel.delete if old_channel.association == :group && old_channel.users.empty?
           elsif action == :join
             text_channel.send_message("**#{member.display_name}** *has joined the voice-channel.*")
             text_channel.define_overwrite(member, text_perms, 0)

@@ -61,6 +61,28 @@ module Regit
       group_role
     end
 
+    def self.create_group_voice_channel(group)
+      server = group.school.server
+
+      # Make sure it's allowed
+      raise 'This group is not allowed to have a voice-channel.' unless group.voice_channel_allowed
+
+      # Ensure voice-channel isn't already open
+      raise "A voice-channel for **Group #{group.name}** already is open!" unless server.voice_channels.find { |vc| vc.name == "Group #{group.name}" }.nil?
+
+      channel = server.create_channel("Group #{group.name}", 2) # Create voice-channel
+      channel.limit = group.members.length
+      channel.position = server.voice_channels.find { |vc| vc.name == '[New Room]' }.position - 1
+
+      perms = Discordrb::Permissions.new
+      perms.can_connect = true
+
+      channel.define_overwrite(server.server_role, 0, perms)
+      channel.define_overwrite(group.role, perms, 0)
+
+      channel
+    end
+
     def self.create_group_channel(server, owner, group_role, channel_name, description)
       # Perms for group members
       group_perms = Discordrb::Permissions.new
@@ -118,8 +140,8 @@ module Regit
       group_role = create_group_role(server, owner, full_name)
       group_text_channel = create_group_channel(server, owner, group_role, group_name, description)
 
-      group = Regit::Database::Group.create(school_id: server.school.id, name: full_name, private: is_private, owner_username: owner.info.username, description: description, default_group: false, text_channel_id: group_text_channel.id, role_id: group_role.id, voice_channel_allowed: false)
-      #LOGGER.info "Attempting to create group '#{group_name}'"
+      LOGGER.info "Attempting to create group '#{group_name}'"
+      group = Regit::Database::Group.create(school_id: server.school.id, name: full_name, private: is_private, owner_username: owner.info.username, description: description, default_group: false, text_channel_id: group_text_channel.id, role_id: group_role.id, voice_channel_allowed: true)
       return group
     end
 

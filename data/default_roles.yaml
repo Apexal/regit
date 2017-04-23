@@ -51,6 +51,19 @@ Moderators:
     mentionable: true
     description: Student-moderator of the school server.
 
+Administrators:
+    perms:
+        - manage_messages
+        - mute_members
+        - move_members
+        - manage_channels
+        - kick_members
+        - manage_nicknames
+        - mention_everyone
+    hoist: false
+    mentionable: true
+    description: More powerful users who can manually edit the server system.
+
 Studying:
     perms: []
     hoist: false

@@ -5,6 +5,10 @@ module Discordrb
       old_initialize.bind(self).call(data, bot, exists)
     end
 
+    def server_role
+      roles.find { |r| r.id == @id }
+    end
+
     def school
       Regit::Database::School.find_by_server_id(@id)
     end

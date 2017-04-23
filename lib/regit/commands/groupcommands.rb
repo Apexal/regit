@@ -66,6 +66,24 @@ module Regit
         nil
       end 
 
+      command(:vc, description: 'Create a temporary voice channel for a group.', min_args: 0, max_args: 0, permission_level: 1) do |event|
+        event.message.delete unless event.channel.private?
+
+        # Ensure in group channel
+        return event.user.pm('`!vc` must be used in a group\'s text-channel!') unless event.channel.association == :group
+
+        group = Regit::Database::Group.find_by_text_channel_id(event.channel.id)
+        return if group.nil?
+
+        begin
+          Regit::Groups::create_group_voice_channel(group)
+        rescue => e
+          return event.user.pm e
+        end
+
+        'A **private** temporary voice-channel for this group has been opened! It will disappear when empty.'
+      end
+
       command(:join, max_args: 1, description: 'Join a group.', usage: '`!join "Group Name"`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, group_name|
         event.message.delete unless event.channel.private?
         

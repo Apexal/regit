@@ -67,6 +67,7 @@ module Regit
 
   at_exit do
     LOGGER.info 'Exiting...'
+    LOGGER.info $!.backtrace
     save_to_file("#{Dir.pwd}/data/associations.yaml", Regit::CHANNEL_ASSOCIATIONS)
     save_to_file("#{Dir.pwd}/data/verify_codes.yaml", Regit::Registration::VERIFY_CODES)
     Regit::Email::GMAIL.logout
