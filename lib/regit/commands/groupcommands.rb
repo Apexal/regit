@@ -66,22 +66,48 @@ module Regit
         nil
       end 
 
-      command(:vc, description: 'Create a temporary voice channel for a group.', min_args: 0, max_args: 0, permission_level: 1) do |event|
+      command(:vc, description: 'Create a temporary voice channel for a group or course.', min_args: 0, max_args: 0, permission_level: 1) do |event|
         event.message.delete unless event.channel.private?
 
-        # Ensure in group channel
-        return event.user.pm('`!vc` must be used in a group\'s text-channel!') unless event.channel.association == :group
+        # Ensure in group channel or course
+        return event.user.pm('`!vc` must be used in a group or course\'s text-channel!') unless [:group, :course].include? event.channel.association
 
-        group = Regit::Database::Group.find_by_text_channel_id(event.channel.id)
-        return if group.nil?
+        if event.channel.association == :group
+          group = Regit::Database::Group.find_by_text_channel_id(event.channel.id)
+          return if group.nil?
 
-        begin
-          Regit::Groups::create_group_voice_channel(group)
-        rescue => e
-          return event.user.pm e
+          begin
+            Regit::Groups::create_group_voice_channel(group)
+          rescue => e
+            return event.user.pm e
+          end
+
+          return event.channel.send_message('A **private** temporary voice-channel for this group has been opened! It will disappear when empty.')
+        else
+          # Make sure user is in studymode
+          return even.user.pm('You must be in `!study`mode to open a course study room.') unless event.user.studying?
+
+          course = Regit::Database::Course.where(school_id: event.server.school.id, text_channel_id: event.channel.id).first
+          course_name = "#{Regit::Registration::course_name(course.title)} Study Room"
+
+          # Make sure doesn't exist
+          return event.channel.send_temporary_message('A study voice room already exists!', 5) unless event.server.voice_channels.find { |vc| vc.name == course_name }.nil?
+
+          # Create Study Room (same as normal opened room)
+          v_perms = Discordrb::Permissions.new
+          v_perms.can_connect = true
+
+          channel = event.server.create_channel(course_name, 2)
+          channel.define_overwrite(event.server.roles.find { |r| r.name == 'Studying' }, v_perms, 0)
+          channel.define_overwrite(event.server.roles.find { |r| r.id == event.server.id }, 0, v_perms)
+
+          # Move user in if in voice
+          event.server.move(event.user, channel) unless event.user.voice_channel.nil?
+
+          return event.channel.send_message("@everyone **Enter `!study`mode and join `#{course_name}` to group study #{course.title}!**")
         end
 
-        'A **private** temporary voice-channel for this group has been opened! It will disappear when empty.'
+        nil
       end
 
       command(:join, max_args: 1, description: 'Join a group.', usage: '`!join "Group Name"`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, group_name|

@@ -24,7 +24,7 @@ module Discordrb
           :course
         end
       elsif type == 2
-        if @name.start_with?('Room ') || @name.start_with?('Study Room ') || @name.end_with?(' Party')
+        if @name.start_with?('Room ') || @name.start_with?('Study Room ') || @name.end_with?(' Study Room') || @name.end_with?(' Party')
           :room
         elsif @name.start_with?('Group ')
           :group
