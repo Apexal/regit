@@ -7,15 +7,21 @@ module Regit
 
       command(:rename, description: 'Change name of a voice room.', permission_level: 1, min_args: 0, max_args: 1) do |event, new_name|
         event.message.delete unless event.channel.private?
-        
+
         # Check if in #voice-channel
         unless event.channel.association == :voice_channel
-          event.channel.send_temporary_message("You can must use this in #{event.user.voice_channel.associated_channel.mention}!", 5) unless event.user.voice_channel.nil?
+          event.channel.send_temporary_message("You must use this in #{event.user.voice_channel.associated_channel.mention}!", 5) unless event.user.voice_channel.nil?
           return
         end
 
         voice_channel = event.channel.associated_channel
         return nil if voice_channel.nil?
+
+        # Make sure is a disposable voice room
+        unless voice_channel.name.start_with? 'Room '
+          event.channel.send_temporary_message('You cannot rename this voice-channel!', 5)
+          return
+        end
 
         # Validate new_name
         # max_length = 100

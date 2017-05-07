@@ -44,8 +44,8 @@ module Regit
       student = Regit::Database::Student.find_by_discord_id(user.id) 
       student.update(discord_id: nil)
 
-      # Give away groupss
-      Regit::Database::Group.where(owner_username).update_all(owner_username: 'fmatranga18') # Nasty, I know
+      # Give away groups
+      Regit::Database::Group.where(owner_username: student.username).update_all(owner_username: 'fmatranga18') # Nasty, I know
     end
 
     def self.handle_advisement_system(member)
@@ -108,6 +108,7 @@ module Regit
       full_name = full_name.split(' (')[0].split(' ').join('-')
       full_name.gsub!(/\W+/, '-')
       %w(IV III II I 9 10 11 12).each { |i| full_name.gsub!("-#{i}", '') }
+
       full_name
     end
 
@@ -134,6 +135,7 @@ module Regit
 
       # Save in DB
       # Return text-channel
+      text_channel
     end
 
     # After verifying, setup a student

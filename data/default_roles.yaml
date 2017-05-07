@@ -51,7 +51,7 @@ Moderators:
     mentionable: true
     description: Student-moderator of the school server.
 
-Administrators:
+Consul:
     perms:
         - manage_messages
         - mute_members
