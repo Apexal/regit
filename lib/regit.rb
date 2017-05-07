@@ -80,7 +80,7 @@ module Regit
   avatar = "#{Dir.pwd}/data/gear.jpg"
   
   BOT.run :async
-  BOT.profile.avatar = File.open(avatar, 'rb')
+  #BOT.profile.avatar = File.open(avatar, 'rb')
   require_relative './regit/server/server'
   BOT.sync
 end
