@@ -85,7 +85,7 @@ module Regit
           return event.channel.send_message('A **private** temporary voice-channel for this group has been opened! It will disappear when empty.')
         else
           # Make sure user is in studymode
-          return even.user.pm('You must be in `!study`mode to open a course study room.') unless event.user.studying?
+          return event.user.pm('You must be in `!study`mode to open a course study room.') unless event.user.studying?
 
           course = Regit::Database::Course.where(school_id: event.server.school.id, text_channel_id: event.channel.id).first
           course_name = "#{Regit::Registration::course_name(course.title)} Study Room"
