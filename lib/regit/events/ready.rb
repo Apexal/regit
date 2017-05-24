@@ -30,7 +30,7 @@ module Regit
 
           CHANNEL_ASSOCIATIONS[server.id].select { |v_id, _| server.voice_channels.find { |v| v.id == v_id }.nil? }.each { |v_id, _| CHANNEL_ASSOCIATIONS[server.id].delete(v_id) } # Remove extra associations
           server.text_channels.select { |t| t.association == :voice_channel && !CHANNEL_ASSOCIATIONS[server_id].has_value?(t.id) }.map(&:delete)
-          LOGGER.info "33"
+
           server.voice_channels.each do |v|
             next if v.name == !server.afk_channel.nil? && v == server.afk_channel
             t_channel = Regit::Events::VoiceState::handle_voice_channel(v)
@@ -38,8 +38,8 @@ module Regit
             v.users.each do |u|
               t_channel.define_overwrite(u, text_perms, 0)
             end
-            LOGGER.info "41"
-            # Account for people in #voice-channel's they arent supposed to be in
+						
+						# Account for people in #voice-channel's they arent supposed to be in
             t_channel.users.select { |u| u.student?(server.school) && !v.users.include?(u) }.map { |u| t_channel.define_overwrite(u, 0, 0) } unless t_channel.nil?
           end
 

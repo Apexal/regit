@@ -30,7 +30,10 @@ module Regit
         # Check what type of room it is
         if channel.name == CONFIG.new_room_name && !channel.users.empty?
           # Person joined empty voice-channel! Transform into room!
-
+					
+					# Give them ownership of associated text-channel 
+					CHANNEL_OWNERS[channel.server.id][channel.id] = user.id unless user.nil?
+					
           v_perms = Discordrb::Permissions.new
           v_perms.can_connect = true
 

@@ -44,9 +44,10 @@ module Regit
   
   CONFIG = Config.new
   
-  OLD_VOICE_STATES = {}
-  CHANNEL_ASSOCIATIONS = {}
-  
+  OLD_VOICE_STATES = Hash.new
+  CHANNEL_ASSOCIATIONS = Hash.new
+	CHANNEL_OWNERS = Hash.new({})
+	
   # Require all modules
   Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| require file }
 

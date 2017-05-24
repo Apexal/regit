@@ -4,7 +4,11 @@ module Discordrb
     define_method(:initialize) do |data, bot, server = nil|
       old_initialize.bind(self).call(data, bot, server)
     end
-
+	
+		def student_owner
+			@server.members.find { |m| m.id == Regit::CHANNEL_OWNERS[@server][@id] }
+		end
+		
     def association
       small_advs = Regit::Database::Student.distinct.pluck(:advisement)
       large_advs = small_advs.map { |a| a[0..1] }.uniq
