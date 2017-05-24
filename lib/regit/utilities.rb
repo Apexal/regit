@@ -2,7 +2,9 @@ module Regit
   module Utilities
 
     ANNOUNCED_BIRTHDAYS_DATES = []
-
+    
+    # Can be used to send an announcement to a server, or just to get the announcements channel on a server
+    # the 'everyone' parameter determines whether the announcement mentions everybody
     def self.announce(server, message, everyone=false)
       announcement_channel = server.text_channels.find { |t| t.name == 'announcements' }
 
@@ -12,7 +14,8 @@ module Regit
 
       announcement_channel
     end
-
+    
+    # Returns a list of Students whose birthday is the current date
     def self.todays_birthdays(school)
       date = DateTime.now
       Regit::Database::Student.where("MONTH(birthday) = ? and DAY(birthday) = ? and school_id = ? and discord_id IS NOT NULL", date.month, date.day, school.id)
@@ -23,7 +26,8 @@ module Regit
       announce(server, ":birthday: TODAY'S BIRTHDAYS: #{todays_birthdays(server.school).map { |s| "**#{s.first_name} #{s.last_name} of #{s.advisement}** (#{s.member.mention})" }.join(', ')}")
       ANNOUNCED_BIRTHDAYS_DATES << DateTime.now.to_date
     end
-
+    
+    # Converts a list of perms (from YAML) to a permissions object
     def self.list_to_perms(perms)
       allow = Discordrb::Permissions.new
       deny = Discordrb::Permissions.new
@@ -56,7 +60,8 @@ module Regit
       server.text_channels.select { |t| t.association.nil? }.map(&:delete)
       server.roles.select { |r| r.association.nil? }.map(&:delete)
     end
-
+    
+    # Sanitize messages to remove any mentions
     def self.replace_mentions(message)
       message.strip!
       message.gsub! '**', ''
