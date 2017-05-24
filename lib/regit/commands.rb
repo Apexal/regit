@@ -13,7 +13,7 @@ module Regit
       Moderation,
       Studymode,
       Colors,
-      Rename,
+      VoiceCommands,
       Quotes,
       Pin,
 #      Imitate,

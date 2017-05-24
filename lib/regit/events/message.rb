@@ -3,6 +3,7 @@ module Regit
     module Mention
       extend Discordrb::EventContainer
 
+      # Allow mentioning of students by Regis username
       message(containing: '@') do |event|
         mentions = []
 
@@ -27,6 +28,7 @@ module Regit
       message(containing: '@everyone') do |event|
         return if event.channel.private?
 
+        # Warn about use of @everyone when user doesn't have permission to use it
         event.channel.send_temporary_message('You can\'t use `@everyone` in this channel. Try using `@here`.`' , 10) unless event.user.on(event.server).permission?(:mention_everyone, event.channel)
       end
 
@@ -44,7 +46,11 @@ module Regit
 
 
       message do |event|
-        event.message.delete if !event.channel.private? && event.user.on(event.server).role?(event.server.roles.find { |r| r.name == 'Muted' })
+        begin
+          event.message.delete if !event.channel.private? && event.user.on(event.server).role?(event.server.roles.find { |r| r.name == 'Muted' })
+        rescue
+          LOGGER.error 'Could not find author of message.'
+        end
       end
     end
   end

@@ -2,7 +2,7 @@
 
 module Regit
   module Commands
-    module Rename
+    module VoiceCommands
       extend Discordrb::Commands::CommandContainer
 			
 			# Allow voice-channel owners to kick people from the channel

@@ -52,7 +52,7 @@ module Regit
 
         #Regit::Schedule::update_work_channel_topic()
         LOGGER.info 'Regit is ready.'
-        Regit::WebApp.run!
+        # Regit::WebApp.run!
 
         # Regit::Email::GMAIL.deliver do
         #   to "fmatranga18@regis.org"
