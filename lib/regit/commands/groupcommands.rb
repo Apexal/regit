@@ -88,7 +88,7 @@ module Regit
           # return event.user.pm('You must be in `!study`mode to open a course study room.') unless event.user.studying?
 
           course = Regit::Database::Course.where(school_id: event.server.school.id, text_channel_id: event.channel.id).first
-          course_name = "#{Regit::Registration::course_name(course.title)} Study Room"
+          course_name = "#{course.teacher.last_name} #{Regit::Registration::course_name(course.title)} Study Room"
 
           # Make sure doesn't exist
           return event.channel.send_temporary_message('A study voice room already exists!', 5) unless event.server.voice_channels.find { |vc| vc.name == course_name }.nil?
