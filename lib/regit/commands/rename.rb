@@ -54,7 +54,7 @@ module Regit
         new_name = new_name[0..max_length-1]
 
         voice_channel.name = "Room #{new_name}"
-        event.channel.topic = "Private chat for all those in the voice-channel **#{voice_channel.name}**."
+        event.channel.topic = "Private chat for all those in the voice-channel **#{voice_channel.name}** | Owned by #{voice_channel.student_owner.mention}"
 
         "**#{event.user.display_name}** renamed room to **Room #{new_name}**."
       end

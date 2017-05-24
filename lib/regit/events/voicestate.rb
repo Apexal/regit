@@ -75,7 +75,7 @@ module Regit
           # Must create
           # Create associated #voice-channel text-channel
           text_channel = voice_channel.server.create_channel('voice-channel', 0)
-          text_channel.topic = "Private chat for all those in the voice-channel **#{voice_channel.name}**."
+          text_channel.topic = "Private chat for all those in the voice-channel **#{voice_channel.name}** | Owned by #{voice_channel.student_owner.mention}"
 
           # For when a user creates a new room, it makes it seem less glitchy
           text_channel.define_overwrite(member, text_perms, 0) unless member.nil?
