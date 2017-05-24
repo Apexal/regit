@@ -15,7 +15,11 @@ module Regit
 
     def self.todays_birthdays(school)
       date = DateTime.now
-      Regit::Database::Student.where("MONTH(birthday) = ? and DAY(birthday) = ? and school_id = ? and discord_id IS NOT NULL", date.month, date.day, school.id)
+      birthdays = Regit::Database::Student.where("MONTH(birthday) = ? and DAY(birthday) = ? and school_id = ? and discord_id IS NOT NULL", date.month, date.day, school.id)
+      
+      LOGGER.info "Birthdays: #{birthdays.map { |s| s.description }.join ', '}"
+
+      birthdays
     end
 
     def self.announce_birthdays(server)
