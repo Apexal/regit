@@ -9,7 +9,8 @@ module Regit
       Join,
       NewServer,
       Presence,
-      VoiceState
+      VoiceState,
+      MemberUpdate
     ]
 
     def self.include!
