@@ -36,7 +36,7 @@ module Regit
 
         begin
           raise 'You must use this command in a associated #voice-channel.' if vc.nil?
-          raise "Only the owner of this channel (#{student_owner.mention}) and moderators can kick users!" unless vc.student_owner == user || user.moderator?
+          raise "Only the owner of this channel (#{vc.student_owner.mention}) and moderators can kick users!" unless vc.student_owner == user || user.moderator?
 
           kicked = Regit::VoiceChannels::kick_from_voice(vc, event.message.mentions, user)
           raise 'Nobody valid was passed.' if kicked.empty?
@@ -49,35 +49,23 @@ module Regit
         nil
       end
 			
-      command(:rename, description: 'Change name of a voice room.', permission_level: 1, min_args: 0, max_args: 1) do |event, new_name|
+      command(:rename, description: 'Change name of a voice room.', permission_level: 1, min_args: 1, max_args: 1) do |event, new_name|
         event.message.delete unless event.channel.private?
-
-        # Check if in #voice-channel
-        unless event.channel.association == :voice_channel
-          event.channel.send_temporary_message("You must use this in #{event.user.voice_channel.associated_channel.mention}!", 5) unless event.user.voice_channel.nil?
-          return
-        end
-
-        voice_channel = event.channel.associated_channel
-        return nil if voice_channel.nil?
-
-        # Make sure is a disposable voice room
-        unless voice_channel.name.start_with? 'Room '
-          event.channel.send_temporary_message('You cannot rename this voice-channel!', 5)
-          return
-        end
-
-        # Validate new_name
-        # max_length = 100
-        new_name.strip!
         
-        max_length = 100 - 'Room '.length # 95; easy to change later on
-        new_name = new_name[0..max_length-1]
+        user = event.user.on(event.server)
+        voice_channel = event.channel.associated_channel
 
-        voice_channel.name = "Room #{new_name}"
-        event.channel.topic = "Private chat for all those in the voice-channel **#{voice_channel.name}** | Owned by #{voice_channel.student_owner.mention}"
+        begin
+          raise 'You must use this command in a associated #voice-channel.' if voice_channel.nil?
+          raise "Only the owner of this channel (#{voice_channel.student_owner.mention}) and moderators can kick users!" unless voice_channel.student_owner == user || user.moderator?
 
-        "**#{event.user.display_name}** renamed room to **Room #{new_name}**."
+          new_name = Regit::VoiceChannels::rename_room(voice_channel, new_name)
+          event.channel.send_message("**#{user.display_name}** renamed room to **#{voice_channel.name}**.")
+        rescue => e
+          event.user.pm "Failed to rename room: #{e}"
+        end
+
+        nil
       end
     end
   end

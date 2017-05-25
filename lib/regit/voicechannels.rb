@@ -111,6 +111,22 @@ module Regit
       end
     end
 
+    def self.rename_room(voice_channel, new_name)
+      raise 'Not a voice room' unless voice_channel.association == :room
+
+      new_name.strip!
+        
+      max_length = 100 - 'Room '.length # 95; easy to change later on
+      new_name = new_name[0..max_length-1]
+
+      raise 'Invalid name' if new_name.empty?
+
+      voice_channel.name = "Room #{new_name}"
+      voice_channel.associated_channel.topic = "Private chat for all those in the voice-channel [**#{voice_channel.name}**] | Owned by #{voice_channel.student_owner.mention}"
+      
+      new_name
+    end
+
     def self.toggle_ban_from_voice(channel, target, user=nil)
       raise 'This channel doesn\'t have an owner...' if channel.student_owner.nil?
       
