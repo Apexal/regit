@@ -75,7 +75,9 @@ module Regit
           # Must create
           # Create associated #voice-channel text-channel
           text_channel = voice_channel.server.create_channel('voice-channel', 0)
-          text_channel.topic = "Private chat for all those in the voice-channel **#{voice_channel.name}**#{voice_channel.student_owner.nil? ? '' : "| Owned by #{voice_channel.student_owner.mention}"}"
+          text_channel.topic = "Private chat for all those in the voice-channel **#{voice_channel.name}**#{voice_channel.student_owner.nil? ? '' : " | Owned by #{voice_channel.student_owner.mention}"}"
+
+          text_channel.send_message("#{voice_channel.student_owner.nil? ? '' : "**#{voice_channel.student_owner.mention}, you now own this channel!**\n"}Use `!vkick @user1 @user2 ...` to kick users from the voice channel.\nUse `!vban @user` to toggle ban for one user from the voice channel.")
 
           # For when a user creates a new room, it makes it seem less glitchy
           text_channel.define_overwrite(member, text_perms, 0) unless member.nil?

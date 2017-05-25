@@ -6,8 +6,8 @@ module Regit
       extend Discordrb::Commands::CommandContainer
 			
       # Allow voice-channel owners to ban people from the channel
-			command(:vban, description: 'Toggle ban of unwanted users from a voice-channel.', permission_level: 1, usage: '`!vban @user`') do |event|
-				event.message.delete unless event.channel.private?
+      command(:vban, description: 'Toggle ban of unwanted user from a voice-channel.', permission_level: 1, usage: '`!vban @user`') do |event|
+        event.message.delete unless event.channel.private?
 				
         user = event.user.on(event.server)
         vc = event.channel.associated_channel
