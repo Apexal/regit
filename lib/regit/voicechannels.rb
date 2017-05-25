@@ -184,7 +184,13 @@ module Regit
         voice_channel.define_overwrite(voice_channel.server.roles.find { |r| r.name == 'Studying' }, VOICE_PERMS, 0)
         voice_channel.define_overwrite(voice_channel.server.roles.find { |r| r.id == voice_channel.server.id }, 0, VOICE_PERMS)
       else
-        voice_channel.name = 'Room ' + (user.nil? || !user.student?(voice_channel.server.school) ? voice_channel.server.school.staffs.order("RAND()").first : user.info.teachers.sample ).last_name  # Name after teacher
+        # If user is playing a game, name room after game
+        unless user.nil? || user.game.nil?
+          voice_channel.name = "Room #{user.game[0..20]}"
+        else
+          voice_channel.name = 'Room ' + (user.nil? || !user.student?(voice_channel.server.school) ? voice_channel.server.school.staffs.order("RAND()").first : user.info.teachers.sample ).last_name  # Name after teacher
+        end
+
 
         # Block now to studying users
         voice_channel.define_overwrite(voice_channel.server.roles.find { |r| r.name == 'Studying' }, 0, VOICE_PERMS)
