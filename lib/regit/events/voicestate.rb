@@ -11,6 +11,7 @@ module Regit
       # Voice channel deleted
       channel_delete(type: 2) do |event|
         begin
+          CHANNEL_OWNERS[event.server.id].delete event.id
           event.server.text_channels.find { |tc| tc.id == CHANNEL_ASSOCIATIONS[event.server.id][event.id] }.delete
         rescue => e
           LOGGER.info 'Failed to remove associated channel on vc delete: '

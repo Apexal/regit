@@ -13,6 +13,7 @@ module Regit
 
     def self.save_associations
       save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
+      save_to_file("#{Dir.pwd}/data/channel_owners.yaml", CHANNEL_OWNERS)
     end
 
     def self.trim_voice_associations(server)
@@ -25,6 +26,8 @@ module Regit
     def self.setup_server_voice(server)
       LOGGER.info "Setting up voice system for [#{server.name}]"
       
+      CHANNEL_OWNERS[server.id] = Hash.new
+
       LOGGER.info 'Trimming associations'
       trim_voice_associations(server)
 
@@ -174,6 +177,7 @@ module Regit
     def self.create_new_room(voice_channel, user=nil)
       # Give them ownership of associated text-channel 
       CHANNEL_OWNERS[voice_channel.server.id][voice_channel.id] = user.id unless user.nil?
+      save_associations
 
       if !user.nil? && user.studying?
         voice_channel.name = "Study Room Fun" # TODO: Better filler

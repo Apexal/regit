@@ -56,7 +56,8 @@ module Regit
   CHANNEL_ASSOCIATIONS = load_file("#{Dir.pwd}/data/associations.yaml")
   CHANNEL_ASSOCIATIONS ||= Hash.new({})
 
-	CHANNEL_OWNERS = Hash.new({})
+  CHANNEL_OWNERS = load_file("#{Dir.pwd}/data/channel_owners.yaml")
+  CHANNEL_OWNERS ||= Hash.new({})
 	
   # Require all modules
   Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| require file }
