@@ -5,6 +5,28 @@ module Regit
     module VoiceCommands
       extend Discordrb::Commands::CommandContainer
 			
+      # Allow voice-channel owners to ban people from the channel
+			command(:vban, description: 'Toggle ban of unwanted users from a voice-channel.', permission_level: 1, usage: '`!vban @user`') do |event|
+				event.message.delete unless event.channel.private?
+				
+        user = event.user.on(event.server)
+        vc = event.channel.associated_channel
+
+        begin
+          raise 'You must give 1 user to toggle ban.' if event.message.mentions.length != 1
+          raise 'You must use this command in a associated #voice-channel.' if vc.nil?
+          raise "Only the owner of this channel (#{student_owner.mention}) and moderators can ban users!" unless vc.student_owner == user || user.moderator?
+
+          is_banned = Regit::VoiceChannels::toggle_ban_from_voice(vc, event.message.mentions.first.on(event.server), user)
+
+          event.channel.send_message("**#{user.mention} #{is_banned ? 'banned' : 'unbanned'} #{event.message.mentions.first.mention} from the voice-channel.**")
+        rescue => e
+          user.pm("Failed to ban user from voice-channel: #{e}")
+        end
+
+        nil
+      end
+      
 			# Allow voice-channel owners to kick people from the channel
 			command(:vkick, description: 'Kick unwanted users from a owned voice-channel.', permission_level: 1, usage: '`!vkick @user1 @user2`') do |event|
 				event.message.delete unless event.channel.private?
@@ -17,8 +39,9 @@ module Regit
           raise "Only the owner of this channel (#{student_owner.mention}) and moderators can kick users!" unless vc.student_owner == user || user.moderator?
 
           kicked = Regit::VoiceChannels::kick_from_voice(vc, event.message.mentions, user)
-          
-          event.channel.send_message("**#{vc.student_owner.mention} kicked #{kicked.map { |m| m.mention }.join(', ')} from the voice-channel.")
+          raise 'Nobody valid was passed.' if kicked.empty?
+
+          event.channel.send_message("**#{user.mention} kicked #{kicked.map { |m| m.mention }.join(', ')} from the voice-channel.**")
         rescue => e
           user.pm("Failed to kick users from voice-channel: #{e}")
         end
