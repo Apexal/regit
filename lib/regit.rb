@@ -44,9 +44,20 @@ module Regit
   
   CONFIG = Config.new
   
-  OLD_VOICE_STATES = Hash.new
-  CHANNEL_ASSOCIATIONS = Hash.new
-	CHANNEL_OWNERS = Hash.new({})
+  # OLD_VOICE_STATES = Hash.new({})
+  
+  # This hash will store voice channel_ids mapped to text_channel ids
+  # {
+  #   "server_id": {
+  #     "267526886454722560": "295714345344565249",
+  #     etc.
+  #   }
+  # }
+  CHANNEL_ASSOCIATIONS = load_file("#{Dir.pwd}/data/associations.yaml")
+  CHANNEL_ASSOCIATIONS ||= Hash.new({})
+
+  CHANNEL_OWNERS = load_file("#{Dir.pwd}/data/channel_owners.yaml")
+  CHANNEL_OWNERS ||= Hash.new({})
 	
   # Require all modules
   Dir["#{File.dirname(__FILE__)}/regit/*.rb"].each { |file| require file }

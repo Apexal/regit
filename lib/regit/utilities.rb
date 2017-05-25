@@ -59,6 +59,7 @@ module Regit
 
     # Remove any remnants 
     def self.clean_channels(server)
+      return
       LOGGER.info 'Cleaing channels...'
       server.voice_channels.select { |v| v.association.nil? }.map(&:delete)
       server.text_channels.select { |t| t.association.nil? }.map(&:delete)

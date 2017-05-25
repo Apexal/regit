@@ -66,6 +66,10 @@ module Regit
         end
       end
 
+      def short_description
+        "#{first_name} #{last_name} [#{grade}th grade]"
+      end
+
       def description
         "#{first_name} #{last_name} (#{grade}th grade) of #{school.title}"
       end
