@@ -44,7 +44,7 @@ module Regit
   
   CONFIG = Config.new
   
-  OLD_VOICE_STATES = Hash.new({})
+  # OLD_VOICE_STATES = Hash.new({})
   
   # This hash will store voice channel_ids mapped to text_channel ids
   # {
@@ -54,7 +54,7 @@ module Regit
   #   }
   # }
   CHANNEL_ASSOCIATIONS = load_file("#{Dir.pwd}/data/associations.yaml")
-  CHANNEL_ASSOCIATIONS.default({})
+  CHANNEL_ASSOCIATIONS ||= Hash.new({})
 
 	CHANNEL_OWNERS = Hash.new({})
 	

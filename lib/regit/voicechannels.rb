@@ -1,5 +1,6 @@
 module Regit
   module VoiceChannels
+    extend StoreData
 
     # These are the perms given to people for a associated voice-channel
     TEXT_PERMS = Discordrb::Permissions.new
@@ -12,14 +13,18 @@ module Regit
     end
 
     def self.trim_voice_associations(server)
-      server.associations.each do |vc_id, tc_id|
-        server.associations.delete(vc_id) if tc_id.nil? || server.voice_channels.find { |vc| vc.id == vc_id }.nil?
+      CHANNEL_ASSOCIATIONS[server.id].each do |vc_id, tc_id|
+        CHANNEL_ASSOCIATIONS[server.id].delete(vc_id) if tc_id.nil? || server.voice_channels.find { |vc| vc.id == vc_id }.nil?
       end
       save_associations
     end
 
     def self.setup_server_voice(server)
       LOGGER.info "Setting up voice system for [#{server.name}]"
+      LOGGER.info "CURRENT SERVER ASSOCIATIONS:"
+      CHANNEL_ASSOCIATIONS[server.id] ||= {}
+      LOGGER.info CHANNEL_ASSOCIATIONS[server.id]
+      
       LOGGER.info 'Trimming associations'
       trim_voice_associations(server)
 
@@ -27,22 +32,25 @@ module Regit
 
       # Loop through existing #voice-channel text channels and make sure they are associated or delete them
       server.text_channels.select { |tc| tc.association == :voice_channel }.each do |tc|
-        unless server.associations.values.include?(tc.id)
+        LOGGER.info "At #{tc.name} (#{tc.id})"
+        unless CHANNEL_ASSOCIATIONS[server.id].values.include?(tc.id)
           # Not associated
           tc.delete
+          LOGGER.info 'Deleted an orphaned #voice-channel'
           next
         end
 
-        vc = server.voice_channels.find { |vc| vc.id == server.associations.key(tc) } # Associated voice-channel
-        tc.users.select { |u| !vc.users.include?(u) }.each do |u|
+        vc = server.voice_channels.find { |vc| vc.id == CHANNEL_ASSOCIATIONS[server.id].key(tc) } # Associated voice-channel
+        #tc.users.select { |u| u.defined_permission?(:send_messages, tc) && !vc.users.include?(u) }.each do |u| # TODO: FIX WHEN tc.users IS FIXED
+          # LOGGER.info(u.distinct)
           # Users not in the voice channel but somehow in the #voice-channel text channel
-          tc.define_overwrite(u, 0, 0) # Effectively removes their perms to see the #voice-channel
-        end
+          #tc.define_overwrite(u, 0, 0) # Effectively removes their perms to see the #voice-channel
+        #end
       end
 
       LOGGER.info 'Associating...'
-      server.voice_channels.each { |vc| associate(vc) }
-      OLD_VOICE_STATES[server.id] = server.voice_states.clone
+      server.voice_channels.each { |vc| associate_voice_channel(vc) }
+
       LOGGER.info 'Done'
     end
 
@@ -51,9 +59,9 @@ module Regit
       return if voice_channel == server.afk_channel # No need for AFK channel to have associated text-channel
 
       puts "Associating '#{voice_channel.name} / #{server.name}'"
-      text_channel = server.text_channels.find { |tc| tc.id == server.associations[voice_channel.id] }
+      text_channel = server.text_channels.find { |tc| tc.id == CHANNEL_ASSOCIATIONS[server.id][voice_channel.id] }
 
-      if server.associations[voice_channel.id].nil? || text_channel.nil?
+      if CHANNEL_ASSOCIATIONS[server.id][voice_channel.id].nil? || text_channel.nil?
         text_channel = server.create_channel('voice-channel', 0) # Creates a matching text-channel called 'voice-channel'
         text_channel.topic = "Private chat for all those in the voice-channel [**#{voice_channel.name}**]."
         
@@ -63,11 +71,27 @@ module Regit
         end
 
         text_channel.define_overwrite(voice_channel.server.roles.find { |r| r.id == voice_channel.server.id }, 0, TEXT_PERMS) # Set default perms as invisible
-        server.associations[voice_channel.id] = text_channel.id # Associate the two 
+        CHANNEL_ASSOCIATIONS[server.id][voice_channel.id] = text_channel.id # Associate the two 
         save_associations
       end
 
       text_channel
+    end
+
+    def self.handle_user_change(action, voice_channel, user)
+      puts "Handling user #{action} for '#{voice_channel.name} / #{voice_channel.server.name}' for #{user.distinct}"
+      text_channel = associate_voice_channel(voice_channel) # This will create it if it doesn't exist. Pretty cool!
+
+      # For whatever reason, maybe is AFK channel
+      return if text_channel.nil?
+
+      if action == :join
+        text_channel.send_message("**#{user.display_name}** #{user.info.nil? ? '' : "*#{user.info.short_description}*"} joined the voice-channel.")
+        text_channel.define_overwrite(user, TEXT_PERMS, 0)
+      else
+        text_channel.send_message("**#{user.display_name}** #{user.info.nil? ? '' : "*#{user.info.short_description}*"} left the voice-channel.")
+        text_channel.define_overwrite(user, 0, 0)
+      end
     end
 
     def self.toggle_ban_from_voice(channel, target, user=nil)

@@ -38,7 +38,7 @@ module Regit
           # Tries to remove any unused color roles
           event.server.roles.select { |r| r.association == :color && r.members.empty? }.map(&:delete)
         rescue
-          LOGGER.log 'Failed to remove unused color roles...'
+          LOGGER.info 'Failed to remove unused color roles...'
         end
 
         nil
