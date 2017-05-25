@@ -169,10 +169,12 @@ module Regit
         # Block now to studying users
         voice_channel.define_overwrite(voice_channel.server.roles.find { |r| r.name == 'Studying' }, 0, VOICE_PERMS)
       end
+      voice_channel.user_limit = nil
 
       # THIS IS BEFORE handle_associated_channel TO MAKE IT LOOK FASTER
       # Create new empty room
-      voice_channel.server.create_channel(CONFIG.new_room_name, 2)
+      new_room = voice_channel.server.create_channel(CONFIG.new_room_name, 2)
+      new_room.user_limit = 1
     end
   end
 end
