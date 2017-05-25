@@ -4,8 +4,6 @@ module Regit
     module Ready
       extend Discordrb::EventContainer
       extend StoreData
-      
-      associations = load_file("#{Dir.pwd}/data/associations.yaml")
 
       ready do |event|
         BOT.game = '!help'
@@ -19,6 +17,8 @@ module Regit
           Regit::BOT.set_role_permission(server.roles.find { |r| r.name == 'Moderators' }.id, 2)
           Regit::BOT.set_user_permission(152621041976344577, 3) # Me
           
+          setup_server_voice(server)
+
           begin
             Regit::Utilities::clean_channels(server)
           rescue => e

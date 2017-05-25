@@ -20,5 +20,9 @@ module Discordrb
     def setup?
       !school.nil?
     end
+
+    def associations
+      Regit::CHANNEL_ASSOCIATIONS[@id]
+    end
   end
 end
