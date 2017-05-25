@@ -4,7 +4,7 @@ module Regit
       extend Discordrb::EventContainer
 
       # Voice channel created
-      channel_create(type: 2) do |event|
+      channel_create(type: 2, name: not!(Regit::CONFIG.new_room_name)) do |event|
         Regit::VoiceChannels::associate_voice_channel(event.channel)
       end
 
