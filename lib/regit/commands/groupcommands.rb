@@ -92,10 +92,10 @@ module Regit
       end 
 
       command(:vc, description: 'Create a temporary voice channel for a group or course.', min_args: 0, max_args: 0, permission_level: 1) do |event|
-        # event.message.delete unless event.channel.private?
+        event.message.delete unless event.channel.private?
 
         # Ensure in group channel or course
-        return event.user.pm('`!vc` must be used in a group or course\'s text-channel!') unless [:group, :course].include? event.channel.association
+        return event.user.pm('`!vc` must be used in a group, course, or advisement\'s text-channel!') unless [:group, :course, :advisement].include? event.channel.association
 
         if event.channel.association == :group
           group = Regit::Database::Group.find_by_text_channel_id(event.channel.id)
@@ -108,6 +108,28 @@ module Regit
           end
 
           return event.channel.send_message('A **private** temporary voice-channel for this group has been opened! It will disappear when empty.')
+        elsif event.channel.association == :advisement
+          advisement = event.channel.name.upcase
+
+          # Create Advisement Room (same as normal opened room)
+          v_perms = Discordrb::Permissions.new
+          v_perms.can_connect = true
+
+          # Make sure doesn't exist
+          return event.channel.send_temporary_message('An advisement voice room already exists!', 5) unless event.server.voice_channels.find { |vc| vc.name == "Advisement #{advisement}" }.nil?
+
+          channel = event.server.create_channel("Advisement #{advisement}", 2)
+
+          # Allow only one advisement entry
+          adv_role = event.server.roles.find { |r| r.name == advisement }
+          channel.define_overwrite(adv_role, v_perms, 0) # Advisement
+          channel.define_overwrite(event.server.roles.find { |r| r.id == event.server.id }, 0, v_perms) # @everyone
+          # channel.user_limit = adv_role.members.length
+
+          # Move user in if in voice
+          event.server.move(event.user, channel) unless event.user.voice_channel.nil?
+
+          return event.channel.send_message("@everyone Join **Advisement #{advisement}** to for a private chat! (Opened by #{event.user.mention})")
         else
           # Make sure user is in studymode
           # return event.user.pm('You must be in `!study`mode to open a course study room.') unless event.user.studying?
@@ -126,7 +148,7 @@ module Regit
           # channel.define_overwrite(event.server.roles.find { |r| r.name == 'Studying' }, v_perms, 0)
 
           # Allow only one grade-level entry
-          channel.define_overwrite(channel.server.roles.find { |r| r.name == event.user.info.grade_name }, v_perms, 0)
+          channel.define_overwrite(event.server.roles.find { |r| r.name == event.user.info.grade_name }, v_perms, 0)
           channel.define_overwrite(event.server.roles.find { |r| r.id == event.server.id }, 0, v_perms)
 
           # Move user in if in voice
