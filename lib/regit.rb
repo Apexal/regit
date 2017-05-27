@@ -26,6 +26,8 @@ module Regit
   DEFAULT_TEXT_CHANNELS = load_file("#{Dir.pwd}/data/default_text_channels.yaml")
   DEFAULT_VOICE_CHANNELS = load_file("#{Dir.pwd}/data/default_voice_channels.yaml")
 
+  SCHEDULE = ScheduleSystem.new("#{Dir.pwd}/data/schedule.txt")
+
   Discordrb::LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
   
   debug = ARGV.include?('--debug') ? :debug : false

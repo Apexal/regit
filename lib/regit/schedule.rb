@@ -1,7 +1,5 @@
 module Regit
   module Schedule
-    #SCHEDULE = ScheduleSystem.new("#{Dir.pwd}/data/schedule.txt")
-
     def self.update_work_channel_topic()
       LOGGER.info 'Updating schedule day info...'
       basis = "#{DateTime.now.strftime('%A, %B %e')} | General school discussion, homework help, etc."
