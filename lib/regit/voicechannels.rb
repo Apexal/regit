@@ -11,6 +11,11 @@ module Regit
     VOICE_PERMS = Discordrb::Permissions.new
     VOICE_PERMS.can_connect = true
 
+    FULL_VOICE_PERMS = Discordrb::Permissions.new
+    FULL_VOICE_PERMS.can_connect = true
+    FULL_VOICE_PERMS.can_use_voice_activity = true
+    FULL_VOICE_PERMS.can_speak = true
+
     def self.save_associations
       save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
       save_to_file("#{Dir.pwd}/data/channel_owners.yaml", CHANNEL_OWNERS)
@@ -78,8 +83,16 @@ module Regit
         text_channel = server.create_channel('voice-channel', 0) # Creates a matching text-channel called 'voice-channel'
         topic = "Private chat for all those in the voice-channel [**#{voice_channel.name}**]"
         unless voice_channel.student_owner.nil?
-          topic += " Owned by #{voice_channel.student_owner.mention}"
-          text_channel.send_message("**#{voice_channel.student_owner.mention}, now owns this voice channel.**\n\nUse `!vkick @user1 @user2 ...` to kick users from the voice channel.\nUse `!vban @user` to toggle ban for one user from the voice channel.")
+          topic += " | Owned by #{voice_channel.student_owner.mention}"
+          
+          help = [
+            "**#{voice_channel.student_owner.mention}, now owns this voice channel.**\n", 
+            "Use `!vkick @user1 @user2 ...` to kick users from the voice channel.",
+            "Use `!vban @user` to toggle ban for one user from the voice channel.",
+            "Use `!allowguests` and `!denyguests` to allow/prevent Guests from entering the voice channel."
+          ]
+
+          text_channel.send_message(help.join "\n")
         end
         text_channel.topic = topic
         
@@ -172,6 +185,23 @@ module Regit
       end
       
       kicked
+    end
+
+    # Toggle whether or not to allow Guests in a voice room
+    def self.set_room_guests(voice_channel, allow=true)
+      raise 'Not a voice room.' unless voice_channel.association == :room
+
+      guests_role = voice_channel.server.roles.find { |r| r.name == 'Guests' }
+
+      if allow
+        voice_channel.define_overwrite(guests_role, FULL_VOICE_PERMS, 0)
+      else
+        voice_channel.define_overwrite(guests_role, 0, 0)
+      end
+
+      LOGGER.info "Guests in #{voice_channel.name} / #{voice_channel.server.name}: #{allow}"
+
+      allow
     end
 
     def self.create_new_room(voice_channel, user=nil)

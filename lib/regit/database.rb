@@ -67,11 +67,11 @@ module Regit
       end
 
       def short_description
-        "#{first_name} #{last_name} [#{grade}th grade]"
+        "#{first_name} #{last_name} of #{advisement}"
       end
 
       def description
-        "#{first_name} #{last_name} (#{grade}th grade) of #{school.title}"
+        "#{first_name} #{last_name} of #{advisement} (#{grade}th grade) of #{school.title}"
       end
 
       def groups
