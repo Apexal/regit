@@ -16,3 +16,4 @@ data/schedule.txt
 logs/*.log
 
 data/associations.yaml
+data/channel_owners.yaml

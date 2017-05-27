@@ -41,6 +41,31 @@ module Regit
         nil
       end
 
+      # Delete a group and notify all the members
+      command(:deletegroup, max_args: 0, description: 'Delete a group you own.', usage: '`!deletegroup` in a group\'s text channel', permission_level: 1) do |event|
+        event.message.delete unless event.channel.private?
+
+        user = event.user.on(event.server)
+
+        begin
+          raise 'Not in a group text channel!' unless event.channel.association == :group
+          group = Regit::Database::Group.find_by_text_channel_id(event.channel.id)
+          name = group.name
+
+          raise 'This is a protected group!' if ['Meta', 'Memes', 'Recreation', 'Gaming', 'Politics', 'Testing'].include? name
+
+          raise 'You do not own this group!' unless group.owner.on(event.server) == user || user.moderator?
+
+          Regit::Groups::delete_group(group.id)
+
+          event.user.pm("You have deleted **Group #{name}**")
+        rescue => e
+          event.user.pm("Failed to delete group: #{e}")
+        end
+
+        nil
+      end
+
       command(:invite, max_args: 0, description: 'Invite a student to a private group.', usage: '`!invite "Group" @member` in a group text-channel', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event|
         event.message.delete unless event.channel.private?
 

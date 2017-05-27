@@ -47,7 +47,7 @@ module Regit
       group.role.delete
       group.text_channel.delete
 
-      #LOGGER.info "Deleted group #{group.name} of #{group.school.title} server"
+      LOGGER.info "Deleted group #{group.name} of #{group.school.title} server"
       group.destroy
     end
 
