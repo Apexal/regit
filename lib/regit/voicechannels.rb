@@ -73,36 +73,33 @@ module Regit
     def self.associate_voice_channel(voice_channel, user=nil)
       server = voice_channel.server
       return if voice_channel == server.afk_channel # No need for AFK channel to have associated text-channel
+      puts "Associating '#{voice_channel.name} / #{server.name}'"
+      
+      text_channel = server.text_channels.find { |tc| tc.id == CHANNEL_ASSOCIATIONS[server.id][voice_channel.id] }
+
+      need_text_channel = CHANNEL_ASSOCIATIONS[server.id][voice_channel.id].nil? || text_channel.nil?
+
+      # Do this first so if two people join a [New Room] at the same time it recognizes that and doesnt try to associate twice
+      if need_text_channel
+        text_channel = server.create_channel('voice-channel', 0) # Creates a matching text-channel called 'voice-channel'
+        CHANNEL_ASSOCIATIONS[server.id][voice_channel.id] = text_channel.id # Associate the two 
+      end
 
       create_new_room(voice_channel, user) if voice_channel.name == Regit::CONFIG.new_room_name && !voice_channel.users.empty?
 
-      puts "Associating '#{voice_channel.name} / #{server.name}'"
-      text_channel = server.text_channels.find { |tc| tc.id == CHANNEL_ASSOCIATIONS[server.id][voice_channel.id] }
-
-      if CHANNEL_ASSOCIATIONS[server.id][voice_channel.id].nil? || text_channel.nil?
-        text_channel = server.create_channel('voice-channel', 0) # Creates a matching text-channel called 'voice-channel'
+      if need_text_channel
         topic = "Private chat for all those in the voice-channel [**#{voice_channel.name}**]"
-        unless voice_channel.student_owner.nil?
-          topic += " | Owned by #{voice_channel.student_owner.mention}"
-          
-          help = [
-            "**#{voice_channel.student_owner.mention}, now owns this voice channel.**\n", 
-            "Use `!vkick @user1 @user2 ...` to kick users from the voice channel.",
-            "Use `!vban @user` to toggle ban for one user from the voice channel.",
-            "Use `!allowguests` and `!denyguests` to allow/prevent Guests from entering the voice channel."
-          ]
-
-          text_channel.send_message(help.join "\n")
-        end
-        text_channel.topic = topic
         
+        transfer_room_ownership(voice_channel, user) unless voice_channel.student_owner.nil?
+        
+        text_channel.topic = topic
         # Give each voice channel member perms to see the new associated text-channel
         voice_channel.users.each do |u|
           text_channel.define_overwrite(u, TEXT_PERMS, 0)
         end
 
         text_channel.define_overwrite(voice_channel.server.roles.find { |r| r.id == voice_channel.server.id }, 0, TEXT_PERMS) # Set default perms as invisible
-        CHANNEL_ASSOCIATIONS[server.id][voice_channel.id] = text_channel.id # Associate the two 
+        
         save_associations
       end
 
@@ -124,6 +121,9 @@ module Regit
 
         text_channel.send_message("**#{user.display_name}** #{user.info.nil? ? '' : "*#{user.info.short_description}*"} left the voice-channel.")
         text_channel.define_overwrite(user, 0, 0)
+        
+        # Give ownership to oldest member if owner left
+        transfer_room_ownership(voice_channel, voice_channel.users.sort_by { |u| u.on(voice_channel.server).joined_at }.first) if voice_channel.student_owner == user
       end
     end
 
@@ -204,6 +204,22 @@ module Regit
       allow
     end
 
+    def self.transfer_room_ownership(voice_channel, new_owner)
+      CHANNEL_OWNERS[voice_channel.server.id][voice_channel.id] = new_owner.id
+      text_channel = voice_channel.associated_channel
+
+      text_channel.topic = "Private chat for all those in the voice-channel [**#{voice_channel.name}**] | Owned by #{voice_channel.student_owner.mention}"
+      
+      help = [
+        "**#{voice_channel.student_owner.mention}, now owns this voice channel.**\n", 
+        "Use `!vkick @user1 @user2 ...` to kick users from the voice channel.",
+        "Use `!vban @user` to toggle ban for one user from the voice channel.",
+        "Use `!allowguests` and `!denyguests` to allow/prevent Guests from entering the voice channel."
+      ]
+
+      text_channel.send_message(help.join "\n")
+    end
+
     def self.create_new_room(voice_channel, user=nil)
       # Give them ownership of associated text-channel 
       CHANNEL_OWNERS[voice_channel.server.id][voice_channel.id] = user.id unless user.nil?
@@ -220,7 +236,6 @@ module Regit
         else
           voice_channel.name = 'Room ' + (user.nil? || !user.student?(voice_channel.server.school) ? voice_channel.server.school.staffs.order("RAND()").first : user.info.teachers.sample ).last_name  # Name after teacher
         end
-
 
         # Block now to studying users
         voice_channel.define_overwrite(voice_channel.server.roles.find { |r| r.name == 'Studying' }, 0, VOICE_PERMS)

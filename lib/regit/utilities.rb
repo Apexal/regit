@@ -20,7 +20,7 @@ module Regit
       date = DateTime.now
       birthdays = Regit::Database::Student.where("MONTH(birthday) = ? and DAY(birthday) = ? and school_id = ? and discord_id IS NOT NULL", date.month, date.day, school.id)
       
-      LOGGER.info "Birthdays: #{birthdays.map { |s| s.description }.join ', '}"
+      #LOGGER.info "Birthdays: #{birthdays.map { |s| s.description }.join ', '}"
 
       birthdays
     end
