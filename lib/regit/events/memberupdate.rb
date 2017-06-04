@@ -9,6 +9,7 @@ module Regit
 
         nickname = member.nickname
         
+        next
         unless nickname.nil?
           other = event.server.members.find { |m| !m.nickname.nil? && m.nickname.downcase.delete(' ') == nickname.downcase.delete(' ') && m != member}
           unless other.nil?

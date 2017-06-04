@@ -25,8 +25,8 @@ module Discordrb
       !roles.find { |r| r.name == 'Studying' }.nil?
     end
 
-    def muted?
-      !roles.find { |r| r.name == 'Muted' }.nil?
+    def muted? channel
+      !permission?(:send_messages, channel)
     end
 
     def avatar_url_fixed
