@@ -114,12 +114,12 @@ module Regit
       return if text_channel.nil?
 
       if action == :join
-        text_channel.send_message("**#{user.display_name}** #{user.info.nil? ? '' : "*#{user.info.short_description}*"} joined the voice-channel.")
+        text_channel.send_message("#{user.short_info} joined the voice-channel.")
         text_channel.define_overwrite(user, TEXT_PERMS, 0)
       else
         return voice_channel.delete if voice_channel.users.empty? && voice_channel.association == :room
 
-        text_channel.send_message("**#{user.display_name}** #{user.info.nil? ? '' : "*#{user.info.short_description}*"} left the voice-channel.")
+        text_channel.send_message("#{user.short_info} left the voice-channel.")
         text_channel.define_overwrite(user, 0, 0)
         
         # Give ownership to oldest member if owner left

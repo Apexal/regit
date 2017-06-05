@@ -17,7 +17,7 @@ module Regit
           raise "Only the owner of this channel (#{student_owner.mention}) and moderators can allow guests!" unless vc.student_owner == user || user.moderator?
 
           Regit::VoiceChannels::set_room_guests(vc, true)
-          event.channel.send_message("**#{user.display_name} *(#{user.info.short_description})*** has allowed **Guests** to enter this voice channel.")
+          event.channel.send_message("#{user.short_info} has allowed **Guests** to enter this voice channel.")
         rescue => e
           event.user.pm("Failed to allow guests: #{e}")
         end
@@ -37,7 +37,7 @@ module Regit
           raise "Only the owner of this channel (#{student_owner.mention}) and moderators can deny guests!" unless vc.student_owner == user || user.moderator?
 
           Regit::VoiceChannels::set_room_guests(vc, false)
-          event.channel.send_message("**#{user.display_name} *(#{user.info.short_description})*** has denied **Guests** from entering this voice channel.")
+          event.channel.send_message("#{user.short_info} has denied **Guests** from entering this voice channel.")
         rescue => e
           event.user.pm("Failed to deny guests: #{e}")
         end
@@ -59,7 +59,7 @@ module Regit
 
           is_banned = Regit::VoiceChannels::toggle_ban_from_voice(vc, event.message.mentions.first.on(event.server), user)
 
-          event.channel.send_message("**#{user.display_name} *(#{user.info.short_description})* #{is_banned ? 'banned' : 'unbanned'} #{event.message.mentions.first.mention} from the voice-channel.**")
+          event.channel.send_message("#{user.short_info} #{is_banned ? 'banned' : 'unbanned'} #{event.message.mentions.first.mention} from the voice-channel.**")
         rescue => e
           user.pm("Failed to ban user from voice-channel: #{e}")
         end

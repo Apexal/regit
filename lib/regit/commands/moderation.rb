@@ -1,5 +1,3 @@
-# Example command module
-
 module Regit
   module Commands
     module Moderation

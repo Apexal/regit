@@ -111,7 +111,7 @@ module Regit
 
     def self.create_group(owner, full_name, description, is_private)
       full_name.strip!
-      raise '' if full_name.empty?
+      raise 'Empty group name!' if full_name.empty?
 
       server = owner.server
 

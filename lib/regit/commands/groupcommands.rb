@@ -66,28 +66,35 @@ module Regit
         nil
       end
 
-      command(:invite, max_args: 0, description: 'Invite a student to a private group.', usage: '`!invite "Group" @member` in a group text-channel', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event|
+      # Allows a member of a private group to invite somebody else to the group, allowing them to join
+      command(:invite, min_args: 2, max_args: 2, description: 'Invite a student to a private group.', usage: '`!invite "Group" @member`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, group_name|
         event.message.delete unless event.channel.private?
 
-        if event.message.mentions.empty?
-          event.user.pm 'Usage: `!invite "Group" @member`'
-          return
-        end
+        user = event.user.on(event.server)
+
+        group_name.strip!
+
+        return event.user.pm 'Usage: `!invite "Group" @member`' if event.message.mentions.empty?
 
         target = event.message.mentions.first.on(event.server)
 
         begin
-          group = Regit::Database::Group.find_by_text_channel_id(event.channel.id)
-          raise 'Must be used in a private group text-channel!' if group.nil?
+          raise 'Invalid group name' if group_name.empty?
+          group = Regit::Database::Group.find_by_name(group_name)
+          raise 'Could not find group.' if group.nil?
+          raise 'You aren\'t in that group!' unless user.role?(group.role)
           raise 'Group is not private!' unless group.private?
           raise 'Target is already in that group!' if target.role?(group.role)
 
           Regit::Groups::add_invite(target, group.id)
+
+          target.pm("You've been invited to private **Group #{group.name}** by member #{user.mention} (#{user.short_info}).\nJoin with `!join \"#{group.name}\"` on the server!")
+          user.pm("Invited #{target.mention} to private **Group #{group.name}**. They can now join with `!join \"#{group.name}\"`")
         rescue => e
           event.user.pm "Failed to invite: #{e}"
           LOGGER.error e.backtrace
         end
-        LOGGER.info Regit::Groups::INVITES
+
         nil
       end 
 
@@ -171,7 +178,7 @@ module Regit
 
           if group.private?
             invites = Regit::Groups::INVITES[event.user.id]
-            raise 'You have not been invited to that group!' if invites.nil? || !invites.include?(group.id)
+            raise 'You have not been invited to that private group!' if invites.nil? || !invites.include?(group.id)
           end
         
           Regit::Groups::add_to_group(event.user, group.id)

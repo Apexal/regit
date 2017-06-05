@@ -32,5 +32,9 @@ module Discordrb
     def avatar_url_fixed
       avatar_url.end_with?('/.jpg') ? '/img/noavatar.png' : avatar_url
     end
+
+    def short_info
+      "**#{display_name} [*#{info.nil? ? 'Guest' : info.short_description}*]**"
+    end
   end
 end
