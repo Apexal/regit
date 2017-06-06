@@ -17,10 +17,10 @@ module Regit
       presence do |event|
         Regit::Schedule::update_work_channel_topic() if event.user.status == :online
         begin
-          #Regit::Utilities::announce_birthdays(event.server)
+          # Regit::Utilities::announce_birthdays(event.server)
         rescue;end
 
-        LOGGER.info "#{event.user.distinct} is now #{event.user.status} on #{event.server.name}"
+        # LOGGER.info "#{event.user.distinct} is now #{event.user.status} on #{event.server.name}"
 
         begin;Regit::Database::Student.find_by_discord_id(event.user.id).update(last_online: Time.new) if event.user.status == :offline;rescue;end
       end

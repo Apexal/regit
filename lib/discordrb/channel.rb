@@ -6,7 +6,7 @@ module Discordrb
     end
 	
 		def student_owner
-			@server.members.find { |m| m.id == Regit::CHANNEL_OWNERS[@server.id][@id] }
+			Regit::CHANNEL_OWNERS[@server.id][@id].nil? ? nil : @server.members.find { |m| m.id == Regit::CHANNEL_OWNERS[@server.id][@id] }
 		end
 		
     def association

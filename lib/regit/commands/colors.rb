@@ -28,9 +28,9 @@ module Regit
           end
 
           event.user.modify_roles(color_role, old_colors)
-          event.user.pm.send_message("Changed user color to #{color_hex}! Remove color with just `!color`.")
+          event.user.pm("Changed user color to #{color_hex}! Remove color with just `!color`.")
         rescue => e
-          event.user.send_message('Invalid hex color code! Trying getting codes from http://www.colorpicker.com')
+          event.user.pm('Invalid hex color code! Trying getting codes from http://www.colorpicker.com')
           LOGGER.error "Failed to set color: #{e}"
           LOGGER.error e.backtrace.join("\n")
         end

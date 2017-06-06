@@ -12,7 +12,7 @@ module Regit
         LOGGER.info "Deleting text-channel ##{tc.name} [#{tc.topic}] (#{tc.id})"
         
         begin
-          # tc.delete
+          tc.delete
         rescue => e
           LOGGER.error "Somehow failed to delete channel: #{e}"
           LOGGER.error e.backtrace.join("\n")
@@ -25,7 +25,7 @@ module Regit
         LOGGER.info "Deleting text-channel ##{tc.name} [#{tc.topic}] (#{tc.id})"
         
         begin
-          # tc.delete
+          tc.delete
         rescue => e
           LOGGER.error "Somehow failed to delete channel: #{e}"
           LOGGER.error e.backtrace.join("\n")
