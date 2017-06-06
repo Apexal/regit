@@ -31,7 +31,8 @@ module Regit
           event.user.pm.send_message("Changed user color to #{color_hex}! Remove color with just `!color`.")
         rescue => e
           event.user.send_message('Invalid hex color code! Trying getting codes from http://www.colorpicker.com')
-          LOGGER.error e
+          LOGGER.error "Failed to set color: #{e}"
+          LOGGER.error e.backtrace.join("\n")
         end
         
         begin

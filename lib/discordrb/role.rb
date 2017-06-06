@@ -12,6 +12,8 @@ module Discordrb
 
       if !Regit::Database::Group.find_by_role_id(@id).nil?
         :group
+      elsif @name == 'Consul'
+        :consul
       elsif Regit::GRADES.include?(@name)
         :grade
       elsif !Regit::DEFAULT_ROLES[@name].nil?

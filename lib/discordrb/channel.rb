@@ -16,6 +16,8 @@ module Discordrb
       if @type == 0
         if @name == 'voice-channel'
           :voice_channel
+        elsif @name == 'finals'
+          :finals
         elsif !Regit::Database::Group.find_by_text_channel_id(@id).nil?
           :group
         elsif Regit::GRADES.map { |g| g.downcase }.include?(@name)

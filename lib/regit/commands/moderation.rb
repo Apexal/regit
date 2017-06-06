@@ -54,7 +54,8 @@ module Regit
           event.user.pm "Target has been **#{target.muted?(event.channel) ? 'muted' : 'unmuted'}** in #{event.channel.mention}."
         rescue => e
           event.user.pm "Failed to mute target: #{e}"
-          LOGGER.error e.backtrace
+          LOGGER.error "Failed to mute target: #{e}"
+          LOGGER.error e.backtrace.join("\n")
         end
 
         nil
@@ -63,13 +64,16 @@ module Regit
       command(:report, description: 'Report a user for breaking the rules.', usage: '`!report @who "reason"` or `!report "reason" @who`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, *reason|
         event.message.delete unless event.channel.private?
 
+        return event.user.pm("Shame on you.")
+
         target = (event.message.mentions.empty? ? nil : event.message.mentions.first.on(event.server))
         
         begin
           send_report(event.channel, event.user, target, reason.join(' '))
           event.user.pm 'Sent report!'
         rescue => e
-          LOGGER.error e
+          LOGGER.error "Failed to send report: #{e}"
+          LOGGER.error e.backtrace.join("\n")
           event.user.pm "Failed to send report: #{e}"
         end
 

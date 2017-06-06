@@ -33,8 +33,8 @@ module Discordrb
       avatar_url.end_with?('/.jpg') ? '/img/noavatar.png' : avatar_url
     end
 
-    def short_info
-      "**#{display_name} [*#{info.nil? ? 'Guest' : info.short_description}*]**"
+    def short_info(use_mention=false)
+      "**#{use_mention ? mention : display_name} [*#{info.nil? ? 'Guest' : info.short_description}*]**"
     end
   end
 end

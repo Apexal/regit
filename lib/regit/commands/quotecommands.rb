@@ -53,7 +53,7 @@ module Regit
         author = author.on(event.server)
 
         Regit::Quotes::add_quote(event.user.on(event.server), author, message)
-        "Saved quote `#{message}` by **#{author.display_name}** (#{author.info.username})!"
+        "Saved quote `#{message}` by #{author.short_info}"
       end
     end
   end

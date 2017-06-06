@@ -52,7 +52,8 @@ module Regit
           set_study_mode(event.user, !event.user.studying?)
           event.user.pm "**Studymode** is now *#{event.user.studying? ? 'on' : 'off'}*."  
         rescue => e
-          LOGGER.error e
+          LOGGER.error "Failed to toggle studymode: #{e}"
+          LOGGER.error e.backtrace.join("\n")
           event.user.pm "Failed to toggle studymode: #{e}"
         end
       end

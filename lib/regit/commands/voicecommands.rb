@@ -83,6 +83,9 @@ module Regit
 
           event.channel.send_message("**#{user.display_name} *(#{user.info.short_description})* kicked #{kicked.map { |m| m.mention }.join(', ')} from the voice-channel.**")
         rescue => e
+          LOGGER.error "Failed to kick user from voice-channel: #{e}"
+          LOGGER.error e.backtrace.join("\n")
+
           user.pm("Failed to kick users from voice-channel: #{e}")
         end
 
@@ -102,6 +105,8 @@ module Regit
           new_name = Regit::VoiceChannels::rename_room(voice_channel, new_name)
           event.channel.send_message("**#{user.display_name} *(#{user.info.short_description})*** renamed room to **#{voice_channel.name}**.")
         rescue => e
+          LOGGER.error "Failed to rename room: #{e}"
+          LOGGER.error e.backtrace.join("\n")
           event.user.pm "Failed to rename room: #{e}"
         end
 

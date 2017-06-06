@@ -180,7 +180,6 @@ module Regit
 
       raise 'Not in that group.' unless member.role? group.role
 
-      group.text_channel.send_message "*#{member.mention} left the group.*"
       member.remove_role group.role
 
       return group

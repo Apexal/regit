@@ -34,7 +34,8 @@ module Regit
           Regit::Utilities::announce(event.server, "#{event.user.mention} has created public **Group #{new_group.name}**!") unless new_group.private?
         rescue => e
           event.user.pm "Failed to create group: #{e}"
-          LOGGER.error e.backtrace.join("\n\t")
+          LOGGER.error "Failed to create group: #{e}"
+          LOGGER.error e.backtrace.join("\n")
           Regit::Utilities::clean_channels(event.server)
         end
 
@@ -60,6 +61,8 @@ module Regit
 
           event.user.pm("You have deleted **Group #{name}**")
         rescue => e
+          LOGGER.error "Failed to delete group: #{e}"
+          LOGGER.error e.backtrace.join("\n")
           event.user.pm("Failed to delete group: #{e}")
         end
 
@@ -92,12 +95,14 @@ module Regit
           user.pm("Invited #{target.mention} to private **Group #{group.name}**. They can now join with `!join \"#{group.name}\"`")
         rescue => e
           event.user.pm "Failed to invite: #{e}"
-          LOGGER.error e.backtrace
+          LOGGER.error "Failed to invite: #{e}"
+          LOGGER.error e.backtrace.join("\n")
         end
 
         nil
-      end 
+      end
 
+      # Create private voice-channels for special situations
       command(:vc, description: 'Create a temporary voice channel for a group or course.', min_args: 0, max_args: 0, permission_level: 1) do |event|
         event.message.delete unless event.channel.private?
 
@@ -111,7 +116,7 @@ module Regit
           begin
             Regit::Groups::create_group_voice_channel(group)
           rescue => e
-            return event.user.pm e
+            return event.user.pm "Failed to create special voice-channel: #{e}"
           end
 
           return event.channel.send_message('A **private** temporary voice-channel for this group has been opened! It will disappear when empty.')
@@ -167,9 +172,12 @@ module Regit
         nil
       end
 
+      # Join a group
       command(:join, max_args: 1, description: 'Join a group.', usage: '`!join "Group Name"`', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event, group_name|
         event.message.delete unless event.channel.private?
-        
+
+        user = event.user.on(event.server)
+
         begin
           raise 'No group name given!' if group_name.nil?
 
@@ -180,13 +188,15 @@ module Regit
             invites = Regit::Groups::INVITES[event.user.id]
             raise 'You have not been invited to that private group!' if invites.nil? || !invites.include?(group.id)
           end
-        
+
           Regit::Groups::add_to_group(event.user, group.id)
-          group.text_channel.send_message "**#{event.user.mention}** joined the group."
+
+          group.text_channel.send_message "#{user.short_info(true)} joined the group."
           event.user.pm("Joined group! | http://www.getontrac.info:4567/groups/#{group.id}")
         rescue => e
           event.user.pm("Failed to join group: #{e}")
-          LOGGER.error e.backtrace
+          LOGGER.error "Failed to join group: #{e}"
+          LOGGER.error e.backtrace.join("\n")
         end
 
         nil
@@ -195,16 +205,22 @@ module Regit
       command(:leave, max_args: 0, description: 'Leave a group.', usage: '`!leave` in a group text-channel', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event|
         event.message.delete unless event.channel.private?
         
+        user = event.user.on(event.server)
+
         begin
-          group = Regit::Groups::remove_from_group(event.user, Regit::Database::Group.find_by_text_channel_id(event.channel.id).id)
+          group = Regit::Groups::remove_from_group(user, Regit::Database::Group.find_by_text_channel_id(event.channel.id).id)
+          group.text_channel.send_message("#{user.short_info(true)} left the group.")
+
           if event.server.members.count { |m| m.role? group.role } == 0
             # Delete group when everybody leaves
             Regit::Groups::delete_group(group.id)
           end
-          event.user.pm 'Left group!'
+
+          user.pm 'Left group!'
         rescue => e
-          event.user.pm "Failed to leave group: #{e}"
-          LOGGER.error e.backtrace
+          user.pm "Failed to leave group: #{e}"
+          LOGGER.error "Failed to leave group: #{e}"
+          LOGGER.error e.backtrace.join("\n")
         end
 
         nil
