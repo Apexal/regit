@@ -39,7 +39,7 @@ module Regit
             embed.add_field(name: 'School', value: info.school.title + ' ' + info.school.school_type, inline: true)
             
             if Regit::School::summer?(info.school)
-              embed.add_field(name: 'Class of', value: '2018', inline: true)
+              embed.add_field(name: 'Class of', value: info.graduation_year, inline: true)
             else
               embed.add_field(name: 'Advisement', value: info.advisement, inline: true)
             end
@@ -54,7 +54,7 @@ module Regit
             embed.add_field(name: 'School', value: target.info.school.title + ' ' + target.info.school.school_type, inline: true)
             
             if Regit::School::summer?(target.info.school)
-              embed.add_field(name: 'Class of', value: '2018', inline: true)
+              embed.add_field(name: 'Class of', value: target.info.graduation_year, inline: true)
             else
               embed.add_field(name: 'Advisement', value: target.info.advisement, inline: true)
             end

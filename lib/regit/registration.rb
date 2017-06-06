@@ -173,7 +173,7 @@ module Regit
         embed.add_field(name: 'School', value: member.info.school.title + ' ' + member.info.school.school_type, inline: true)
         
         if Regit::School::summer?(server.school)
-          embed.add_field(name: 'Class of', value: "'18", inline: true)
+          embed.add_field(name: 'Class of', value: member.info.graduation_year, inline: true)
         else
           embed.add_field(name: 'Advisement', value: member.info.advisement, inline: true)
         end
