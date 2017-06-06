@@ -158,8 +158,11 @@ module Regit
 
       member.modify_roles(new_roles, [])
 
-      handle_advisement_system(member)
-      handle_course_channels(member)
+      unless Regit::School::summer?(server.school)
+        handle_advisement_system(member)
+        handle_course_channels(member)
+      end
+
       VERIFY_CODES.delete(member.info.username)
 
       # Announce it
@@ -168,7 +171,13 @@ module Regit
         embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: member.info.pictureurl)
         embed.title = '[Student] ' + member.info.first_name + ' ' + member.info.last_name
         embed.add_field(name: 'School', value: member.info.school.title + ' ' + member.info.school.school_type, inline: true)
-        embed.add_field(name: 'Advisement', value: member.info.advisement, inline: true)
+        
+        if Regit::School::summer?(server.school)
+          embed.add_field(name: 'Class of', value: "'18", inline: true)
+        else
+          embed.add_field(name: 'Advisement', value: member.info.advisement, inline: true)
+        end
+      
         embed.add_field(name: 'Discord Tag', value: "#{member.mention} | #{member.distinct}", inline: true)
         embed.add_field(name: 'Birthday', value: member.info.birthday.strftime('%B %e, %Y '), inline: true)
 
