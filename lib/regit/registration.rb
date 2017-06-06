@@ -158,7 +158,18 @@ module Regit
 
       member.modify_roles(new_roles, [])
 
-      unless Regit::School::summer?(server.school)
+      if Regit::School::summer?(server.school)
+        class_role = server.roles.find { |r| r.name == "Class of #{member.info.graduation_year}" }
+          
+        if class_role.nil?
+          class_role = server.create_role
+          class_role.name = "Class of #{m.info.graduation_year}"
+          class_role.hoist = true
+          class_role.mentionable = true
+        end
+
+        member.add_role(class_role)
+      else
         handle_advisement_system(member)
         handle_course_channels(member)
       end
