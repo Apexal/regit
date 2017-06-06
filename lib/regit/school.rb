@@ -1,9 +1,9 @@
 module Regit
   module School
 
-    # Returns wh
-    def self.summer?(summer)
-
+    # Returns whether it is summer vacation
+    def self.summer?(school)
+      true
     end
   end
 end

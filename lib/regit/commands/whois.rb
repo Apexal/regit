@@ -37,7 +37,13 @@ module Regit
             embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: info.pictureurl)
             embed.title = '[Student] ' + info.first_name + ' ' + info.last_name
             embed.add_field(name: 'School', value: info.school.title + ' ' + info.school.school_type, inline: true)
-            embed.add_field(name: 'Advisement', value: info.advisement, inline: true)
+            
+            if Regit::School::summer?(info.school)
+              embed.add_field(name: 'Class of', value: '2018', inline: true)
+            else
+              embed.add_field(name: 'Advisement', value: info.advisement, inline: true)
+            end
+
             embed.add_field(name: 'Birthday', value: info.birthday.strftime('%B %e, %Y '), inline: true)
 
             embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "#{info.first_name} is not registered on the server yet!")
@@ -46,7 +52,13 @@ module Regit
             embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: target.info.pictureurl)
             embed.title = '[Student] ' + target.info.first_name + ' ' + target.info.last_name
             embed.add_field(name: 'School', value: target.info.school.title + ' ' + target.info.school.school_type, inline: true)
-            embed.add_field(name: 'Advisement', value: target.info.advisement, inline: true)
+            
+            if Regit::School::summer?(target.info.school)
+              embed.add_field(name: 'Class of', value: '2018', inline: true)
+            else
+              embed.add_field(name: 'Advisement', value: target.info.advisement, inline: true)
+            end
+            
             embed.add_field(name: 'Discord Tag', value: "#{target.mention} | #{target.distinct}", inline: true)
             embed.add_field(name: 'Birthday', value: target.info.birthday.strftime('%B %e, %Y '), inline: true)
 

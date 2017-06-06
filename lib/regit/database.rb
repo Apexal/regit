@@ -67,7 +67,7 @@ module Regit
       end
 
       def short_description
-        "#{first_name} #{last_name} of #{advisement}"
+        "#{first_name} #{last_name} #{Regit::School::summer?(School.find(school_id)) ? "'18" : "of #{advisement}"}"
       end
 
       def description
