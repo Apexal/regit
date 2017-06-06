@@ -20,9 +20,10 @@ module Regit
           Regit::VoiceChannels::setup_server_voice(server)
 
           begin
-            #Regit::Utilities::clean_channels(server)
+            Regit::Utilities::clean_channels(server)
           rescue => e
-            puts e
+            LOGGER.error "Failed to clean channels"
+            LOGGER.error e
           end
         end
 

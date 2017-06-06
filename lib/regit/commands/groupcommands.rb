@@ -64,6 +64,7 @@ module Regit
           LOGGER.error "Failed to delete group: #{e}"
           LOGGER.error e.backtrace.join("\n")
           event.user.pm("Failed to delete group: #{e}")
+          Regit::Utilities::clean_channels(event.server)
         end
 
         nil
@@ -184,7 +185,7 @@ module Regit
           group = Regit::Database::Group.where('lower(name) = ?', group_name.downcase).first
           raise 'Doesn\'t exist!' if group.nil?
 
-          if group.private?
+          if group.private? && !user.moderator?
             invites = Regit::Groups::INVITES[event.user.id]
             raise 'You have not been invited to that private group!' if invites.nil? || !invites.include?(group.id)
           end
