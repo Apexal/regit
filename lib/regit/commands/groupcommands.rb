@@ -226,6 +226,37 @@ module Regit
 
         nil
       end
+
+      # For group owners and Moderators
+      command(:gkick, max_args: 1, description: 'Kick a student from a group.', usage: '!gkick @user in a group text-channel', permission_level: 1, permission_message: 'You can only use this command in a school server!') do |event|
+        event.message.delete unless event.channel.private?
+        
+        user = event.user.on(event.server)
+        target = event.message.mentions.first
+        group = Regit::Database::Group.find_by_text_channel_id(event.channel.id)
+
+        begin
+          raise 'You must use this in a group text-channel.' if group.nil?
+          raise 'Only the owner of this group and moderators can kick users!' unless group.owner == user || user.moderator?
+          raise 'Need to mention user to kick!' if target.nil?
+          raise 'Can\'t kick yourself!' if user == target
+
+          target = target.on(event.server)
+
+          group = Regit::Groups::remove_from_group(target, group.id)
+          group.text_channel.send_message("#{target.short_info(true)} was kicked from the group.")
+
+          target.pm("You were kicked from **Group #{group.name}**.")
+          user.pm("Kicked #{target.short_info(true)} from **Group #{group.name}**.")
+        rescue => e
+          user.pm "Failed to kick user from group: #{e}"
+          LOGGER.error "Failed to kick user from group: #{e}"
+          LOGGER.error e.backtrace.join("\n")
+        end
+
+        nil
+      end
+
     end
   end
 end

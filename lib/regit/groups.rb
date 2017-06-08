@@ -182,7 +182,7 @@ module Regit
 
       member.remove_role group.role
 
-      return group
+      group
     end
 
   end
