@@ -43,7 +43,7 @@ module Regit
       group = Regit::Database::Group.find(id)
 
       # SO EZ
-      group.school.server.members.select { |m| m.role? group.role }.each { |m| m.pm "**Group #{group.name}** has been deleted." }
+      group.school.server.students.select { |m| m.role? group.role }.each { |m| m.pm "**Group #{group.name}** has been deleted." }
       group.role.delete
       group.text_channel.delete
 

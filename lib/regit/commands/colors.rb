@@ -1,4 +1,4 @@
-# Example command module
+# Color command
 
 module Regit
   module Commands

@@ -1,4 +1,4 @@
-# Example command module
+# Commands for the Consul
 
 module Regit
   module Commands

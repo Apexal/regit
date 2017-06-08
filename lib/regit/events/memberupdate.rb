@@ -11,7 +11,7 @@ module Regit
         
         next
         unless nickname.nil?
-          other = event.server.members.find { |m| !m.nickname.nil? && m.nickname.downcase.delete(' ') == nickname.downcase.delete(' ') && m != member}
+          other = event.server.students.find { |m| !m.nickname.nil? && m.nickname.downcase.delete(' ') == nickname.downcase.delete(' ') && m != member}
           unless other.nil?
             LOGGER.info other.distinct
             # COPIED SOMEBODY'S NICKNAME

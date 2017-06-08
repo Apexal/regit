@@ -212,7 +212,7 @@ module Regit
           group = Regit::Groups::remove_from_group(user, Regit::Database::Group.find_by_text_channel_id(event.channel.id).id)
           group.text_channel.send_message("#{user.short_info(true)} left the group.")
 
-          if event.server.members.count { |m| m.role? group.role } == 0
+          if event.server.students.count { |m| m.role? group.role } == 0
             # Delete group when everybody leaves
             Regit::Groups::delete_group(group.id)
           end

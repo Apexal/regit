@@ -175,29 +175,6 @@ module Regit
       end
 
       VERIFY_CODES.delete(member.info.username)
-
-      # Announce it
-      Regit::Utilities::announce(member.server, 'Please welcome a new member to the server!', true)
-      Regit::Utilities::announce(member.server, nil).send_embed do |embed|
-        embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: member.info.pictureurl)
-        embed.title = '[Student] ' + member.info.first_name + ' ' + member.info.last_name
-        embed.add_field(name: 'School', value: member.info.school.title + ' ' + member.info.school.school_type, inline: true)
-        
-        if Regit::School::summer?(server.school)
-          embed.add_field(name: 'Class of', value: member.info.graduation_year, inline: true)
-        else
-          embed.add_field(name: 'Advisement', value: member.info.advisement, inline: true)
-        end
-      
-        embed.add_field(name: 'Discord Tag', value: "#{member.mention} | #{member.distinct}", inline: true)
-        embed.add_field(name: 'Birthday', value: member.info.birthday.strftime('%B %e, %Y '), inline: true)
-
-        embed.color = 7380991
-
-        embed.url = "http://www.getontrac.info:4567/users/#{member.info.username}"
-        embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{member.joined_at}", icon_url: member.avatar_url)
-      end
-
       LOGGER.info 'Done!'
 
       member
