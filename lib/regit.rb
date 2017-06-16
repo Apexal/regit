@@ -14,6 +14,7 @@ require 'rhs-schedule'
 require 'marky_markov'
 require 'gmail'
 require 'securerandom'
+# require 'regis-lector'
 
 require_relative 'regit/other/store_data'
 module Regit

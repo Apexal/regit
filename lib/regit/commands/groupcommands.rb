@@ -193,7 +193,7 @@ module Regit
           Regit::Groups::add_to_group(event.user, group.id)
 
           group.text_channel.send_message "#{user.short_info(true)} joined the group."
-          event.user.pm("Joined group! | http://www.getontrac.info:4567/groups/#{group.id}")
+          # event.user.pm("Joined group! | http://www.getontrac.info:4567/groups/#{group.id}")
         rescue => e
           event.user.pm("Failed to join group: #{e}")
           LOGGER.error "Failed to join group: #{e}"
