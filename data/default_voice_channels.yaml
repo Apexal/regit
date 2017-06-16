@@ -1,5 +1,5 @@
 ---
-Music Room:
+🎵 Music Room:
     perms:
         everyone:
             - connect
@@ -11,7 +11,7 @@ Music Room:
             - -connect
     position: 0
 
-Public Room:
+💬 Public Room:
     perms:
         everyone:
             - connect
