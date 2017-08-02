@@ -21,6 +21,11 @@ module Regit
         Regit::VoiceChannels::trim_voice_associations(event.server)
       end
 
+      # Remove existing votekicks
+      channel_delete(type: 0) do |event|
+        VOTEKICKS[vc.server.id][vc.id].delete_if { |v| v[:message].channel.id == event.id }
+      end
+
       voice_state_update do |event|
         member = event.user.on(event.server)
 

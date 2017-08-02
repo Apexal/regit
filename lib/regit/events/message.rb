@@ -44,7 +44,6 @@ module Regit
         end
       end
 
-
       message do |event|
         begin
           event.message.delete if !event.channel.private? && event.user.on(event.server).role?(event.server.roles.find { |r| r.name == 'Muted' })
@@ -52,6 +51,33 @@ module Regit
           LOGGER.error 'Could not find author of message.'
         end
       end
+
+      reaction_add(emoji: ["☑", "❌"]) do |event|
+        next if event.channel.private?
+
+        next unless event.channel.association == :voice_channel
+
+        vc = event.channel.associated_channel
+        vote = VOTEKICKS[vc.server.id][vc.id].find { |v| v[:message] == event.message }
+
+        next if vote.nil?
+
+        Regit::VoiceChannels::handle_vote_kick(vote[:target])
+      end
+
+      reaction_remove(emoji: ["☑", "❌"]) do |event|
+        next if event.channel.private?
+
+        next unless event.channel.association == :voice_channel
+
+        vc = event.channel.associated_channel
+        vote = VOTEKICKS[vc.server.id][vc.id].find { |v| v[:message] == event.message }
+
+        next if vote.nil?
+
+        Regit::VoiceChannels::handle_vote_kick(vote[:target])
+      end
+
     end
   end
 end

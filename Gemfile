@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Specify your gem's dependencies in regit.gemspec
-gem 'discordrb'
+gem 'discordrb', :github => 'meew0/discordrb'
 gem 'mysql2'
 gem 'activerecord'
 gem 'sinatra'

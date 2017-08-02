@@ -7,7 +7,8 @@ module Regit
 			
       # Allows guests to enter a voice room
       command(:allowguests, description: 'Allow guests to enter a voice room.', permission_level: 1, usage: '`!allowguests` in a #voice-channel') do |event|
-        event.message.delete unless event.channel.private?
+        next if event.channel.private?
+        event.message.delete
 
         user = event.user.on(event.server)
         vc = event.channel.associated_channel
@@ -27,7 +28,8 @@ module Regit
 
       # Prevent Guests from entering a voice room
       command(:denyguests, description: 'Deny guests from entering a voice room.', permission_level: 1, usage: '`!denyguests` in a #voice-channel') do |event|
-        event.message.delete unless event.channel.private?
+        next if event.channel.private?
+        event.message.delete
 
         user = event.user.on(event.server)
         vc = event.channel.associated_channel
@@ -47,7 +49,8 @@ module Regit
 
       # Allow voice-channel owners to ban people from the channel
       command(:vban, description: 'Toggle ban of unwanted user from a voice-channel.', permission_level: 1, usage: '`!vban @user`') do |event|
-        event.message.delete unless event.channel.private?
+        next if event.channel.private?
+        event.message.delete
 				
         user = event.user.on(event.server)
         vc = event.channel.associated_channel
@@ -69,7 +72,8 @@ module Regit
       
 			# Allow voice-channel owners to kick people from the channel
 			command(:vkick, description: 'Kick unwanted users from a owned voice-channel.', permission_level: 1, usage: '`!vkick @user1 @user2`') do |event|
-				event.message.delete unless event.channel.private?
+				next if event.channel.private?
+        event.message.delete
 				
         user = event.user.on(event.server)
         vc = event.channel.associated_channel
@@ -93,7 +97,8 @@ module Regit
       end
 			
       command(:rename, description: 'Change name of a voice room.', permission_level: 1, min_args: 1, max_args: 1) do |event, new_name|
-        event.message.delete unless event.channel.private?
+        next if event.channel.private?
+        event.message.delete
         
         user = event.user.on(event.server)
         voice_channel = event.channel.associated_channel
@@ -108,6 +113,26 @@ module Regit
           LOGGER.error "Failed to rename room: #{e}"
           LOGGER.error e.backtrace.join("\n")
           event.user.pm "Failed to rename room: #{e}"
+        end
+
+        nil
+      end
+
+      command(:votekick, description: 'Start a votekick of a user in a voice-channel.', permission_level: 1, min_args: 1, max_args: 1) do |event|
+        next if event.channel.private?
+        event.message.delete
+
+        user = event.user.on(event.server)
+        vc = event.channel.associated_channel
+
+        begin
+          raise 'You must use this command in a associated #voice-channel.' if vc.nil?
+
+          Regit::VoiceChannels::start_vote_kick(vc, user, event.message.mentions.first.on(event.server))
+        rescue => e
+          LOGGER.error "Failed to start votekick: #{e}"
+          LOGGER.error e.backtrace.join("\n")
+          event.user.pm "Failed to start votekick: #{e}"
         end
 
         nil

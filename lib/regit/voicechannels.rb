@@ -16,6 +16,9 @@ module Regit
     FULL_VOICE_PERMS.can_use_voice_activity = true
     FULL_VOICE_PERMS.can_speak = true
 
+    # VOTEKICK CONSTANTS
+    VOTEKICK_THRESHOLD = 0.75
+
     def self.save_associations
       save_to_file("#{Dir.pwd}/data/associations.yaml", CHANNEL_ASSOCIATIONS)
       save_to_file("#{Dir.pwd}/data/channel_owners.yaml", CHANNEL_OWNERS)
@@ -171,7 +174,7 @@ module Regit
     end
 
     def self.kick_from_voice(channel, targets, user=nil)
-      raise 'This channel doesn\'t have an owner...' if channel.student_owner.nil?
+      #raise 'This channel doesn\'t have an owner...' if channel.student_owner.nil?
       
       # Check for mention(s)
       raise 'You must say what users you want to kick! `!vkick @user1 @user2`' if targets.empty?
@@ -185,6 +188,71 @@ module Regit
       end
       
       kicked
+    end
+
+    # Start a vote kick and send the embed message with the mentions
+    def self.start_vote_kick(voice_channel, started_by, target)
+      raise 'Not a voice room.' unless voice_channel.association == :room
+      raise 'Can\'t votekick yourself.' if started_by == target
+      raise 'Target isn\'t in voice-channel.' unless voice_channel.users.include?(target)
+      raise 'Not enough people in voice-channel.' if voice_channel.users.length < 3
+
+      VOTEKICKS[voice_channel.server.id][voice_channel.id] ||= []
+
+      # Check for existing
+      raise 'Somebody already started a votekick for this person!' if VOTEKICKS[voice_channel.server.id][voice_channel.id].count { |v| v[:target] == target } > 0
+
+      votes = VOTEKICKS[voice_channel.server.id][voice_channel.id] << { target: target, message: nil }
+      vote = votes.find { |v| v[:target] == target}
+
+      title = target.info.nil? ? target.display_name : target.info.short_description
+
+      embed = Discordrb::Webhooks::Embed.new
+      embed.author = Discordrb::Webhooks::EmbedAuthor.new(name: "Vote Kick #{title}", url: nil, icon_url: target.safe_avatar_url)
+      embed.description = "Vote to kick #{target.mention} from this voice-channel by choosing the ❌ or ☑ reaction below."
+      embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Started by #{started_by.short_info}", icon_url: started_by.safe_avatar_url)
+
+      message = voice_channel.associated_channel.send_embed(nil, embed)
+      message.react('☑')
+      message.react('❌')
+
+      vote[:message] = message
+    end
+
+    def self.handle_vote_kick(target)
+      vc = target.voice_channel
+      vote = VOTEKICKS[vc.server.id][vc.id].find { |v| v[:target] == target }
+      raise 'No vote kick of the target currently exists' if vote.nil?
+
+      message = vote[:message].channel.load_message(vote[:message].id)
+      total = vc.users.length
+
+      yes = message.reactions['☑'].count - 1
+      no = message.reactions['❌'].count - 1
+
+      yes_percent = yes / total.to_f
+      no_percent = no / total.to_f
+
+      if yes_percent >= VOTEKICK_THRESHOLD
+        begin
+          kick_from_voice(vc, [target])
+          message.edit("#{target.mention} has been votekicked! (#{yes_percent * 100}% voted yes)")
+          target.pm "You have been votekicked from **#{vc.name}**."
+          message.delete_all_reactions
+          VOTEKICKS[vc.server.id][vc.id].delete_if { |v| v[:target] == target }
+        rescue => e
+          LOGGER.error "Failed to votekick user: #{e}"
+          LOGGER.error e.backtrace.join("\n")
+          vote[:message].channel.send_message("Failed to kick...")
+        end
+      elsif no_percent >= VOTEKICK_THRESHOLD
+        VOTEKICKS[vc.server.id][vc.id].delete_if { |v| v[:target] == target }
+
+        message.edit("#{target.mention} has **not** been votekicked! (#{no_percent * 100}% voted no)")
+        message.delete_all_reactions
+      end
+
+      LOGGER.info "Vote to kick #{target.display_name} from #{vc.name}: #{yes_percent * 100}% yes (#{yes}/#{total})"
     end
 
     # Toggle whether or not to allow Guests in a voice room

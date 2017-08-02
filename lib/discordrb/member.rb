@@ -36,5 +36,14 @@ module Discordrb
     def short_info(use_mention=false)
       "**#{use_mention ? mention : display_name} [*#{info.nil? ? 'Guest' : info.short_description}*]**"
     end
+
+    # BUG
+    def safe_avatar_url
+      begin
+        return avatar_url
+      rescue
+        return ''
+      end
+    end
   end
 end
