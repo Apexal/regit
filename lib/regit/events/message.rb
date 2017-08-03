@@ -59,8 +59,14 @@ module Regit
 
         vc = event.channel.associated_channel
         vote = VOTEKICKS[vc.server.id][vc.id].find { |v| v[:message] == event.message }
-
         next if vote.nil?
+
+        choice = event.emoji.to_s == '<:☑:>' ? :yes : :no 
+        if choice == :yes
+          event.message.delete_reaction(event.user, '❌')
+        else
+          event.message.delete_reaction(event.user, '☑')
+        end
 
         Regit::VoiceChannels::handle_vote_kick(vote[:target])
       end

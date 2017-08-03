@@ -212,7 +212,7 @@ module Regit
       embed.description = "Vote to kick #{target.mention} from this voice-channel by choosing the ❌ or ☑ reaction below."
       embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Started by #{started_by.short_info}", icon_url: started_by.safe_avatar_url)
 
-      message = voice_channel.associated_channel.send_embed(nil, embed)
+      message = voice_channel.associated_channel.send_embed('@everyone', embed)
       message.react('☑')
       message.react('❌')
 
