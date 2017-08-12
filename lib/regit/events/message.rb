@@ -84,6 +84,14 @@ module Regit
         Regit::VoiceChannels::handle_vote_kick(vote[:target])
       end
 
+      message_delete do |event|
+        vc = event.channel.associated_channel
+        next if vc.nil?
+
+        if VOTEKICKS[vc.server.id][vc.id].delete_if { |v| v[:message].id == event.id }.length > 0
+          event.send_message('The votekick was ended because a Moderator deleted the vote.')
+        end
+      end
     end
   end
 end
