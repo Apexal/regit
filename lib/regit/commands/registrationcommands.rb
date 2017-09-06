@@ -7,6 +7,8 @@ module Regit
         # Sanitize email
         email.strip!
 
+        email += '@regis.org' unless email.end_with? '@regis.org'
+
         # Validate and get code
         begin
           code = Regit::Registration::start_process(event.user, email.split('@')[0])
@@ -54,7 +56,7 @@ module Regit
             embed.title = '[Student] ' + student.first_name + ' ' + student.last_name
             embed.add_field(name: 'School', value: student.school.title + ' ' + student.school.school_type, inline: true)
 
-            if Regit::School::summer?(server.school)
+            if Regit::School::summer?(member.server.school)
               embed.add_field(name: 'Class of', value: student.graduation_year, inline: true)
             else
               embed.add_field(name: 'Advisement', value: student.advisement, inline: true)
@@ -66,17 +68,17 @@ module Regit
             embed.color = 7380991
 
             embed.url = "http://www.getontrac.info:4567/users/#{student.username}"
-            embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{member.joined_at}", icon_url: member.avatar_url)
+            #embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{member.joined_at}", icon_url: member.avatar_url_fixed)
           end
 
           # Send email
           Regit::Email::GMAIL.deliver! do
-            to email
+            to student.username + '@regis.org'
             from 'Student Discord Server'
             subject "Welcome to the Server, #{student.first_name}"
             html_part do
               content_type 'text/html; charset=UTF-8'
-              body "<h1>Welcome to the Server!</h1>"
+              body "<h1>Welcome to the Server!</h1><p>You've successfully verified yourself and now have full access to the server!</p><p>Check out all the user-made groups on the server (or start your own for you and your friends) by typing <code><pre>!groups</pre></code> anywhere on the server."
             end
           end
         rescue => e

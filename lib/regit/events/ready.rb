@@ -16,7 +16,8 @@ module Regit
           Regit::BOT.set_role_permission(server.roles.find { |r| r.name == 'Students' }.id, 1)
           Regit::BOT.set_role_permission(server.roles.find { |r| r.name == 'Moderators' }.id, 2)
           Regit::BOT.set_user_permission(152621041976344577, 3) # Me
-          
+          Regit::BOT.set_user_permission(152189849284247553, 3) # SuperUser
+
           Regit::VoiceChannels::setup_server_voice(server)
 
           begin

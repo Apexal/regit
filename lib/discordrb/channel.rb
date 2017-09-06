@@ -54,8 +54,9 @@ module Discordrb
       if @type == 2
         Regit::BOT.channel(Regit::CHANNEL_ASSOCIATIONS[@server.id][@id], @server)
       elsif @type == 0
-        Regit::BOT.channel(Regit::CHANNEL_ASSOCIATIONS[@server.id].key(@id), @server)
+        Regit::BOT.channel(Regit::CHANNEL_ASSOCIATIONS[@server.id].key(@id), @server) rescue nil
       end
+
     end
 
   end

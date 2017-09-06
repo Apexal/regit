@@ -44,11 +44,11 @@ module Regit
 
       # Delete a group and notify all the members
       command(:deletegroup, max_args: 0, description: 'Delete a group you own.', usage: '`!deletegroup` in a group\'s text channel', permission_level: 3) do |event|
-        return
+
         event.message.delete unless event.channel.private?
 
         user = event.user.on(event.server)
-        next
+
         begin
           raise 'Not in a group text channel!' unless event.channel.association == :group
           group = Regit::Database::Group.find_by_text_channel_id(event.channel.id)

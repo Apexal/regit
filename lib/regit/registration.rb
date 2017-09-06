@@ -160,7 +160,7 @@ module Regit
       
       if class_role.nil?
         class_role = server.create_role
-        class_role.name = "Class of #{m.info.graduation_year}"
+        class_role.name = "Class of #{member.info.graduation_year}"
         class_role.hoist = true
         class_role.mentionable = true
       end
