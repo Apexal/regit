@@ -3,7 +3,7 @@ module Regit
 
     # Returns whether it is summer vacation
     def self.summer?(school)
-      true
+      false
     end
 
     # Deletes all course text-channels on a server

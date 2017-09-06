@@ -156,22 +156,21 @@ module Regit
         Regit::Groups::add_to_group(member, g.id)
       end
 
+      class_role = server.roles.find { |r| r.name == "Class of #{member.info.graduation_year}" }
+      
+      if class_role.nil?
+        class_role = server.create_role
+        class_role.name = "Class of #{m.info.graduation_year}"
+        class_role.hoist = true
+        class_role.mentionable = true
+      end
+      new_roles << class_role
+
       member.modify_roles(new_roles, [])
 
-      if Regit::School::summer?(server.school)
-        class_role = server.roles.find { |r| r.name == "Class of #{member.info.graduation_year}" }
-          
-        if class_role.nil?
-          class_role = server.create_role
-          class_role.name = "Class of #{m.info.graduation_year}"
-          class_role.hoist = true
-          class_role.mentionable = true
-        end
-
-        member.add_role(class_role)
-      else
-        handle_advisement_system(member)
-        handle_course_channels(member)
+      unless Regit::School::summer?(server.school)
+        handle_advisement_system(member) rescue nil
+        handle_course_channels(member) rescue nil
       end
 
       VERIFY_CODES.delete(member.info.username)

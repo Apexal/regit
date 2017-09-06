@@ -17,3 +17,4 @@ logs/*.log
 
 data/associations.yaml
 data/channel_owners.yaml
+lib/regit/scripts/

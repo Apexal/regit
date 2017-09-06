@@ -41,20 +41,6 @@ module Regit
       belongs_to :school, inverse_of: :students
       has_and_belongs_to_many :courses
 
-      # CHANGE EVERY YEAR UNFORTUNATELY
-      def graduation_year
-        case grade
-          when 9
-            '2020'
-          when 10
-            '2019'
-          when 11
-            '2018'
-          when 12
-            '2017'
-        end
-      end
-
       def teachers
         courses.select { |c| c.is_class? }.map { |c| c.teacher }.uniq
       end
