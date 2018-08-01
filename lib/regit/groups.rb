@@ -109,6 +109,10 @@ module Regit
       group_text_channel.define_overwrite(owner, owner_perms, 0) unless owner.nil? # Add owner perms 
       group_text_channel.define_overwrite(server.roles.find { |r| r.id == server.id }, 0, non_perms) # Don't allow anyone else
 
+      # Set category
+      category = server.channels.find { |c| c.name == 'User Groups' }
+      group_text_channel.category= category
+
       group_text_channel
     end
 

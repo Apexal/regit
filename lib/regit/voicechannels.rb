@@ -85,6 +85,9 @@ module Regit
       # Do this first so if two people join a [New Room] at the same time it recognizes that and doesnt try to associate twice
       if need_text_channel
         text_channel = server.create_channel('voice-channel', 0) # Creates a matching text-channel called 'voice-channel'
+        category = voice_channel.server.channels.find { |c| c.name == 'Voice Channels' }
+        text_channel.category= category
+        text_channel.position = 0
         CHANNEL_ASSOCIATIONS[server.id][voice_channel.id] = text_channel.id # Associate the two 
       end
 
@@ -313,6 +316,8 @@ module Regit
       # THIS IS BEFORE handle_associated_channel TO MAKE IT LOOK FASTER
       # Create new empty room
       new_room = voice_channel.server.create_channel(CONFIG.new_room_name, 2)
+      category = voice_channel.server.channels.find { |c| c.name == 'Voice Channels' }
+      new_room.category= category
       new_room.user_limit = 1
     end
   end
