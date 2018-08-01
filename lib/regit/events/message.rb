@@ -25,6 +25,12 @@ module Regit
         event.channel.send("^^^ #{mentions.map { |m| m.mention }.join(' ')}") unless mentions.empty?
       end
 
+      message(containing: 'gn') do |event|
+        return if event.channel.private?
+
+        event.channel.send_temporary_message('stop.', 5)
+      end
+
       message(containing: '@everyone') do |event|
         return if event.channel.private?
 

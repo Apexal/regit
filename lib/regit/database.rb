@@ -130,7 +130,7 @@ module Regit
       def owner
         # Find owner
         begin
-          return Regit::BOT.user(Student.where(username: owner_username).first.discord_id)
+          return Regit::BOT.user(Student.where(username: owner_username).first.discord_id).on(school.server)
         rescue => e
           #LOGGER.error "Could not find group owner for #{name}: #{e}"
           return nil
@@ -144,6 +144,16 @@ module Regit
           LOGGER.error "Could not find text-channel for #{name}: #{e}"
           return nil
         end
+      end
+
+      def embed
+        embed = Discordrb::Webhooks::Embed.new
+        embed.title = "Group #{name}"
+        embed.description = description
+        embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Owned by #{owner.short_info}", icon_url: owner.safe_avatar_url)
+        #embed.add_field(name: 'Members', value: members.count, inline: true)
+        #embed.add_field(name: 'Default', value: default_group, inline: true)
+        embed
       end
 
       def role

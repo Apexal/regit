@@ -10,7 +10,8 @@ module Regit
       NewServer,
       Presence,
       VoiceState,
-      MemberUpdate
+      MemberUpdate,
+      React
     ]
 
     def self.include!

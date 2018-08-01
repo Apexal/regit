@@ -44,7 +44,7 @@ module Regit
               embed.add_field(name: 'Advisement', value: info.advisement, inline: true)
             end
 
-            embed.add_field(name: 'Birthday', value: info.birthday.strftime('%B %e, %Y '), inline: true)
+            embed.add_field(name: 'Birthday', value: info.birthday.strftime('%B %e, %Y '), inline: true) unless info.birthday.nil? 
 
             embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "#{info.first_name} is not registered on the server yet!")
           elsif [:mention, :author, :username].include?(who) && (who == :username || target.student?(event.server.school))
@@ -60,13 +60,13 @@ module Regit
             end
             
             embed.add_field(name: 'Discord Tag', value: "#{target.mention} | #{target.distinct}", inline: true)
-            embed.add_field(name: 'Birthday', value: target.info.birthday.strftime('%B %e, %Y '), inline: true)
+            embed.add_field(name: 'Birthday', value: target.info.birthday.strftime('%B %e, %Y '), inline: true) unless target.info.birthday.nil?
 
             embed.color = 7380991
             embed.color = 16720128 if target.role?(target.server.roles.find { |r| r.name == 'Moderators' })
 
             embed.url = "http://www.getontrac.info:4567/users/#{target.info.username}"
-            embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{target.joined_at}", icon_url: target.avatar_url)
+            embed.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Joined at #{target.joined_at}", icon_url: target.safe_avatar_url)
           elsif who == :mention && target.guest?(event.server.school)
             embed.title = '[Guest] ' + target.info.first_name + ' ' + target.info.last_name
             embed.add_field(name: 'School', value: target.info.school.title + ' ' + target.info.school.school_type, inline: true)

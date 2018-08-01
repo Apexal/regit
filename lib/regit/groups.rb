@@ -47,6 +47,9 @@ module Regit
       group.role.delete
       group.text_channel.delete
 
+      # Groups embed
+      group.school.server.text_channels.find { |c| c.name == 'groups' }.history(100).select { |m| !m.embeds.empty? && m.embeds.first.title == "Group #{group.name}" }.map(&:delete)
+
       LOGGER.info "Deleted group #{group.name} of #{group.school.title} server"
       group.destroy
     end
@@ -142,6 +145,9 @@ module Regit
 
       LOGGER.info "Attempting to create group '#{group_name}'"
       group = Regit::Database::Group.create(school_id: server.school.id, name: full_name, private: is_private, owner_username: owner.info.username, description: description, default_group: false, text_channel_id: group_text_channel.id, role_id: group_role.id, voice_channel_allowed: true)
+      
+      server.text_channels.find { |c| c.name == 'groups' }.send_embed('', group.embed).react('☑') unless is_private
+
       return group
     end
 

@@ -20,6 +20,8 @@ module Discordrb
           :finals
         elsif !Regit::Database::Group.find_by_text_channel_id(@id).nil?
           :group
+        elsif @name == 'groups'
+          :groups
         elsif Regit::GRADES.map { |g| g.downcase }.include?(@name)
           :grade
         elsif !Regit::DEFAULT_TEXT_CHANNELS[@name].nil?
