@@ -25,6 +25,7 @@ module Regit
         LOGGER.info "Deleting text-channel ##{tc.name} [#{tc.topic}] (#{tc.id})"
         
         begin
+          puts "DELETED: ##{tc.name}"
           tc.delete
         rescue => e
           LOGGER.error "Somehow failed to delete channel: #{e}"
@@ -33,8 +34,16 @@ module Regit
       end
     end
 
-    # Removes all advisement roles from users but doesnt delete them and assigns `Class of [YEAR]` roles
     def self.remove_advisement_roles(server)
+      server.roles.select { |r| r.association == :advisement }.each do |r|
+        r.delete
+      end
+
+      'Done'
+    end
+
+    # Removes all advisement roles from users but doesnt delete them and assigns `Class of [YEAR]` roles
+    def self.remove_advisement_roles_old(server)
       server.students.each do |m|
         LOGGER.info "Removing advisement roles for #{m.short_info}"
 
@@ -46,7 +55,7 @@ module Regit
           # Add class roles
           role_c = server.roles.length
           class_role = server.roles.find { |r| r.name == "Class of #{m.info.graduation_year}" }
-          
+
           if class_role.nil?
             class_role = server.create_role
             class_role.name = "Class of #{m.info.graduation_year}"
